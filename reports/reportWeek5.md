@@ -1,4 +1,4 @@
-## Weekly status report 1
+## Weekly status report 2
 
 ## Team report    
 **Goals from a week ago:**  
