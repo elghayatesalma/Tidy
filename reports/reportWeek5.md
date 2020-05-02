@@ -15,7 +15,8 @@ We continued to work on the requirements document, and added Architecture and De
 
 **Plans and future goals:**  
 Frontend:
-<TODO>
+We plan on taking this next week to setup the project in Android Studio and beginning to implement basic navigation between screens
+and a low-fidelity UI. We will work on our assigned activities according to the schedule in the requirements document.
 
 Backend:
 For the next week, the entire backend team will be focused on learning how Firebase/Firestore works and can be integrated into the main project. Google provides a number of good examples for this, so it should be reasonable to make significant progress within a week.
