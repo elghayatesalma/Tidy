@@ -1,6 +1,5 @@
 package cse403.sp2020.tidy.ui.main;
 
-
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -8,7 +7,6 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * A [FragmentPagerAdapter] that returns a fragment corresponding to one of the sections/tabs/pages.
