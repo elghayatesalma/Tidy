@@ -1,17 +1,15 @@
 package cse403.sp2020.tidy.ui.login;
 
-/**
- * Class exposing authenticated user details to the UI.
- */
+/** Class exposing authenticated user details to the UI. */
 class LoggedInUserView {
-    private String displayName;
-    //... other data fields that may be accessible to the UI
+  private String displayName;
+  // ... other data fields that may be accessible to the UI
 
-    LoggedInUserView(String displayName) {
-        this.displayName = displayName;
-    }
+  LoggedInUserView(String displayName) {
+    this.displayName = displayName;
+  }
 
-    String getDisplayName() {
-        return displayName;
-    }
+  String getDisplayName() {
+    return displayName;
+  }
 }

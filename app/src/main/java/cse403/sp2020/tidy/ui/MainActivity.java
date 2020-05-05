@@ -14,30 +14,30 @@ import cse403.sp2020.tidy.ui.main.SectionsPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity";
+  private static final String TAG = "MainActivity";
 
-    private SectionsPagerAdapter sectionsPagerAdapter;
+  private SectionsPagerAdapter sectionsPagerAdapter;
 
-    private ViewPager viewPager;
+  private ViewPager viewPager;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
 
-        sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+    sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        viewPager = (ViewPager) findViewById(R.id.view_pager);
-        setupViewPager(viewPager);
+    viewPager = (ViewPager) findViewById(R.id.view_pager);
+    setupViewPager(viewPager);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
-    }
+    TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+    tabLayout.setupWithViewPager(viewPager);
+  }
 
-    private void setupViewPager(ViewPager viewPager) {
-        SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new AllChoresFragment(), "All Chores");
-        adapter.addFragment(new MyChoresFragment(), "My Chores");
-        viewPager.setAdapter(adapter);
-    }
+  private void setupViewPager(ViewPager viewPager) {
+    SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
+    adapter.addFragment(new AllChoresFragment(), "All Chores");
+    adapter.addFragment(new MyChoresFragment(), "My Chores");
+    viewPager.setAdapter(adapter);
+  }
 }
