@@ -78,7 +78,7 @@ public class ModelInterface {
     // Takes in task and household objects
     // Returns true if tasks is successfully removed from the household
     // Returns false otherwise
-    public static boolean removeTaskFromHouse(String householdId, Task task) {
+    public static boolean removeTaskFromHouse(Household household, Task task) {
         return false;
     }
 
