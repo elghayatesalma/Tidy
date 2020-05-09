@@ -10,7 +10,7 @@ public class HouseholdModel {
     this.householdNum = householdNum;
   }
 
-  public long getHouseholdNum(){
+  public long getHouseholdNum() {
     return householdNum;
   }
 
