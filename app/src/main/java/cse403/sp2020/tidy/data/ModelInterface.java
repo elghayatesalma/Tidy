@@ -23,9 +23,7 @@ import cse403.sp2020.tidy.data.model.UserModel;
  *  - ALL db changes should be done directly on the db (will affect local cache and remote)
  *  - Operation speed for any lookup/change will likely be very quick, especially if data is cached
  *  - Add event listeners for realtime updates, use get with success/fail/complete for one-time
- *
- * Open Questions:
- *  - Deactivate previous listeners if household object changes?
+ *  - Documents can be create by / used to create objects (See helper methods and add methods)
  *
  * TODO List:
  *  - Finish the remaining interface functions (mostly updaters)
