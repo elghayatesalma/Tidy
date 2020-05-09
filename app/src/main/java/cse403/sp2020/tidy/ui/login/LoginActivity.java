@@ -28,6 +28,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 import cse403.sp2020.tidy.R;
+import cse403.sp2020.tidy.ui.MainActivity;
 
 /**
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
@@ -58,6 +59,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     findViewById(R.id.sign_in_button).setOnClickListener(this);
     findViewById(R.id.sign_out_button).setOnClickListener(this);
     findViewById(R.id.disconnect_button).setOnClickListener(this);
+    findViewById(R.id.go_to_main_button).setOnClickListener(this);
 
     // [START configure_signin]
     // Configure sign-in to request the user's ID, email address, and basic
@@ -96,8 +98,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     // Check for existing Google Sign In account, if the user is already signed in
     // the GoogleSignInAccount will be non-null.
     GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-    updateGoogleSignInUI(account);
     FirebaseUser currentUser = mAuth.getCurrentUser();
+    // Only show google sign in information if firebase logged in as well
+    if (currentUser != null) {
+      updateGoogleSignInUI(account);
+    } else {
+      updateGoogleSignInUI(null);
+    }
     updateFireBaseSignInUI(currentUser);
     // [END on_start_sign_in]
   }
@@ -227,8 +234,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
       }
       mFirebaseStatusTextView.setText(
           getString(R.string.firebase_status_fmt, displayName, email, photoURL, user.getUid()));
+      findViewById(R.id.go_to_main_button).setVisibility(View.VISIBLE);
     } else {
       mFirebaseStatusTextView.setText(getString(R.string.firebase_disconnected));
+      findViewById(R.id.go_to_main_button).setVisibility(View.GONE);
     }
   }
 
@@ -269,15 +278,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
   @Override
   public void onClick(View v) {
     switch (v.getId()) {
+      case R.id.go_to_main_button:
+        Intent mainActivityIntent = new Intent(this, MainActivity.class);
+        startActivity(mainActivityIntent);
+        break;
       case R.id.sign_in_button:
         signInGoogle();
         break;
-        // Currently only signing out from Google. Firebase user is left untouched.
       case R.id.sign_out_button:
         signOutGoogle();
+        mAuth.signOut();
+        updateFireBaseSignInUI(null);
         break;
       case R.id.disconnect_button:
         revokeAccessGoogle();
+        updateFireBaseSignInUI(null);
         break;
     }
   }

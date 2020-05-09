@@ -66,11 +66,11 @@
             android:text="@string/firebase_disconnected" />
 
         <Button
-            android:id="@+id/button_optional_action"
+            android:id="@+id/go_to_main_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            tools:text="Optional Action"
+            android:text="Continue"
             tools:visibility="visible" />
 
     </LinearLayout>
