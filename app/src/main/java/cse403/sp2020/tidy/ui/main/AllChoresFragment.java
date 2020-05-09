@@ -22,7 +22,6 @@ public class AllChoresFragment extends Fragment {
 
   private static final String TAG = "ALL_CHORES";
 
-
   private TableLayout allChores;
   private HashMap<String, Map<String, Object>> allChoresMap;
 
@@ -52,8 +51,8 @@ public class AllChoresFragment extends Fragment {
 
     // Case where this task is already in the table
     if (allChoresMap.containsKey(taskId)
-            && allChoresMap.get(taskId).containsKey(TITLE_VIEW_KEY)
-            && allChoresMap.get(taskId).containsKey(DESC_VIEW_KEY)) {
+        && allChoresMap.get(taskId).containsKey(TITLE_VIEW_KEY)
+        && allChoresMap.get(taskId).containsKey(DESC_VIEW_KEY)) {
       Log.w(TAG, taskId + " has already been seen - reusing TextViews");
       title = (TextView) allChoresMap.get(taskId).get(TITLE_VIEW_KEY);
       description = (TextView) allChoresMap.get(taskId).get(DESC_VIEW_KEY);
@@ -75,7 +74,6 @@ public class AllChoresFragment extends Fragment {
 
     title.setText((CharSequence) titleStr);
     description.setText((CharSequence) descStr);
-
 
     taskData.put(TITLE_VIEW_KEY, title);
     taskData.put(DESC_VIEW_KEY, description);
