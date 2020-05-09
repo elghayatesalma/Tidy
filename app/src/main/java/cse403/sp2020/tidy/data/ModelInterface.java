@@ -70,6 +70,11 @@ public class ModelInterface {
   private List<Task> mTasks;
   private List<User> mUsers;
 
+  // Firestore Listeners
+  private ListenerRegistration mHouseholdListener;
+  private ListenerRegistration mTasksListener;
+  private ListenerRegistration mUsersListener;
+
   // Firestore Database instance
   private FirebaseFirestore db;
 
@@ -80,10 +85,15 @@ public class ModelInterface {
     // May need to move this out of the constructor for testing with a mock firestore db
     db = FirebaseFirestore.getInstance();
 
-    // Initialize members
+    // Initialize data
     mHousehold = null;
     mTasks = new ArrayList<Task>();
     mUsers = new ArrayList<User>();
+
+    // Initialize Listeners
+    mHouseholdListener = null;
+    mTasksListener = null;
+    mUsersListener = null;
 
     // Do initial queries if a user is present
     // TODO: Change this?
@@ -200,6 +210,8 @@ public class ModelInterface {
   private void queryHouseholdID() {
     Log.w(TAG, "Getting household with user ID: " + mFirebaseUser.getUid());
 
+    // Single-time query, no reason to get listener
+    // Searches all Users collections for particular id
     db.collectionGroup(USERS_COLLECTION_NAME)
         .whereEqualTo(USER_ID_FIELD, mFirebaseUser.getUid())
         .get()
@@ -216,7 +228,11 @@ public class ModelInterface {
                     Log.d(
                         TAG,
                         "Found " + snapshot.getDocuments().size() + " households with user ID");
-                    String householdID = snapshot.getDocuments().get(0).getId();
+
+                    // From the first document, get the parent (Users collection),
+                    // then parent's parent (Household document)
+                    String householdID = snapshot.getDocuments().get(0).getReference()
+                            .getParent().getParent().getId();
                     if (snapshot.getDocuments().size() > 1) {
                       Log.w(TAG, "Multiple households found, logging them");
                       for (DocumentSnapshot d : snapshot.getDocuments()) {
@@ -246,9 +262,16 @@ public class ModelInterface {
   // If found, it will start queries for existing Tasks and Users
   private void queryHousehold(final String householdID) {
     Log.w(TAG, "Getting household document for household ID " + householdID);
-    // Get the
+
+    // Deactivate the previous listener if it exists
+    if (mHouseholdListener != null) {
+      mHouseholdListener.remove();
+      mHouseholdListener = null;
+    }
+
     DocumentReference householdDoc = db.collection(HOUSEHOLD_COLLECTION_NAME).document(householdID);
-    householdDoc.addSnapshotListener(
+
+    mHouseholdListener = householdDoc.addSnapshotListener(
         new EventListener<DocumentSnapshot>() {
           @Override
           public void onEvent(
@@ -286,12 +309,18 @@ public class ModelInterface {
       return;
     }
 
+    // Deactivate the previous listener if it exists
+    if (mTasksListener != null) {
+      mTasksListener.remove();
+      mTasksListener = null;
+    }
+
     CollectionReference taskCollection =
         db.collection(HOUSEHOLD_COLLECTION_NAME)
             .document(mHousehold.getHouseId())
             .collection(TASK_COLLECTION_NAME);
 
-    taskCollection.addSnapshotListener(
+    mTasksListener = taskCollection.addSnapshotListener(
         new EventListener<QuerySnapshot>() {
           @Override
           public void onEvent(
@@ -330,12 +359,18 @@ public class ModelInterface {
       return;
     }
 
+    // Deactivate the previous listener if it exists
+    if (mUsersListener != null) {
+      mUsersListener.remove();
+      mUsersListener = null;
+    }
+
     CollectionReference userCollection =
         db.collection(HOUSEHOLD_COLLECTION_NAME)
             .document(mHousehold.getHouseId())
             .collection(USERS_COLLECTION_NAME);
 
-    userCollection.addSnapshotListener(
+    mUsersListener = userCollection.addSnapshotListener(
         new EventListener<QuerySnapshot>() {
           @Override
           public void onEvent(
