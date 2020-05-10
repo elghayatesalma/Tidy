@@ -1,22 +1,26 @@
 package cse403.sp2020.tidy.data.model;
 
 public class HouseholdModel {
-  private long householdNum;
+  private String householdId;
 
   // Empty constructor for firestore
   public HouseholdModel() {}
 
-  public HouseholdModel(long householdNum) {
-    this.householdNum = householdNum;
+  public HouseholdModel(String householdId) {
+    this.householdId = householdId;
   }
 
-  public long getHouseholdNum() {
-    return householdNum;
+  public String getHouseholdId() {
+    return householdId;
+  }
+
+  public void setHouseholdId(String householdId) {
+    this.householdId = householdId;
   }
 
   public boolean equals(HouseholdModel other) {
     if (other != null) {
-      return other.getHouseholdNum() == getHouseholdNum();
+      return other.getHouseholdId().equals(getHouseholdId());
     } else {
       return false;
     }
