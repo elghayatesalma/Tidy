@@ -44,7 +44,7 @@ import cse403.sp2020.tidy.data.model.UserModel;
  *   - DO NOT cache/store any data retrieved from these methods, query on every usage
  *      OR better yet, use callbacks to get updates automatically
  *
- * Callback Register Methods:
+ *  Callback Register Methods:
  *   - Allows for registering classes that implement the callback interfaces
  *   - These methods will be called on listener updates for respective type
  *
@@ -71,7 +71,6 @@ public class ModelInterface {
 
   // Firestore Constants
   private static final String HOUSEHOLD_COLLECTION_NAME = "Households";
-  private static final String HOUSEHOLD_ID_FIELD = "householdNum";
   private static final String TASK_COLLECTION_NAME = "Tasks";
   private static final String USERS_COLLECTION_NAME = "Users";
   private static final String USER_ID_FIELD = "firebaseId";
@@ -100,7 +99,7 @@ public class ModelInterface {
   // Constructor
   // Takes a Firestore instance and the current user
   public ModelInterface(FirebaseFirestore firestore, UserModel firebaseUser) {
-    Log.w(TAG, "Building ModelInterface");
+    Log.d(TAG, "Building ModelInterface");
     mFirestore = firestore;
 
     // Initialize data
@@ -121,7 +120,7 @@ public class ModelInterface {
     // Do initial queries if a user is present
     mFirebaseUser = firebaseUser;
     if (mFirebaseUser != null) {
-      Log.w(TAG, "Doing initial query");
+      Log.d(TAG, "Doing initial query");
       queryHouseholdIdByUser();
     } else {
       Log.w(TAG, "No user on init, skipping initial queries");
@@ -143,14 +142,14 @@ public class ModelInterface {
       return;
     }
 
-    Log.w(TAG, "Change in user, clearing local data and stopping listeners");
+    Log.d(TAG, "Change in user, clearing local data and stopping listeners");
     clearData();
 
     if (newUser == null) {
       Log.w(TAG, "Current user is null, avoiding new queries");
 
     } else {
-      Log.w(TAG, "New user set, starting queries");
+      Log.d(TAG, "New user set, starting queries");
 
       // Set user and restart queries
       mFirebaseUser = newUser;
@@ -158,11 +157,13 @@ public class ModelInterface {
     }
   }
 
-  // Creates a household and assigns the curremt user to it
-  public void makeHousehold() {
+  // Creates a household and assigns the current user to it
+  // Uses any metadata store in the input household, but replaces id (id can be null or anything)
+  public void makeHousehold(final HouseholdModel household) {
+    // Get the doc id and set in the new household
     DocumentReference householdDoc = mFirestore.collection(HOUSEHOLD_COLLECTION_NAME).document();
-    final HouseholdModel household = new HouseholdModel(householdDoc.getId());
-    Log.w(TAG, "Making new household: " + household.getHouseholdId());
+    household.setHouseholdId(householdDoc.getId());
+    Log.d(TAG, "Making new household: " + household.getHouseholdId());
 
     // Create the household
     householdDoc
@@ -172,7 +173,7 @@ public class ModelInterface {
               @Override
               public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                  Log.w(TAG, "Household has been created");
+                  Log.d(TAG, "Household has been created");
                   // Household created, assign user to it
                   setHousehold(household);
                 } else {
@@ -184,9 +185,9 @@ public class ModelInterface {
 
   // Takes in a household object to put the user in
   public void setHousehold(final HouseholdModel household) {
-    Log.w(TAG, "Attempting to set household");
+    Log.d(TAG, "Attempting to set household");
     if (household == null) {
-      Log.w(TAG, "household object is null");
+      Log.w(TAG, "set household object is null");
       return;
     }
 
@@ -202,7 +203,9 @@ public class ModelInterface {
               @Override
               public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                  Log.w(TAG, "User has been assigned to household");
+                  Log.d(TAG, "User has been assigned to household");
+
+                  // Set a new household and trigger callback
                   mHousehold = household;
                   callbackHousehold(false);
 
@@ -219,14 +222,17 @@ public class ModelInterface {
 
   // Returns the current household (or null if there isn't one)
   public HouseholdModel getHousehold() {
-    return mHousehold;
+    if (mHousehold == null) {
+      return null;
+    }
+    return new HouseholdModel(mHousehold);
   }
 
   // Returns a (potentially empty) list of users if household exists
   // Returns null if household doesn't exist
   public List<UserModel> getUsers() {
     if (mHousehold != null) {
-      return mUsers; // Create copy?
+      return new ArrayList<>(mUsers);
     }
     return null;
   }
@@ -235,7 +241,7 @@ public class ModelInterface {
   // Returns null if household doesn't exist
   public List<TaskModel> getTasks() {
     if (mHousehold != null) {
-      return mTasks; // Create copy?
+      return new ArrayList<>(mTasks);
     }
     return null;
   }
@@ -248,7 +254,7 @@ public class ModelInterface {
     }
 
     if (getUserCollection() != null) {
-      Log.w(TAG, "Removing user: " + mFirebaseUser.getFirebaseId());
+      Log.d(TAG, "Removing user: " + mFirebaseUser.getFirebaseId());
       getUserCollection()
           .document(mFirebaseUser.getFirebaseId())
           .delete()
@@ -257,27 +263,25 @@ public class ModelInterface {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                   if (task.isSuccessful()) {
-                    Log.w(TAG, "User removed successfully");
+                    Log.d(TAG, "User removed successfully");
                     // The user is gone, so household data is no longer relevant
                     clearData();
-                    // Trigger all callbacks, data is now invalid
-                    callbackHousehold(true);
-                    //                    callbackTasks(true);
-                    //                    callbackUsers(true);
+                    // Trigger household callback, data is now invalid
+                    callbackHousehold(false);
                   } else {
                     Log.w(TAG, "Failed to remove user: " + task.getException());
                   }
                 }
               });
     } else {
-      Log.w(TAG, "No collection, failed to remove user: " + mFirebaseUser.getFirebaseId());
+      Log.w(TAG, "No users collection, failed to remove user: " + mFirebaseUser.getFirebaseId());
     }
   }
 
   // Attempts to add the task to the household
   public void addTaskToHouse(TaskModel task) {
     if (task == null) {
-      Log.w(TAG, "Trying to add a null task, ignoring");
+      Log.d(TAG, "Trying to add a null task, ignoring");
       return;
     }
 
@@ -301,7 +305,7 @@ public class ModelInterface {
                 }
               });
     } else {
-      Log.w(TAG, "No collection, failed to add task: " + task.getName());
+      Log.w(TAG, "No tasks collection, failed to add task: " + task.getName());
     }
   }
 
@@ -313,7 +317,7 @@ public class ModelInterface {
     }
 
     if (getTaskCollection() != null) {
-      Log.w(TAG, "Removing task: " + task.getName());
+      Log.d(TAG, "Removing task: " + task.getName());
       getTaskCollection()
           .document(task.getTaskId())
           .delete()
@@ -322,28 +326,31 @@ public class ModelInterface {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                   if (task.isSuccessful()) {
-                    Log.w(TAG, "Task deleted successfully");
+                    Log.d(TAG, "Task deleted successfully");
                   } else {
                     Log.w(TAG, "Failed to delete task: " + task.getException());
                   }
                 }
               });
     } else {
-      Log.w(TAG, "No collection, failed to remove task: " + task.getName());
+      Log.w(TAG, "No tasks collection, failed to remove task: " + task.getName());
     }
   }
 
   /* Callback Register methods */
 
   public void registerHouseholdCallback(HouseholdCallbackInterface callback) {
+    Log.d(TAG, "Registering callback for Household");
     mHouseholdCallback = callback;
   }
 
   public void registerTaskCallback(TaskCallbackInterface callback) {
+    Log.d(TAG, "Registering callback for Tasks");
     mTaskCallback = callback;
   }
 
   public void registerUserCallback(UserCallbackInterface callback) {
+    Log.d(TAG, "Registering callback for Users");
     mUserCallback = callback;
   }
 
@@ -352,15 +359,15 @@ public class ModelInterface {
   // Called when the current household has been updated
   private void callbackHousehold(boolean failed) {
     if (mHouseholdCallback == null) {
-      Log.w(TAG, "No household callback");
+      Log.d(TAG, "No household callback");
       return;
     }
 
     if (failed) {
-      Log.w(TAG, "callback fail on Household");
+      Log.d(TAG, "callback fail on Household");
       mHouseholdCallback.householdCallbackFailed();
     } else {
-      Log.w(TAG, "callback on Household");
+      Log.d(TAG, "callback on Household");
       mHouseholdCallback.householdCallback(getHousehold());
     }
   }
@@ -368,15 +375,15 @@ public class ModelInterface {
   // Called when the tasks have been updated
   private void callbackTasks(boolean failed) {
     if (mTaskCallback == null) {
-      Log.w(TAG, "No task callback");
+      Log.d(TAG, "No task callback");
       return;
     }
 
     if (failed) {
-      Log.w(TAG, "callback fail on Tasks");
+      Log.d(TAG, "callback fail on Tasks");
       mTaskCallback.taskCallbackFail();
     } else {
-      Log.w(TAG, "callback on Tasks");
+      Log.d(TAG, "callback on Tasks");
       mTaskCallback.taskCallback(getTasks());
     }
   }
@@ -384,15 +391,15 @@ public class ModelInterface {
   // Called when the users have been updated
   private void callbackUsers(boolean failed) {
     if (mUserCallback == null) {
-      Log.w(TAG, "No user callback");
+      Log.d(TAG, "No user callback");
       return;
     }
 
     if (failed) {
-      Log.w(TAG, "callback fail on Users");
+      Log.d(TAG, "callback fail on Users");
       mUserCallback.userCallbackFailed();
     } else {
-      Log.w(TAG, "callback on Users");
+      Log.d(TAG, "callback on Users");
       mUserCallback.userCallback(getUsers());
     }
   }
@@ -402,7 +409,7 @@ public class ModelInterface {
   // Finds the householdID corresponding to the current user
   // Starts query for household document if ID is found
   private void queryHouseholdIdByUser() {
-    Log.w(TAG, "Getting household with user ID: " + mFirebaseUser.getFirebaseId());
+    Log.d(TAG, "Getting household with user ID: " + mFirebaseUser.getFirebaseId());
 
     // Single-time query, no reason to get listener
     // Searches all Users collections for particular id
@@ -437,7 +444,7 @@ public class ModelInterface {
                     if (snapshot.getDocuments().size() > 1) {
                       Log.w(TAG, "Multiple entries of user found, logging them");
                       for (DocumentSnapshot d : snapshot.getDocuments()) {
-                        Log.d(TAG, "UserID: " + d.getId() + ", data: " + d.getData());
+                        Log.w(TAG, "UserID: " + d.getId() + ", data: " + d.getData());
                       }
                     }
 
@@ -446,7 +453,7 @@ public class ModelInterface {
                     return;
                   }
                 } else {
-                  Log.d(TAG, "Query result for households is null");
+                  Log.w(TAG, "Query result for households is null");
                   clearData();
                 }
 
@@ -496,7 +503,7 @@ public class ModelInterface {
 
                     // Set the user this household
                     if (mFirebaseUser != null) {
-                      Log.w(TAG, "Setting user to new household");
+                      Log.d(TAG, "Setting user to new household");
                       mFirestore
                           .collection(HOUSEHOLD_COLLECTION_NAME)
                           .document(householdID)
@@ -520,7 +527,7 @@ public class ModelInterface {
                     clearData();
                   }
                 } else {
-                  Log.d(TAG, "Current data: null");
+                  Log.w(TAG, "Household query is null");
                   clearData();
                 }
                 callbackHousehold(true);
@@ -575,7 +582,7 @@ public class ModelInterface {
                       callbackTasks(false);
                       return;
                     } else {
-                      Log.d(TAG, "Query result for tasks is null");
+                      Log.w(TAG, "Query result for tasks is null");
                     }
                     callbackTasks(true);
                   }
@@ -630,7 +637,7 @@ public class ModelInterface {
                       callbackUsers(false);
                       return;
                     } else {
-                      Log.d(TAG, "Query result for users is null");
+                      Log.w(TAG, "Query result for users is null");
                     }
                     callbackUsers(true);
                   }
@@ -676,6 +683,8 @@ public class ModelInterface {
 
   // Removes all local data and references for the current household
   private void clearData() {
+    Log.d(TAG, "Clearing all data");
+
     // Remove listeners if they exist
     if (mHouseholdListener != null) {
       mHouseholdListener.remove();

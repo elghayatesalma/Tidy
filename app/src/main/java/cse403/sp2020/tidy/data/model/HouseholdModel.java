@@ -10,6 +10,12 @@ public class HouseholdModel {
     this.householdId = householdId;
   }
 
+  public HouseholdModel(HouseholdModel other) {
+    if (other != null) {
+      this.householdId = other.householdId;
+    }
+  }
+
   public String getHouseholdId() {
     return householdId;
   }

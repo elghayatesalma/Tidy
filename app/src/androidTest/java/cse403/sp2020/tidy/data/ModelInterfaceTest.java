@@ -9,6 +9,7 @@ import static org.junit.Assert.*;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cse403.sp2020.tidy.data.callbacks.HouseholdCallbackInterface;
@@ -37,7 +38,7 @@ public class ModelInterfaceTest {
   }
 
   @Test
-  // Runs through a basic setup with creating a household and adding a user
+  // Runs through a basic setup with creating a household and adding a user with a few tasks
   public void singleUserTest() throws InterruptedException {
     String userId = "test_user_id";
     CallbackChecker checker = new CallbackChecker();
@@ -58,7 +59,7 @@ public class ModelInterfaceTest {
     // Create a household for the user and add 'em to it
     checker.setHouseholdWaiting();
     checker.setUserWaiting();
-    mi.makeHousehold();
+    mi.makeHousehold(new HouseholdModel());
     checker.block();
 
     // A household with a user should now exist
@@ -126,6 +127,7 @@ public class ModelInterfaceTest {
   }
 
   @Test
+  // Tests adding a number of users to a few households
   public void multiUserTest() {
     // TODO
   }
