@@ -25,4 +25,11 @@ public class UserModel {
   public String getFirebaseId() {
     return firebaseId;
   }
+
+  public boolean equals(UserModel other) {
+    if (other != null) {
+      return  other.getFirebaseId() == getFirebaseId();
+    }
+    return false;
+  }
 }
