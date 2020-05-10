@@ -98,11 +98,10 @@ public class ModelInterfaceTest {
     checker.block();
     assertEquals(1, mi.getTasks().size());
 
-
     // Leave the household, but grab info first
     HouseholdModel household = mi.getHousehold();
     checker.setHouseholdWaiting();
-//    checker.setTaskWaiting();
+    //    checker.setTaskWaiting();
     checker.setUserWaiting();
     mi.removeUserFromHouse();
     checker.block();
@@ -138,7 +137,8 @@ public class ModelInterfaceTest {
 }
 
 // Simple class to keep track of callbacks and mark when the callbacks have succeeded
-class CallbackChecker implements HouseholdCallbackInterface, TaskCallbackInterface, UserCallbackInterface {
+class CallbackChecker
+    implements HouseholdCallbackInterface, TaskCallbackInterface, UserCallbackInterface {
   private boolean householdWaiting;
   private boolean taskWaiting;
   private boolean userWaiting;
@@ -157,6 +157,7 @@ class CallbackChecker implements HouseholdCallbackInterface, TaskCallbackInterfa
   public void setHouseholdWaiting() {
     setHouseholdWaiting(true);
   }
+
   public void setHouseholdWaiting(boolean setTo) {
     householdWaiting = setTo;
   }
@@ -164,6 +165,7 @@ class CallbackChecker implements HouseholdCallbackInterface, TaskCallbackInterfa
   public void setTaskWaiting() {
     setTaskWaiting(true);
   }
+
   public void setTaskWaiting(boolean setTo) {
     taskWaiting = setTo;
   }
@@ -171,6 +173,7 @@ class CallbackChecker implements HouseholdCallbackInterface, TaskCallbackInterfa
   public void setUserWaiting() {
     setUserWaiting(true);
   }
+
   public void setUserWaiting(boolean setTo) {
     userWaiting = setTo;
   }

@@ -197,24 +197,24 @@ public class ModelInterface {
         .collection(USERS_COLLECTION_NAME)
         .document(mFirebaseUser.getFirebaseId())
         .set(mFirebaseUser)
-            .addOnCompleteListener(
-                new OnCompleteListener<Void>() {
-                  @Override
-                  public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                      Log.w(TAG, "User has been assigned to household");
-                      mHousehold = household;
-                      callbackHousehold(false);
+        .addOnCompleteListener(
+            new OnCompleteListener<Void>() {
+              @Override
+              public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                  Log.w(TAG, "User has been assigned to household");
+                  mHousehold = household;
+                  callbackHousehold(false);
 
-                      // User has been assigned a new household, so get the data
-                      queryTasks();
-                      queryUsers();
+                  // User has been assigned a new household, so get the data
+                  queryTasks();
+                  queryUsers();
 
-                    } else {
-                      Log.w(TAG, "Failed to assign user to household: " + task.getException());
-                    }
-                  }
-                });
+                } else {
+                  Log.w(TAG, "Failed to assign user to household: " + task.getException());
+                }
+              }
+            });
   }
 
   // Returns the current household (or null if there isn't one)
@@ -262,8 +262,8 @@ public class ModelInterface {
                     clearData();
                     // Trigger all callbacks, data is now invalid
                     callbackHousehold(true);
-//                    callbackTasks(true);
-//                    callbackUsers(true);
+                    //                    callbackTasks(true);
+                    //                    callbackUsers(true);
                   } else {
                     Log.w(TAG, "Failed to remove user: " + task.getException());
                   }
@@ -315,19 +315,19 @@ public class ModelInterface {
     if (getTaskCollection() != null) {
       Log.w(TAG, "Removing task: " + task.getName());
       getTaskCollection()
-            .document(task.getTaskId())
-            .delete()
-            .addOnCompleteListener(
-                new OnCompleteListener<Void>() {
-                  @Override
-                  public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                      Log.w(TAG, "Task deleted successfully");
-                    } else {
-                      Log.w(TAG, "Failed to delete task: " + task.getException());
-                    }
+          .document(task.getTaskId())
+          .delete()
+          .addOnCompleteListener(
+              new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                  if (task.isSuccessful()) {
+                    Log.w(TAG, "Task deleted successfully");
+                  } else {
+                    Log.w(TAG, "Failed to delete task: " + task.getException());
                   }
-                });
+                }
+              });
     } else {
       Log.w(TAG, "No collection, failed to remove task: " + task.getName());
     }
@@ -547,38 +547,39 @@ public class ModelInterface {
     }
 
     mTasksListener =
-        getTaskCollection().addSnapshotListener(
-            new EventListener<QuerySnapshot>() {
-              @Override
-              public void onEvent(
-                  @Nullable QuerySnapshot snapshot, @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                  Log.w(TAG, "Tasks collection lookup failed:", e);
-                  return;
-                }
-
-                if (snapshot != null) {
-                  if (snapshot.isEmpty() && snapshot.getDocuments().isEmpty()) {
-                    Log.d(TAG, "No tasks found");
-                    // No tasks, but that's still valid
-                    mTasks.clear();
-                  } else {
-                    Log.d(TAG, "Found " + snapshot.getDocuments().size() + " tasks");
-
-                    // Tasks have been found, so create a new list
-                    mTasks.clear();
-                    for (DocumentSnapshot d : snapshot.getDocuments()) {
-                      mTasks.add(buildTask(d));
+        getTaskCollection()
+            .addSnapshotListener(
+                new EventListener<QuerySnapshot>() {
+                  @Override
+                  public void onEvent(
+                      @Nullable QuerySnapshot snapshot, @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                      Log.w(TAG, "Tasks collection lookup failed:", e);
+                      return;
                     }
+
+                    if (snapshot != null) {
+                      if (snapshot.isEmpty() && snapshot.getDocuments().isEmpty()) {
+                        Log.d(TAG, "No tasks found");
+                        // No tasks, but that's still valid
+                        mTasks.clear();
+                      } else {
+                        Log.d(TAG, "Found " + snapshot.getDocuments().size() + " tasks");
+
+                        // Tasks have been found, so create a new list
+                        mTasks.clear();
+                        for (DocumentSnapshot d : snapshot.getDocuments()) {
+                          mTasks.add(buildTask(d));
+                        }
+                      }
+                      callbackTasks(false);
+                      return;
+                    } else {
+                      Log.d(TAG, "Query result for tasks is null");
+                    }
+                    callbackTasks(true);
                   }
-                  callbackTasks(false);
-                  return;
-                } else {
-                  Log.d(TAG, "Query result for tasks is null");
-                }
-                callbackTasks(true);
-              }
-            });
+                });
   }
 
   // Rebuilds the list of tasks to the current household
@@ -600,39 +601,40 @@ public class ModelInterface {
     }
 
     mUsersListener =
-        getUserCollection().addSnapshotListener(
-            new EventListener<QuerySnapshot>() {
-              @Override
-              public void onEvent(
-                  @Nullable QuerySnapshot snapshot, @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                  Log.w(TAG, "User collection lookup failed:", e);
-                  return;
-                }
-
-                if (snapshot != null) {
-                  if (snapshot.isEmpty() && snapshot.getDocuments().isEmpty()) {
-                    Log.d(TAG, "No users found");
-                    // TODO: This is probably a really bad state...
-                  } else {
-                    Log.d(TAG, "Found " + snapshot.getDocuments().size() + " users");
-
-                    // Users have been found, so create a new list
-                    mUsers.clear();
-                    for (DocumentSnapshot d : snapshot.getDocuments()) {
-                      mUsers.add(buildUser(d));
+        getUserCollection()
+            .addSnapshotListener(
+                new EventListener<QuerySnapshot>() {
+                  @Override
+                  public void onEvent(
+                      @Nullable QuerySnapshot snapshot, @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                      Log.w(TAG, "User collection lookup failed:", e);
+                      return;
                     }
-                  }
 
-                  // Use the callback
-                  callbackUsers(false);
-                  return;
-                } else {
-                  Log.d(TAG, "Query result for users is null");
-                }
-                callbackUsers(true);
-              }
-            });
+                    if (snapshot != null) {
+                      if (snapshot.isEmpty() && snapshot.getDocuments().isEmpty()) {
+                        Log.d(TAG, "No users found");
+                        // TODO: This is probably a really bad state...
+                      } else {
+                        Log.d(TAG, "Found " + snapshot.getDocuments().size() + " users");
+
+                        // Users have been found, so create a new list
+                        mUsers.clear();
+                        for (DocumentSnapshot d : snapshot.getDocuments()) {
+                          mUsers.add(buildUser(d));
+                        }
+                      }
+
+                      // Use the callback
+                      callbackUsers(false);
+                      return;
+                    } else {
+                      Log.d(TAG, "Query result for users is null");
+                    }
+                    callbackUsers(true);
+                  }
+                });
   }
 
   /* Helper methods */
@@ -655,9 +657,9 @@ public class ModelInterface {
   private CollectionReference getTaskCollection() {
     if (mHousehold != null) {
       return mFirestore
-              .collection(HOUSEHOLD_COLLECTION_NAME)
-              .document(mHousehold.getHouseholdId())
-              .collection(TASK_COLLECTION_NAME);
+          .collection(HOUSEHOLD_COLLECTION_NAME)
+          .document(mHousehold.getHouseholdId())
+          .collection(TASK_COLLECTION_NAME);
     }
     return null;
   }
@@ -665,9 +667,9 @@ public class ModelInterface {
   private CollectionReference getUserCollection() {
     if (mHousehold != null) {
       return mFirestore
-              .collection(HOUSEHOLD_COLLECTION_NAME)
-              .document(mHousehold.getHouseholdId())
-              .collection(USERS_COLLECTION_NAME);
+          .collection(HOUSEHOLD_COLLECTION_NAME)
+          .document(mHousehold.getHouseholdId())
+          .collection(USERS_COLLECTION_NAME);
     }
     return null;
   }
