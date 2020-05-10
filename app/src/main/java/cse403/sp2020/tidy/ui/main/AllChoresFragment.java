@@ -13,11 +13,14 @@ import cse403.sp2020.tidy.R;
 
 public class AllChoresFragment extends Fragment {
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.allchores_fragment, container, false);
+  @Nullable
+  @Override
+  public View onCreateView(
+      @NonNull LayoutInflater inflater,
+      @Nullable ViewGroup container,
+      @Nullable Bundle savedInstanceState) {
+    View view = inflater.inflate(R.layout.allchores_fragment, container, false);
 
-        return view;
-    }
+    return view;
+  }
 }
