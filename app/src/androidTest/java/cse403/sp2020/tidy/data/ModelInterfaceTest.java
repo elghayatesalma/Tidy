@@ -9,7 +9,6 @@ import static org.junit.Assert.*;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import cse403.sp2020.tidy.data.callbacks.HouseholdCallbackInterface;
