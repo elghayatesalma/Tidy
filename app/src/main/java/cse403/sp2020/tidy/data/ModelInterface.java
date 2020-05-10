@@ -13,7 +13,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import com.google.firebase.firestore.*;
 
-import cse403.sp2020.tidy.data.model.Household;
 import cse403.sp2020.tidy.data.model.HouseholdModel;
 import cse403.sp2020.tidy.data.model.TaskModel;
 import cse403.sp2020.tidy.data.model.UserModel;
@@ -106,7 +105,6 @@ public class ModelInterface {
       Log.w(TAG, "No user on init, skipping initial queries");
     }
   }
-
 
   // Use to clear all data and stop listeners
   public void cleanUp() {
@@ -252,44 +250,44 @@ public class ModelInterface {
     // Single-time query, no reason to get listener
     // Searches households for particular num
     mFirestore
-            .collection(HOUSEHOLD_COLLECTION_NAME)
-            .whereEqualTo(HOUSEHOLD_ID_FIELD, householdNum)
-            .get()
-            .addOnSuccessListener(
-                    new OnSuccessListener<QuerySnapshot>() {
-                      @Override
-                      public void onSuccess(QuerySnapshot snapshot) {
-                        if (snapshot != null) {
-                          if (snapshot.isEmpty() && snapshot.getDocuments().isEmpty()) {
-                            Log.d(TAG, "No household found with num");
-                            clearData();
-                          } else {
-                            Log.d(TAG, "Found " + snapshot.getDocuments().size() + " households with num");
+        .collection(HOUSEHOLD_COLLECTION_NAME)
+        .whereEqualTo(HOUSEHOLD_ID_FIELD, householdNum)
+        .get()
+        .addOnSuccessListener(
+            new OnSuccessListener<QuerySnapshot>() {
+              @Override
+              public void onSuccess(QuerySnapshot snapshot) {
+                if (snapshot != null) {
+                  if (snapshot.isEmpty() && snapshot.getDocuments().isEmpty()) {
+                    Log.d(TAG, "No household found with num");
+                    clearData();
+                  } else {
+                    Log.d(TAG, "Found " + snapshot.getDocuments().size() + " households with num");
 
-                            String householdID = snapshot.getDocuments().get(0).getReference().getId();
-                            if (snapshot.getDocuments().size() > 1) {
-                              Log.w(TAG, "Multiple households found, logging them");
-                              for (DocumentSnapshot d : snapshot.getDocuments()) {
-                                Log.d(TAG, "Household: " + d.getId() + ", data: " + d.getData());
-                              }
-                            }
+                    String householdID = snapshot.getDocuments().get(0).getReference().getId();
+                    if (snapshot.getDocuments().size() > 1) {
+                      Log.w(TAG, "Multiple households found, logging them");
+                      for (DocumentSnapshot d : snapshot.getDocuments()) {
+                        Log.d(TAG, "Household: " + d.getId() + ", data: " + d.getData());
+                      }
+                    }
 
-                            // Get the corresponding household data
-                            queryHousehold(householdID);
-                          }
-                        } else {
-                          Log.d(TAG, "Query result for households is null");
-                          clearData();
-                        }
-                      }
-                    })
-            .addOnFailureListener(
-                    new OnFailureListener() {
-                      @Override
-                      public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Failed to find household by num", e);
-                      }
-                    });
+                    // Get the corresponding household data
+                    queryHousehold(householdID);
+                  }
+                } else {
+                  Log.d(TAG, "Query result for households is null");
+                  clearData();
+                }
+              }
+            })
+        .addOnFailureListener(
+            new OnFailureListener() {
+              @Override
+              public void onFailure(@NonNull Exception e) {
+                Log.w(TAG, "Failed to find household by num", e);
+              }
+            });
   }
 
   // Finds the householdID corresponding to the current user
@@ -300,56 +298,56 @@ public class ModelInterface {
     // Single-time query, no reason to get listener
     // Searches all Users collections for particular id
     mFirestore
-            .collectionGroup(USERS_COLLECTION_NAME)
-            .whereEqualTo(USER_ID_FIELD, mFirebaseUser.getFirebaseId())
-            .get()
-            .addOnSuccessListener(
-                    new OnSuccessListener<QuerySnapshot>() {
-                      @Override
-                      public void onSuccess(QuerySnapshot snapshot) {
-                        if (snapshot != null) {
-                          // TODO: are both needed?
-                          if (snapshot.isEmpty() && snapshot.getDocuments().isEmpty()) {
-                            Log.d(TAG, "User not found to be part of a household");
-                            clearData();
-                          } else {
-                            Log.d(
-                                    TAG,
-                                    "Found " + snapshot.getDocuments().size() + " households with user ID");
+        .collectionGroup(USERS_COLLECTION_NAME)
+        .whereEqualTo(USER_ID_FIELD, mFirebaseUser.getFirebaseId())
+        .get()
+        .addOnSuccessListener(
+            new OnSuccessListener<QuerySnapshot>() {
+              @Override
+              public void onSuccess(QuerySnapshot snapshot) {
+                if (snapshot != null) {
+                  // TODO: are both needed?
+                  if (snapshot.isEmpty() && snapshot.getDocuments().isEmpty()) {
+                    Log.d(TAG, "User not found to be part of a household");
+                    clearData();
+                  } else {
+                    Log.d(
+                        TAG,
+                        "Found " + snapshot.getDocuments().size() + " households with user ID");
 
-                            // From the first document, get the parent (Users collection),
-                            // then parent's parent (Household document)
-                            String householdID =
-                                    snapshot
-                                            .getDocuments()
-                                            .get(0)
-                                            .getReference()
-                                            .getParent()
-                                            .getParent()
-                                            .getId();
-                            if (snapshot.getDocuments().size() > 1) {
-                              Log.w(TAG, "Multiple households found, logging them");
-                              for (DocumentSnapshot d : snapshot.getDocuments()) {
-                                Log.d(TAG, "Household: " + d.getId() + ", data: " + d.getData());
-                              }
-                            }
+                    // From the first document, get the parent (Users collection),
+                    // then parent's parent (Household document)
+                    String householdID =
+                        snapshot
+                            .getDocuments()
+                            .get(0)
+                            .getReference()
+                            .getParent()
+                            .getParent()
+                            .getId();
+                    if (snapshot.getDocuments().size() > 1) {
+                      Log.w(TAG, "Multiple households found, logging them");
+                      for (DocumentSnapshot d : snapshot.getDocuments()) {
+                        Log.d(TAG, "Household: " + d.getId() + ", data: " + d.getData());
+                      }
+                    }
 
-                            // A household ID has been found, so get the corresponding household data
-                            queryHousehold(householdID);
-                          }
-                        } else {
-                          Log.d(TAG, "Query result for households is null");
-                          clearData();
-                        }
-                      }
-                    })
-            .addOnFailureListener(
-                    new OnFailureListener() {
-                      @Override
-                      public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Failed to find household by user ID", e);
-                      }
-                    });
+                    // A household ID has been found, so get the corresponding household data
+                    queryHousehold(householdID);
+                  }
+                } else {
+                  Log.d(TAG, "Query result for households is null");
+                  clearData();
+                }
+              }
+            })
+        .addOnFailureListener(
+            new OnFailureListener() {
+              @Override
+              public void onFailure(@NonNull Exception e) {
+                Log.w(TAG, "Failed to find household by user ID", e);
+              }
+            });
   }
 
   // Starts a query for a household with the provided household ID
@@ -364,67 +362,67 @@ public class ModelInterface {
     }
 
     DocumentReference householdDoc =
-            mFirestore.collection(HOUSEHOLD_COLLECTION_NAME).document(householdID);
+        mFirestore.collection(HOUSEHOLD_COLLECTION_NAME).document(householdID);
 
     mHouseholdListener =
-            householdDoc.addSnapshotListener(
-                    new EventListener<DocumentSnapshot>() {
-                      @Override
-                      public void onEvent(
-                              @Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException e) {
-                        if (e != null) {
-                          Log.w(TAG, "Listen failed.", e);
-                          return;
-                        }
+        householdDoc.addSnapshotListener(
+            new EventListener<DocumentSnapshot>() {
+              @Override
+              public void onEvent(
+                  @Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                  Log.w(TAG, "Listen failed.", e);
+                  return;
+                }
 
-                        if (snapshot != null) {
-                          if (snapshot.exists()) {
-                            Log.d(TAG, "Household found with id " + householdID);
+                if (snapshot != null) {
+                  if (snapshot.exists()) {
+                    Log.d(TAG, "Household found with id " + householdID);
 
-                            // Set collection references
-                            mTaskCollection =
-                                    mFirestore
-                                            .collection(HOUSEHOLD_COLLECTION_NAME)
-                                            .document(snapshot.getId())
-                                            .collection(TASK_COLLECTION_NAME);
-                            mUserCollection =
-                                    mFirestore
-                                            .collection(HOUSEHOLD_COLLECTION_NAME)
-                                            .document(snapshot.getId())
-                                            .collection(USERS_COLLECTION_NAME);
+                    // Set collection references
+                    mTaskCollection =
+                        mFirestore
+                            .collection(HOUSEHOLD_COLLECTION_NAME)
+                            .document(snapshot.getId())
+                            .collection(TASK_COLLECTION_NAME);
+                    mUserCollection =
+                        mFirestore
+                            .collection(HOUSEHOLD_COLLECTION_NAME)
+                            .document(snapshot.getId())
+                            .collection(USERS_COLLECTION_NAME);
 
-                            mHousehold = buildHousehold(snapshot);
+                    mHousehold = buildHousehold(snapshot);
 
-                            // Set the user this household
-                            if (mFirebaseUser != null) {
-                              Log.w(TAG, "Setting user to new household");
-                              mFirestore
-                                      .collection(HOUSEHOLD_COLLECTION_NAME)
-                                      .document(householdID)
-                                      .collection(USERS_COLLECTION_NAME)
-                                      .document(mFirebaseUser.getFirebaseId())
-                                      .set(mFirebaseUser);
-                            } else {
-                              Log.w(TAG, "User is null, unable to assign to household");
-                            }
+                    // Set the user this household
+                    if (mFirebaseUser != null) {
+                      Log.w(TAG, "Setting user to new household");
+                      mFirestore
+                          .collection(HOUSEHOLD_COLLECTION_NAME)
+                          .document(householdID)
+                          .collection(USERS_COLLECTION_NAME)
+                          .document(mFirebaseUser.getFirebaseId())
+                          .set(mFirebaseUser);
+                    } else {
+                      Log.w(TAG, "User is null, unable to assign to household");
+                    }
 
-                            // Household has been found and set, so get the Users and Tasks
-                            queryTasks();
-                            queryUsers();
+                    // Household has been found and set, so get the Users and Tasks
+                    queryTasks();
+                    queryUsers();
 
-                            // Use the callback
-                            callbackHousehold();
+                    // Use the callback
+                    callbackHousehold();
 
-                          } else {
-                            Log.d(TAG, "No household found");
-                            clearData();
-                          }
-                        } else {
-                          Log.d(TAG, "Current data: null");
-                          clearData();
-                        }
-                      }
-                    });
+                  } else {
+                    Log.d(TAG, "No household found");
+                    clearData();
+                  }
+                } else {
+                  Log.d(TAG, "Current data: null");
+                  clearData();
+                }
+              }
+            });
   }
 
   // Rebuilds the list of tasks to the current household
@@ -446,37 +444,37 @@ public class ModelInterface {
     }
 
     mTasksListener =
-            mTaskCollection.addSnapshotListener(
-                    new EventListener<QuerySnapshot>() {
-                      @Override
-                      public void onEvent(
-                              @Nullable QuerySnapshot snapshot, @Nullable FirebaseFirestoreException e) {
-                        if (e != null) {
-                          Log.w(TAG, "Tasks collection lookup failed:", e);
-                          return;
-                        }
+        mTaskCollection.addSnapshotListener(
+            new EventListener<QuerySnapshot>() {
+              @Override
+              public void onEvent(
+                  @Nullable QuerySnapshot snapshot, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                  Log.w(TAG, "Tasks collection lookup failed:", e);
+                  return;
+                }
 
-                        if (snapshot != null) {
-                          if (snapshot.isEmpty() && snapshot.getDocuments().isEmpty()) {
-                            Log.d(TAG, "No tasks found");
-                          } else {
-                            Log.d(TAG, "Found " + snapshot.getDocuments().size() + " tasks");
+                if (snapshot != null) {
+                  if (snapshot.isEmpty() && snapshot.getDocuments().isEmpty()) {
+                    Log.d(TAG, "No tasks found");
+                  } else {
+                    Log.d(TAG, "Found " + snapshot.getDocuments().size() + " tasks");
 
-                            // Tasks have been found, so create a new list
-                            mTasks.clear();
-                            for (DocumentSnapshot d : snapshot.getDocuments()) {
-                              // TODO: add a lock?
-                              mTasks.add(buildTask(d));
-                            }
+                    // Tasks have been found, so create a new list
+                    mTasks.clear();
+                    for (DocumentSnapshot d : snapshot.getDocuments()) {
+                      // TODO: add a lock?
+                      mTasks.add(buildTask(d));
+                    }
 
-                            // Use the callback
-                            callbackTasks();
-                          }
-                        } else {
-                          Log.d(TAG, "Query result for tasks is null");
-                        }
-                      }
-                    });
+                    // Use the callback
+                    callbackTasks();
+                  }
+                } else {
+                  Log.d(TAG, "Query result for tasks is null");
+                }
+              }
+            });
   }
 
   // Rebuilds the list of tasks to the current household
@@ -498,38 +496,38 @@ public class ModelInterface {
     }
 
     mUsersListener =
-            mUserCollection.addSnapshotListener(
-                    new EventListener<QuerySnapshot>() {
-                      @Override
-                      public void onEvent(
-                              @Nullable QuerySnapshot snapshot, @Nullable FirebaseFirestoreException e) {
-                        if (e != null) {
-                          Log.w(TAG, "User collection lookup failed:", e);
-                          return;
-                        }
+        mUserCollection.addSnapshotListener(
+            new EventListener<QuerySnapshot>() {
+              @Override
+              public void onEvent(
+                  @Nullable QuerySnapshot snapshot, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                  Log.w(TAG, "User collection lookup failed:", e);
+                  return;
+                }
 
-                        if (snapshot != null) {
-                          if (snapshot.isEmpty() && snapshot.getDocuments().isEmpty()) {
-                            Log.d(TAG, "No users found");
-                          } else {
-                            Log.d(TAG, "Found " + snapshot.getDocuments().size() + " users");
+                if (snapshot != null) {
+                  if (snapshot.isEmpty() && snapshot.getDocuments().isEmpty()) {
+                    Log.d(TAG, "No users found");
+                  } else {
+                    Log.d(TAG, "Found " + snapshot.getDocuments().size() + " users");
 
-                            // Users have been found, so create a new list
-                            mUsers.clear();
-                            for (DocumentSnapshot d : snapshot.getDocuments()) {
-                              // TODO: add a lock?
-                              mUsers.add(buildUser(d));
-                            }
-                          }
+                    // Users have been found, so create a new list
+                    mUsers.clear();
+                    for (DocumentSnapshot d : snapshot.getDocuments()) {
+                      // TODO: add a lock?
+                      mUsers.add(buildUser(d));
+                    }
+                  }
 
-                          // Use the callback
-                          callbackUsers();
+                  // Use the callback
+                  callbackUsers();
 
-                        } else {
-                          Log.d(TAG, "Query result for users is null");
-                        }
-                      }
-                    });
+                } else {
+                  Log.d(TAG, "Query result for users is null");
+                }
+              }
+            });
   }
 
   /* Helper functions */

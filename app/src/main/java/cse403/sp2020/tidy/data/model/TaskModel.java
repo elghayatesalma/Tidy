@@ -35,5 +35,4 @@ public class TaskModel {
   public int getPriority() {
     return priority;
   }
-
 }

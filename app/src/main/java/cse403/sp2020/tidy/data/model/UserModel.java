@@ -28,7 +28,7 @@ public class UserModel {
 
   public boolean equals(UserModel other) {
     if (other != null) {
-      return  other.getFirebaseId() == getFirebaseId();
+      return other.getFirebaseId() == getFirebaseId();
     }
     return false;
   }
