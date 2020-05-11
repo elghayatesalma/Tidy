@@ -5,5 +5,5 @@ import cse403.sp2020.tidy.data.model.HouseholdModel;
 public interface HouseholdCallbackInterface {
   public void householdCallback(HouseholdModel household);
 
-  public void householdCallbackFailed();
+  public void householdCallbackFailed(String message);
 }

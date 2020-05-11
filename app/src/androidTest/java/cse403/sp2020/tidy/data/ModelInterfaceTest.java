@@ -11,6 +11,7 @@ import static org.junit.Assert.*;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cse403.sp2020.tidy.data.callbacks.HouseholdCallbackInterface;
@@ -70,34 +71,34 @@ public class ModelInterfaceTest {
 
     // Add a number of tasks
     checker.setTaskWaiting();
-    model.addTaskToHouse(new TaskModel("name 1", "task 1", 1));
+    model.addTaskToHousehold(new TaskModel("name 1", "task 1", 1));
     checker.block();
     checker.setTaskWaiting();
-    model.addTaskToHouse(new TaskModel("name 2", "task 2", 2));
+    model.addTaskToHousehold(new TaskModel("name 2", "task 2", 2));
     checker.block();
     checker.setTaskWaiting();
-    model.addTaskToHouse(new TaskModel("name 3", "task 3", 3));
+    model.addTaskToHousehold(new TaskModel("name 3", "task 3", 3));
     checker.block();
     assertEquals(model.getTasks().size(), 3);
     // TODO: accuracy checks
 
     // Delete the tasks
     checker.setTaskWaiting();
-    model.removeTaskFromHouse(model.getTasks().get(0));
+    model.removeTaskFromHousehold(model.getTasks().get(0));
     checker.block();
     assertEquals(2, model.getTasks().size());
     checker.setTaskWaiting();
-    model.removeTaskFromHouse(model.getTasks().get(0));
+    model.removeTaskFromHousehold(model.getTasks().get(0));
     checker.block();
     assertEquals(1, model.getTasks().size());
     checker.setTaskWaiting();
-    model.removeTaskFromHouse(model.getTasks().get(0));
+    model.removeTaskFromHousehold(model.getTasks().get(0));
     checker.block();
     assertEquals(0, model.getTasks().size());
 
     // Add one back
     checker.setTaskWaiting();
-    model.addTaskToHouse(new TaskModel("name 3", "task 3", 1));
+    model.addTaskToHousehold(new TaskModel("name 3", "task 3", 1));
     checker.block();
     assertEquals(1, model.getTasks().size());
 
@@ -209,7 +210,7 @@ public class ModelInterfaceTest {
         CallbackChecker checker = checkers.get(j);
 
         checker.setTaskWaiting(usersPerHousehold);
-        model.addTaskToHouse(new TaskModel("tname_" + i, "tdesc" + i, i));
+        model.addTaskToHousehold(new TaskModel("tname_" + i, "tdesc" + i, i));
         checker.block();
 
         assertEquals(i + 1, model.getTasks().size());
@@ -222,7 +223,7 @@ public class ModelInterfaceTest {
         CallbackChecker checker = checkers.get(j);
 
         checker.setTaskWaiting(usersPerHousehold);
-        model.removeTaskFromHouse(model.getTasks().get(0));
+        model.removeTaskFromHousehold(model.getTasks().get(0));
         checker.block();
 
         assertEquals(numTasks - i - 1, model.getTasks().size());
@@ -266,7 +267,7 @@ public class ModelInterfaceTest {
     }
     for (int i = 0; i < numTasks * numHouseholds; i++) {
       ModelInterface model = models.get(i % numUsers);
-      model.addTaskToHouse(new TaskModel("tname_" + i, "tdesc" + i, i % 10));
+      model.addTaskToHousehold(new TaskModel("tname_" + i, "tdesc" + i, i % 10));
     }
     for (CallbackChecker checker : checkers) {
       checker.block();
@@ -347,11 +348,11 @@ class CallbackChecker
 
   @Override
   public void householdCallback(HouseholdModel household) {
-    householdCallbackFailed();
+    householdCallbackFailed(null);
   }
 
   @Override
-  public void householdCallbackFailed() {
+  public void householdCallbackFailed(String message) {
     if (mHouseholdWaiting > 0) {
       mHouseholdWaiting--;
     }
@@ -359,11 +360,11 @@ class CallbackChecker
 
   @Override
   public void taskCallback(List<TaskModel> users) {
-    taskCallbackFail();
+    taskCallbackFail(null);
   }
 
   @Override
-  public void taskCallbackFail() {
+  public void taskCallbackFail(String message) {
     if (mTaskWaiting > 0) {
       mTaskWaiting--;
     }
@@ -371,11 +372,11 @@ class CallbackChecker
 
   @Override
   public void userCallback(List<UserModel> users) {
-    userCallbackFailed();
+    userCallbackFailed(null);
   }
 
   @Override
-  public void userCallbackFailed() {
+  public void userCallbackFailed(String message) {
     if (mUserWaiting > 0) {
       mUserWaiting--;
     }
