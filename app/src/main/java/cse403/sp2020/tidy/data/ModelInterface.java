@@ -67,7 +67,6 @@ import cse403.sp2020.tidy.data.model.UserModel;
  *   - ClearData used to clear all current household data and listeners
  */
 
-
 /*** Interface Methods ***
  *
  *  cleanUp()
