@@ -1,7 +1,6 @@
 package cse403.sp2020.tidy.data;
 
 import android.util.Log;
-import android.view.Display;
 
 import org.junit.After;
 import org.junit.Before;
@@ -51,7 +50,7 @@ public class ModelInterfaceTest {
     model.registerUserCallback(checker);
     // Wait for initial query to fail
     checker.setHouseholdWaiting();
-    model.setUser(user);  // Add user in, which runs initial queries
+    model.setUser(user); // Add user in, which runs initial queries
     checker.block();
 
     // Nothing is in the database yet, should be totally empty
@@ -141,9 +140,9 @@ public class ModelInterfaceTest {
     int numUsers = 50;
     int usersPerHousehold = numUsers / numHouseholds;
 
-    assert(numHouseholds >= 2);             // At least 2 households
-    assert(numUsers >= 2* numHouseholds);   // At least 2 users per household
-    assert(numUsers % numHouseholds == 0);  // Same number of users per household
+    assert (numHouseholds >= 2); // At least 2 households
+    assert (numUsers >= 2 * numHouseholds); // At least 2 users per household
+    assert (numUsers % numHouseholds == 0); // Same number of users per household
 
     List<UserModel> users = new ArrayList<>();
     List<HouseholdModel> households = new ArrayList<>();
@@ -154,7 +153,7 @@ public class ModelInterfaceTest {
     // All users within a household will have the same callback triggers
     // So use the same checker for each (nicer for callback counting too)
     for (int i = 0; i < numHouseholds; i++) {
-      households.add(new HouseholdModel("householdId_" + i));  // id currently ignored
+      households.add(new HouseholdModel("householdId_" + i)); // id currently ignored
       checkers.add(new CallbackChecker());
     }
 
@@ -188,7 +187,7 @@ public class ModelInterfaceTest {
 
       // Set household
       checker.setHouseholdWaiting();
-      checker.setUserWaiting(i/numHouseholds + 1);  // Wait for each user to get an update
+      checker.setUserWaiting(i / numHouseholds + 1); // Wait for each user to get an update
       // If on the first occurrence of the household, make it
       if (i < numHouseholds) {
         model.makeHousehold(household);
@@ -198,7 +197,7 @@ public class ModelInterfaceTest {
       checker.block();
 
       assertNotNull(model.getHousehold());
-      assertEquals(i/numHouseholds + 1, model.getUsers().size());
+      assertEquals(i / numHouseholds + 1, model.getUsers().size());
     }
 
     // Test tasks add and delete
@@ -237,7 +236,7 @@ public class ModelInterfaceTest {
 
       Log.w("ModelInterface", "Here");
       checker.setUserWaiting(usersPerHousehold);
-      checker.setHouseholdWaiting();  // Wait for clear data
+      checker.setHouseholdWaiting(); // Wait for clear data
       model.removeUserFromHousehold();
       checker.block();
       Log.w("ModelInterface", "There");
@@ -245,7 +244,7 @@ public class ModelInterfaceTest {
       assertNull(model.getHousehold());
       assertNull(model.getTasks());
       assertNull(model.getUsers());
-      assertEquals(usersPerHousehold -1, models.get(i + numHouseholds).getUsers().size());
+      assertEquals(usersPerHousehold - 1, models.get(i + numHouseholds).getUsers().size());
     }
     // Add them back
     for (int i = 0; i < numHouseholds; i++) {
@@ -253,7 +252,7 @@ public class ModelInterfaceTest {
       CallbackChecker checker = checkers.get(i);
 
       checker.setUserWaiting(usersPerHousehold);
-      checker.setHouseholdWaiting();  // Wait for household to be set
+      checker.setHouseholdWaiting(); // Wait for household to be set
       model.setHousehold(households.get(i));
       checker.block();
 
@@ -263,9 +262,9 @@ public class ModelInterfaceTest {
     // Stress test, add numTasks per household
     numTasks = 100;
     for (CallbackChecker checker : checkers) {
-      checker.setTaskWaiting(numTasks*usersPerHousehold);
+      checker.setTaskWaiting(numTasks * usersPerHousehold);
     }
-    for (int i = 0; i < numTasks*numHouseholds; i++) {
+    for (int i = 0; i < numTasks * numHouseholds; i++) {
       ModelInterface model = models.get(i % numUsers);
       model.addTaskToHouse(new TaskModel("tname_" + i, "tdesc" + i, i % 10));
     }
@@ -290,7 +289,8 @@ public class ModelInterfaceTest {
 
 // Simple class to keep track of callbacks and mark when the callbacks have succeeded
 // Uses callback counting, but does nothing to handle too many/few callbacks
-//  - If the number of callbacks is greater than the wait amount, nothing will happen on excess calls
+//  - If the number of callbacks is greater than the wait amount, nothing will happen on excess
+// calls
 //  - If it is less, block will never stop
 class CallbackChecker
     implements HouseholdCallbackInterface, TaskCallbackInterface, UserCallbackInterface {
@@ -307,7 +307,6 @@ class CallbackChecker
 
   public boolean isWaiting() {
     return householdWaiting() || taskWaiting() || userWaiting();
-
   }
 
   private boolean householdWaiting() {

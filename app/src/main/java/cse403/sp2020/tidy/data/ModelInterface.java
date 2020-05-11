@@ -164,14 +164,11 @@ public class ModelInterface {
     // Generate the householdId if one does not exist
     DocumentReference householdDoc;
     if (household.getHouseholdId() == null) {
-      householdDoc = mFirestore
-              .collection(HOUSEHOLD_COLLECTION_NAME)
-              .document();
+      householdDoc = mFirestore.collection(HOUSEHOLD_COLLECTION_NAME).document();
       household.setHouseholdId(householdDoc.getId());
     } else {
-      householdDoc = mFirestore
-              .collection(HOUSEHOLD_COLLECTION_NAME)
-              .document(household.getHouseholdId());
+      householdDoc =
+          mFirestore.collection(HOUSEHOLD_COLLECTION_NAME).document(household.getHouseholdId());
     }
     Log.d(TAG, "Making new household: " + household.getHouseholdId());
 
