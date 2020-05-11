@@ -158,11 +158,21 @@ public class ModelInterface {
   }
 
   // Creates a household and assigns the current user to it
-  // Uses any metadata store in the input household, but replaces id (id can be null or anything)
+  // Uses any metadata store in the input household
+  // If householdId is null, auto-generates one
   public void makeHousehold(final HouseholdModel household) {
-    // Get the doc id and set in the new household
-    DocumentReference householdDoc = mFirestore.collection(HOUSEHOLD_COLLECTION_NAME).document();
-    household.setHouseholdId(householdDoc.getId());
+    // Generate the householdId if one does not exist
+    DocumentReference householdDoc;
+    if (household.getHouseholdId() == null) {
+      householdDoc = mFirestore
+              .collection(HOUSEHOLD_COLLECTION_NAME)
+              .document();
+      household.setHouseholdId(householdDoc.getId());
+    } else {
+      householdDoc = mFirestore
+              .collection(HOUSEHOLD_COLLECTION_NAME)
+              .document(household.getHouseholdId());
+    }
     Log.d(TAG, "Making new household: " + household.getHouseholdId());
 
     // Create the household
@@ -247,7 +257,7 @@ public class ModelInterface {
   }
 
   // Attempts to remove the user from the household
-  public void removeUserFromHouse() {
+  public void removeUserFromHousehold() {
     if (mFirebaseUser == null) {
       Log.w(TAG, "Trying to remove null user, ignoring");
       return;
@@ -326,6 +336,7 @@ public class ModelInterface {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                   if (task.isSuccessful()) {
+                    // Note: Deleting non-existing documents DOES NOT fail, no way to tell either
                     Log.d(TAG, "Task deleted successfully");
                   } else {
                     Log.w(TAG, "Failed to delete task: " + task.getException());
