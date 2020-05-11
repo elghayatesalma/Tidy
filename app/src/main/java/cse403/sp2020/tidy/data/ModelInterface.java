@@ -72,6 +72,9 @@ import cse403.sp2020.tidy.data.model.UserModel;
  *  cleanUp()
  *   - removes all local data (not firestore cache) and disables listeners
  *
+ *  getCurrentUser()
+ *   - Returns a UserModel object that represents the current user
+ *
  *  setUser(UerModel)
  *   - Sets the current user and proceeds to check if that user is part of a household already
  *   - On failure, triggers household fail callback if it cannot find one
@@ -184,6 +187,14 @@ public class ModelInterface {
 
   /* Interface Methods */
 
+  // Returns the current user if it exists
+  public UserModel getCurrentUser() {
+    if (mFirebaseUser != null) {
+      return new UserModel(mFirebaseUser);
+    }
+    return null;
+  }
+
   // Takes in the new user to set, ignores if it is the same user
   // If a new user is set, removes all current data and restarts the queries
   public void setUser(UserModel newUser) {
@@ -211,6 +222,12 @@ public class ModelInterface {
   // Uses any metadata store in the input household
   // If householdId is null, auto-generates one
   public void makeHousehold(final HouseholdModel household) {
+    // MUST have a user to make a new household
+    if (mFirebaseUser == null) {
+      Log.w(TAG, "No user to create a household for");
+      return;
+    }
+
     // Generate the householdId if one does not exist
     DocumentReference householdDoc;
     if (household.getHouseholdId() == null) {
@@ -243,6 +260,12 @@ public class ModelInterface {
 
   // Takes in a household object to put the user in
   public void setHousehold(final HouseholdModel household) {
+    // MUST have a user to set household
+    if (mFirebaseUser == null) {
+      Log.w(TAG, "No user to put into a household");
+      return;
+    }
+
     Log.d(TAG, "Attempting to set household");
     if (household == null) {
       Log.w(TAG, "set household object is null");
@@ -339,6 +362,11 @@ public class ModelInterface {
 
   // Attempts to add the task to the household
   public void addTaskToHousehold(TaskModel task) {
+    if (mHousehold == null) {
+      Log.w(TAG, "No household to add chore to");
+      return;
+    }
+
     if (task == null) {
       Log.d(TAG, "Trying to add a null task, ignoring");
       return;

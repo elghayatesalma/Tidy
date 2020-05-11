@@ -14,6 +14,14 @@ public class UserModel {
     this.lastName = lastName;
   }
 
+  public UserModel(UserModel other) {
+    if(other != null) {
+      this.firebaseId = other.firebaseId;
+      this.firstName = other.firstName;
+      this.lastName = other.lastName;
+    }
+  }
+
   public String getLastName() {
     return lastName;
   }
