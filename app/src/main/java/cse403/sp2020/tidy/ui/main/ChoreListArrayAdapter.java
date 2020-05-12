@@ -14,10 +14,10 @@ import java.util.List;
 import cse403.sp2020.tidy.R;
 import cse403.sp2020.tidy.data.model.TaskModel;
 
-public class AllChoresArrayAdapter<E> extends ArrayAdapter {
+public class ChoreListArrayAdapter<E> extends ArrayAdapter {
 
     private final LayoutInflater inflater;
-    AllChoresArrayAdapter(Context context, List<E> objects){
+    ChoreListArrayAdapter(Context context, List<E> objects){
         super(context, 0, objects);
         inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -31,12 +31,12 @@ public class AllChoresArrayAdapter<E> extends ArrayAdapter {
     public View getView(int position, View convertView, @NonNull ViewGroup parent){
         TaskModel chore = (TaskModel) getItem(position);
         ChoreHolder choreHolder;
-        if(convertView == null || convertView.findViewById(R.id.all_chores_chore_name) == null){
-            convertView = inflater.inflate(R.layout.allchores_chore_view, parent, false);
+        if(convertView == null || convertView.findViewById(R.id.chore_list_element_name) == null){
+            convertView = inflater.inflate(R.layout.chore_list_element, parent, false);
             choreHolder = new ChoreHolder();
-            choreHolder.chore_name = convertView.findViewById(R.id.all_chores_chore_name);
-            choreHolder.chore_description = convertView.findViewById(R.id.all_chores_chore_description);
-            choreHolder.assigned_roommate = convertView.findViewById(R.id.all_chores_chore_roommate);
+            choreHolder.chore_name = convertView.findViewById(R.id.chore_list_element_name);
+            choreHolder.chore_description = convertView.findViewById(R.id.chore_list_element_description);
+            choreHolder.assigned_roommate = convertView.findViewById(R.id.chore_list_element_roommate);
             convertView.setTag(choreHolder);
         }else{
             choreHolder = (ChoreHolder) convertView.getTag();
