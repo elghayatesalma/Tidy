@@ -591,16 +591,17 @@ public class ModelInterface {
                     taskDoc
                         .delete()
                         .addOnCompleteListener(
-                          new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                              if (task.isSuccessful()) {
-                                // Note: Deleting non-existing documents DOES NOT fail, no way to tell either
-                                Log.d(TAG, "Task removed successfully");
-                              } else {
-                                Log.w(TAG, "Failed to remove task: " + task.getException());
-                                callbackTasks(true);
-                              }
+                            new OnCompleteListener<Void>() {
+                              @Override
+                              public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                  // Note: Deleting non-existing documents DOES NOT fail, no way to
+                                  // tell either
+                                  Log.d(TAG, "Task removed successfully");
+                                } else {
+                                  Log.w(TAG, "Failed to remove task: " + task.getException());
+                                  callbackTasks(true);
+                                }
                               }
                             });
                   } else {
