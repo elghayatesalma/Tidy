@@ -322,32 +322,53 @@ public class ModelInterface {
       return;
     }
 
-    // TODO Check that household exists first!
-
-    // Put the user in the household
+    // Check that household exists first
     mFirestore
         .collection(HOUSEHOLD_COLLECTION_NAME)
         .document(household.getHouseholdId())
-        .collection(USERS_COLLECTION_NAME)
-        .document(mFirebaseUser.getFirebaseId())
-        .set(mFirebaseUser)
+        .get()
         .addOnCompleteListener(
-            new OnCompleteListener<Void>() {
+            new OnCompleteListener<DocumentSnapshot>() {
               @Override
-              public void onComplete(@NonNull Task<Void> task) {
+              public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
-                  Log.d(TAG, "User has been assigned to household");
+                  Log.d(TAG, "Household found, proceeding to set");
 
-                  // Set a new household and trigger callback
-                  mHousehold = household;
-                  callbackHousehold(false);
+                  if (task.getResult().exists()) {
+                    // Household exists, put the user in it
+                    mFirestore
+                        .collection(HOUSEHOLD_COLLECTION_NAME)
+                        .document(household.getHouseholdId())
+                        .collection(USERS_COLLECTION_NAME)
+                        .document(mFirebaseUser.getFirebaseId())
+                        .set(mFirebaseUser)
+                        .addOnCompleteListener(
+                            new OnCompleteListener<Void>() {
+                              @Override
+                              public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                  Log.d(TAG, "User has been assigned to household");
 
-                  // User has been assigned a new household, so get the data
-                  queryTasks();
-                  queryUsers();
+                                  // Set a new household and trigger callback
+                                  mHousehold = household;
+                                  callbackHousehold(false);
 
+                                  // User has been assigned a new household, so get the data
+                                  queryTasks();
+                                  queryUsers();
+
+                                } else {
+                                  Log.w(TAG, "Failed to assign user to household: " + task.getException());
+                                  callbackHousehold(false);
+                                }
+                              }
+                            });
+                  } else {
+                    // No household
+                    callbackHousehold(true);
+                  }
                 } else {
-                  Log.w(TAG, "Failed to assign user to household: " + task.getException());
+                  Log.w(TAG, "Failed to find household: " + task.getException());
                 }
               }
             });
