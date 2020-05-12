@@ -358,7 +358,9 @@ public class ModelInterface {
                                   queryUsers();
 
                                 } else {
-                                  Log.w(TAG, "Failed to assign user to household: " + task.getException());
+                                  Log.w(
+                                      TAG,
+                                      "Failed to assign user to household: " + task.getException());
                                   callbackHousehold(false);
                                 }
                               }
