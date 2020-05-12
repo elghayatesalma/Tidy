@@ -17,12 +17,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.firebase.firestore.*;
+import com.google.firebase.firestore.auth.User;
+
 import cse403.sp2020.tidy.R;
+import cse403.sp2020.tidy.data.ModelInterface;
+import cse403.sp2020.tidy.data.model.HouseholdModel;
+import cse403.sp2020.tidy.data.model.UserModel;
 import cse403.sp2020.tidy.ui.profile.RecyclerAdapter;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -31,6 +38,10 @@ public class ProfileActivity extends AppCompatActivity {
   private RecyclerView recyclerView;
   private RecyclerAdapter recyclerAdapter;
   private LinearLayoutManager mLayoutManager;
+  private ModelInterface modelInterface;
+  private UserModel user;
+  private HouseholdModel household;
+  private String username;
 
   // TODO: receive chores list from the model and add to display
   // TODO: replace name TextView with user's first and last name
@@ -38,6 +49,11 @@ public class ProfileActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_profile);
+
+    // initialize firestore instance
+      modelInterface = new ModelInterface(FirebaseFirestore.getInstance());
+      user = modelInterface.getCurrentUser();
+      household = modelInterface.getHousehold();
 
     // Button for going back to main activity
     ImageButton backToMain = (ImageButton) findViewById(R.id.profile_back);
@@ -48,6 +64,17 @@ public class ProfileActivity extends AppCompatActivity {
         v.getContext().startActivity(intent);
       }
     });
+
+    // get username if user != null, otherwise fill in name with default
+    if (user != null) {
+        username = user.getFirstName() + " " + user.getLastName();
+    } else {
+        username = "No Name";
+    }
+
+    // set textView to username
+    TextView nameView = (TextView) findViewById(R.id.profile_username);
+    nameView.setText(username);
 
     // initialize example chores for testing - should be replaced with just acquiring the list from the model
     exampleChores.add("wash dishes");
@@ -89,7 +116,7 @@ public class ProfileActivity extends AppCompatActivity {
                 int targetPosition = target.getAdapterPosition();
 
                 Collections.swap(exampleChores, draggedPosition, targetPosition); // probably work with backend on chore preference algo
-
+                // needs to update preference list
                 recyclerAdapter.notifyItemMoved(draggedPosition, targetPosition);
 
                 return false;
