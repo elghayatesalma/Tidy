@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Tidy</string>
+    <string name="app_name">tidy</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -12,4 +12,5 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
+    <string name="profile">profile</string>
 </resources>

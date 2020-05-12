@@ -14,6 +14,14 @@ public class UserModel {
     this.lastName = lastName;
   }
 
+  public UserModel(UserModel other) {
+    if (other != null) {
+      this.firebaseId = other.firebaseId;
+      this.firstName = other.firstName;
+      this.lastName = other.lastName;
+    }
+  }
+
   public String getLastName() {
     return lastName;
   }
@@ -24,6 +32,10 @@ public class UserModel {
 
   public String getFirebaseId() {
     return firebaseId;
+  }
+
+  public void setFirebaseId(String newId) {
+    this.firebaseId = newId;
   }
 
   public boolean equals(UserModel other) {
