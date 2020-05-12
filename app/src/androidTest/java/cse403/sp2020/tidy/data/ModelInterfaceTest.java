@@ -155,7 +155,6 @@ public class ModelInterfaceTest {
 
     // Check that a user's metadata is kept
 
-
     // Always clean up and remove listeners
     model.cleanUp();
   }
