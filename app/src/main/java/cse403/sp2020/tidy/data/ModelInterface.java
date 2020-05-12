@@ -381,6 +381,30 @@ public class ModelInterface {
             });
   }
 
+  public void updateHousehold(HouseholdModel household) {
+    if (mHousehold == null) {
+      Log.w(TAG, "No household to update");
+      callbackHousehold(true);
+    } else {
+      mFirestore
+          .collection(HOUSEHOLD_COLLECTION_NAME)
+          .document(mHousehold.getHouseholdId())
+          .set(household)
+          .addOnCompleteListener(
+              new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                  if (task.isSuccessful()) {
+                    Log.w(TAG, "Household updated successfully");
+                  } else {
+                    Log.w(TAG, "Failed to update household: " + task.getException());
+                    callbackTasks(true);
+                  }
+                }
+              });
+    }
+  }
+
   // Returns the current household (or null if there isn't one)
   public HouseholdModel getHousehold() {
     if (mHousehold == null) {
