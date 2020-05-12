@@ -31,8 +31,8 @@ public class ProfileActivity extends AppCompatActivity {
 
 
 
-    // TODO: iterate through list of chores and add each of them to the display,
-    // TODO:
+    // TODO: receive chores list from the model and add to display
+    // TODO: replace name TextView with user's first and last name
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +83,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         helper.attachToRecyclerView(recyclerView);
     }
+
 
 
 }

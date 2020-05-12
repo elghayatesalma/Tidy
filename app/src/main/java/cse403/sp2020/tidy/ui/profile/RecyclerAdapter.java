@@ -34,7 +34,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         //holder.rowCountTextView.setText(String.valueOf(position));
-        holder.textView.setText(chorePreferences.get(position));
+        holder.textViewChore.setText(chorePreferences.get(position));
     }
 
     @Override
@@ -43,12 +43,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView textView;
+        public TextView textViewChore;
 
         public ViewHolder(View v) {
             super(v);
-
-            textView = (TextView) v.findViewById(R.id.chore_preference_name);
+            textViewChore = (TextView) v.findViewById(R.id.chore_preference_name);
         }
 
         @Override
