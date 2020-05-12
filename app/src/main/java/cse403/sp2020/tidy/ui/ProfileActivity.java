@@ -9,9 +9,13 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
@@ -35,7 +39,17 @@ public class ProfileActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_profile);
 
-    // initialize example chores for testing
+    // Button for going back to main activity
+    ImageButton backToMain = (ImageButton) findViewById(R.id.profile_back);
+    backToMain.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        Intent intent = new Intent(v.getContext(), MainActivity.class);
+        v.getContext().startActivity(intent);
+      }
+    });
+
+    // initialize example chores for testing - should be replaced with just acquiring the list from the model
     exampleChores.add("wash dishes");
     exampleChores.add("take out garbage");
     exampleChores.add("clean bathroom");
@@ -51,6 +65,7 @@ public class ProfileActivity extends AppCompatActivity {
     roundedBitmapDrawable.setCircular(true);
     profilePic.setImageDrawable(roundedBitmapDrawable);
 
+    // Set up recycler view for drag and drop chore preference list
     recyclerView = findViewById(R.id.chore_preference_list);
     mLayoutManager = new LinearLayoutManager(this);
     recyclerAdapter = new RecyclerAdapter(exampleChores);
@@ -73,7 +88,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                 int targetPosition = target.getAdapterPosition();
 
-                Collections.swap(exampleChores, draggedPosition, targetPosition);
+                Collections.swap(exampleChores, draggedPosition, targetPosition); // probably work with backend on chore preference algo
 
                 recyclerAdapter.notifyItemMoved(draggedPosition, targetPosition);
 
