@@ -112,6 +112,11 @@ import cse403.sp2020.tidy.data.model.UserModel;
  *   - On failure, triggers task fail callback
  *   - On success, triggers task callback with updated task list
  *
+ *  updateTask(TaskModel)
+ *   - If the task exists, updates it
+ *   - On failure, triggers task fail callback
+ *   - On success, triggers task callback with updated task list
+ *
  *  removeTaskToHousehold(TaskModel)
  *   - Removes the provided task from the current household, if both exists
  *   - On failure, triggers task fail callback
@@ -449,67 +454,162 @@ public class ModelInterface {
   }
 
   // Attempts to add the task to the household
-  public void addTaskToHousehold(TaskModel task) {
+  public void addTaskToHousehold(final TaskModel taskAdd) {
     if (mHousehold == null) {
-      Log.w(TAG, "No household to add chore to");
+      Log.w(TAG, "No household to add task to");
       return;
     }
 
-    if (task == null) {
+    if (taskAdd == null) {
       Log.d(TAG, "Trying to add a null task, ignoring");
       return;
     }
 
     if (getTaskCollection() != null) {
-      Log.w(TAG, "Adding new task: " + task.getName());
+      Log.w(TAG, "Attempting to add new task: " + taskAdd.getName());
       // Store the task object (but grab the id first)
-      DocumentReference taskDoc = getTaskCollection().document();
-      task.setTaskId(taskDoc.getId());
+      final DocumentReference taskDoc = getTaskCollection().document();
+      taskAdd.setTaskId(taskDoc.getId());
 
       taskDoc
-          .set(task)
+          .get()
           .addOnCompleteListener(
-              new OnCompleteListener<Void>() {
+              new OnCompleteListener<DocumentSnapshot>() {
                 @Override
-                public void onComplete(@NonNull Task<Void> task) {
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                   if (task.isSuccessful()) {
-                    Log.w(TAG, "Task added successfully");
+                    if (task.getResult().exists()) {
+                      Log.w(TAG, "Task Found, ignoring add");
+                      callbackTasks(true);
+                    } else {
+                      Log.d(TAG, "Adding task");
+                      taskDoc
+                          .set(taskAdd)
+                          .addOnCompleteListener(
+                              new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                  if (task.isSuccessful()) {
+                                    Log.w(TAG, "Task updated successfully");
+                                  } else {
+                                    Log.w(TAG, "Failed to update task: " + task.getException());
+                                    callbackTasks(true);
+                                  }
+                                }
+                              });
+                    }
                   } else {
-                    Log.w(TAG, "Failed to add task: " + task.getException());
+                    Log.w(TAG, "Task lookup failed: " + task.getException());
+                    callbackTasks(true);
+                  }
+                }
+              });
+
+    } else {
+      Log.w(TAG, "No tasks collection, failed to add task: " + taskAdd.getName());
+      callbackTasks(true);
+    }
+  }
+
+  public void updateTask(final TaskModel taskUpdate) {
+    if (mHousehold == null) {
+      Log.w(TAG, "No household to update chore in");
+      return;
+    }
+
+    if (taskUpdate == null) {
+      Log.d(TAG, "Trying to update a null task, ignoring");
+      return;
+    }
+
+    if (getTaskCollection() != null) {
+      Log.w(TAG, "Updating task: " + taskUpdate.getName());
+      final DocumentReference taskDoc = getTaskCollection().document(taskUpdate.getTaskId());
+
+      // See if task exists first, then update if it does
+      taskDoc
+          .get()
+          .addOnCompleteListener(
+              new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                  if (task.isSuccessful()) {
+                    Log.w(TAG, "Task Found, updating");
+                    taskDoc
+                        .set(taskUpdate)
+                        .addOnCompleteListener(
+                            new OnCompleteListener<Void>() {
+                              @Override
+                              public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                  Log.w(TAG, "Task updated successfully");
+                                } else {
+                                  Log.w(TAG, "Failed to update task: " + task.getException());
+                                  callbackTasks(true);
+                                }
+                              }
+                            });
+                  } else {
+                    Log.w(TAG, "Failed to find task: " + task.getException());
+                    callbackTasks(true);
                   }
                 }
               });
     } else {
-      Log.w(TAG, "No tasks collection, failed to add task: " + task.getName());
+      Log.w(TAG, "No tasks collection, failed to update task: " + taskUpdate.getName());
+      callbackTasks(true);
     }
   }
 
   // Attempts to remove the task from the household
-  public void removeTaskFromHousehold(TaskModel task) {
-    if (task == null) {
+  public void removeTaskFromHousehold(final TaskModel taskDelete) {
+    if (mHousehold == null) {
+      Log.w(TAG, "No household to remove task from");
+      return;
+    }
+
+    if (taskDelete == null) {
       Log.w(TAG, "Trying to remove a null task, ignoring");
       return;
     }
 
     if (getTaskCollection() != null) {
-      Log.d(TAG, "Removing task: " + task.getName());
-      getTaskCollection()
-          .document(task.getTaskId())
-          .delete()
+      Log.w(TAG, "Removing task: " + taskDelete.getName());
+      final DocumentReference taskDoc = getTaskCollection().document(taskDelete.getTaskId());
+
+      // See if task exists first, then remove if it does
+      taskDoc
+          .get()
           .addOnCompleteListener(
-              new OnCompleteListener<Void>() {
+              new OnCompleteListener<DocumentSnapshot>() {
                 @Override
-                public void onComplete(@NonNull Task<Void> task) {
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                   if (task.isSuccessful()) {
-                    // Note: Deleting non-existing documents DOES NOT fail, no way to tell either
-                    Log.d(TAG, "Task deleted successfully");
+                    Log.d(TAG, "Tasks removes");
+                    taskDoc
+                        .delete()
+                        .addOnCompleteListener(
+                          new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                              if (task.isSuccessful()) {
+                                // Note: Deleting non-existing documents DOES NOT fail, no way to tell either
+                                Log.d(TAG, "Task removed successfully");
+                              } else {
+                                Log.w(TAG, "Failed to remove task: " + task.getException());
+                                callbackTasks(true);
+                              }
+                              }
+                            });
                   } else {
-                    Log.w(TAG, "Failed to delete task: " + task.getException());
+                    Log.w(TAG, "Failed to find task: " + task.getException());
+                    callbackTasks(true);
                   }
                 }
               });
     } else {
-      Log.w(TAG, "No tasks collection, failed to remove task: " + task.getName());
+      Log.w(TAG, "No tasks collection, failed to remove task: " + taskDelete.getName());
+      callbackTasks(true);
     }
   }
 
