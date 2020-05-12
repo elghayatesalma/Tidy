@@ -15,11 +15,28 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import cse403.sp2020.tidy.R;
+import cse403.sp2020.tidy.data.ModelInterface;
+import cse403.sp2020.tidy.data.callbacks.TaskCallbackInterface;
 import cse403.sp2020.tidy.data.model.TaskModel;
+import cse403.sp2020.tidy.ui.MainActivity;
 
 public class AllChoresFragment extends Fragment {
+  private ModelInterface model;
+  private String userId;
+  private ArrayList<TaskModel> choreList;
+  private ChoreListArrayAdapter<TaskModel> allChoreAdapter;
+
+  @Override
+  public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    model = ((MainActivity) Objects.requireNonNull(getActivity())).getModelInterface();
+    if(savedInstanceState != null)
+      userId = savedInstanceState.getString("tidy_user_id", null);
+  }
 
   @Nullable
   @Override
@@ -32,7 +49,7 @@ public class AllChoresFragment extends Fragment {
     Button addChore = frag.findViewById(R.id.all_chores_add);
     addChore.setOnClickListener(view -> {
       //Model add task
-      final Dialog dialog = new Dialog(getContext());
+      final Dialog dialog = new Dialog(Objects.requireNonNull(getContext()));
       dialog.setContentView(R.layout.add_chore_dialog);
       dialog.show();
       dialog.findViewById(R.id.add_chore_dialog_cancel).setOnClickListener(view1 -> dialog.dismiss());
@@ -43,23 +60,51 @@ public class AllChoresFragment extends Fragment {
         boolean valid = !name.isEmpty();
         valid &= !description.isEmpty();
         valid &= !priorityStr.isEmpty();
-        int priority;
+        int priority = -1;//Dummy value that will never be used
         try{
           priority = Integer.parseInt(priorityStr, 10);
         }catch (NumberFormatException ex){
           valid = false;
         }
         if(valid){
-          //TODO model add task();
+          model.addTaskToHousehold(new TaskModel(name, description, priority));
+          dialog.dismiss();
         }else{
           Toast.makeText(getContext(), "All fields must be filled", Toast.LENGTH_SHORT).show();
         }
       });
     });
-    ArrayList<TaskModel> choreList = new ArrayList<>();
-    //TODO choreList.addAll(model.getAllTasks(id));
-    ChoreListArrayAdapter<TaskModel> allChoreAdapter = new ChoreListArrayAdapter<>(getContext(), choreList);
+    choreList = new ArrayList<>();
+    allChoreAdapter = new ChoreListArrayAdapter<>(getContext(), choreList);
     allChoreListView.setAdapter(allChoreAdapter);
+    setModelCallBacks();
+    model.setUser(userId);//Initiates data collection callbacks to initialize tasks
     return frag;
+  }
+
+  @Override
+  public void onPause() {
+    super.onPause();
+    model.cleanUp();
+  }
+
+  @Override
+  public void onDestroy(){
+    super.onDestroy();
+    model.cleanUp();
+  }
+
+  private void setModelCallBacks(){
+    model.registerTaskCallback(new TaskCallbackInterface() {
+      @Override
+      public void taskCallback(List<TaskModel> users) {
+        choreList.clear();
+        choreList.addAll(users);
+        allChoreAdapter.notifyDataSetChanged();
+      }
+
+      @Override
+      public void taskCallbackFail(String message) { }
+    });
   }
 }
