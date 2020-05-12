@@ -34,6 +34,10 @@ public class UserModel {
     return firebaseId;
   }
 
+  public void setFirebaseId(String newId) {
+    this.firebaseId = newId;
+  }
+
   public boolean equals(UserModel other) {
     if (other != null) {
       return other.getFirebaseId() == getFirebaseId();
