@@ -14,11 +14,12 @@ import androidx.fragment.app.Fragment;
 import java.util.ArrayList;
 
 import cse403.sp2020.tidy.R;
+import cse403.sp2020.tidy.data.model.TaskModel;
 
 public class AllChoresFragment extends Fragment {
 
-  private ArrayList<Object> choreList;
-  private AllChoresArrayAdapter<Object> allChoreAdapter;
+  private ArrayList<TaskModel> choreList;
+  private AllChoresArrayAdapter<TaskModel> allChoreAdapter;
 
   @Nullable
   @Override

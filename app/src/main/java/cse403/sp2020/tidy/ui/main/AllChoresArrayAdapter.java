@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import java.util.List;
 
 import cse403.sp2020.tidy.R;
+import cse403.sp2020.tidy.data.model.TaskModel;
 
 public class AllChoresArrayAdapter<E> extends ArrayAdapter {
 
@@ -28,28 +29,28 @@ public class AllChoresArrayAdapter<E> extends ArrayAdapter {
 
     @Override @NonNull
     public View getView(int position, View convertView, @NonNull ViewGroup parent){
-        Object chore = (Object) getItem(position);
+        TaskModel chore = (TaskModel) getItem(position);
         ChoreHolder choreHolder;
         if(convertView == null || convertView.findViewById(R.id.all_chores_chore_name) == null){
             convertView = inflater.inflate(R.layout.allchores_chore_view, parent, false);
             choreHolder = new ChoreHolder();
             choreHolder.chore_name = convertView.findViewById(R.id.all_chores_chore_name);
-            choreHolder.chore_date = convertView.findViewById(R.id.all_chores_chore_date);
+            choreHolder.chore_description = convertView.findViewById(R.id.all_chores_chore_description);
             choreHolder.assigned_roommate = convertView.findViewById(R.id.all_chores_chore_roommate);
             convertView.setTag(choreHolder);
         }else{
             choreHolder = (ChoreHolder) convertView.getTag();
         }
         assert chore != null;
-        choreHolder.chore_name.setText("");
-        choreHolder.chore_date.setText("");
-        choreHolder.assigned_roommate.setText("");
+        choreHolder.chore_name.setText(chore.getName());
+        choreHolder.chore_description.setText(chore.getDescription());
+        choreHolder.assigned_roommate.setText("");//TODO add assigned roommate
         return convertView;
     }
 
     private class ChoreHolder{
         TextView chore_name;
-        TextView chore_date;
+        TextView chore_description;
         TextView assigned_roommate;
     }
 }
