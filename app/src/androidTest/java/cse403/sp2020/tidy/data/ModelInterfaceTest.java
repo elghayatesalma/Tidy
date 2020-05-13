@@ -401,11 +401,13 @@ public class ModelInterfaceTest {
 
   // Constructs a basic setup based on the input params
   // Household ignored if the user exists
-  private void basicSetup(String userId,
-                          ModelInterface model,
-                          CallbackChecker checker,
-                          HouseholdModel household,
-                          boolean userExists) throws InterruptedException {
+  private void basicSetup(
+      String userId,
+      ModelInterface model,
+      CallbackChecker checker,
+      HouseholdModel household,
+      boolean userExists)
+      throws InterruptedException {
 
     model.registerHouseholdCallback(checker);
     model.registerTaskCallback(checker);
@@ -451,15 +453,20 @@ public class ModelInterfaceTest {
     assertTrue(model.getUsers().size() > 0);
   }
 
-  private void basicSetup(String userId, ModelInterface model, CallbackChecker checker, boolean userExists) throws InterruptedException {
+  private void basicSetup(
+      String userId, ModelInterface model, CallbackChecker checker, boolean userExists)
+      throws InterruptedException {
     basicSetup(userId, model, checker, null, userExists);
   }
 
-  private void basicSetup(String userId, ModelInterface model, CallbackChecker checker, HouseholdModel household) throws InterruptedException {
+  private void basicSetup(
+      String userId, ModelInterface model, CallbackChecker checker, HouseholdModel household)
+      throws InterruptedException {
     basicSetup(userId, model, checker, household, false);
   }
 
-  private void basicSetup(String userId, ModelInterface model, CallbackChecker checker) throws InterruptedException {
+  private void basicSetup(String userId, ModelInterface model, CallbackChecker checker)
+      throws InterruptedException {
     basicSetup(userId, model, checker, null, false);
   }
 }
