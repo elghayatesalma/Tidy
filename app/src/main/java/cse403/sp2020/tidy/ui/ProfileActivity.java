@@ -60,20 +60,21 @@ public class ProfileActivity extends AppCompatActivity {
     // initialize firestore instance
     modelInterface = new ModelInterface(FirebaseFirestore.getInstance());
     setModelCallbacks();
-    UserCallbackInterface c = new UserCallbackInterface() {
-        @Override
-        public void userCallback(List<UserModel> users) {
+    UserCallbackInterface c =
+        new UserCallbackInterface() {
+          @Override
+          public void userCallback(List<UserModel> users) {
             user = modelInterface.getCurrentUser();
             username = user.getFirstName() + " " + user.getLastName();
             nameView.setText(username);
-        }
+          }
 
-        @Override
-        public void userCallbackFailed(String message) {
+          @Override
+          public void userCallbackFailed(String message) {
             username = "No Name";
             nameView.setText(username);
-        }
-    };
+          }
+        };
     Log.w("PROFILE", userID);
     modelInterface.setUser(userID);
 
