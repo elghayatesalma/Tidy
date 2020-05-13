@@ -34,7 +34,7 @@ import cse403.sp2020.tidy.ui.profile.RecyclerAdapter;
 
 public class ProfileActivity extends AppCompatActivity {
 
-  List<String> exampleChores = new ArrayList<>();
+  private List<String> choreList = new ArrayList<>();
   private RecyclerView recyclerView;
   private RecyclerAdapter recyclerAdapter;
   private LinearLayoutManager mLayoutManager;
@@ -42,22 +42,30 @@ public class ProfileActivity extends AppCompatActivity {
   private UserModel user;
   private HouseholdModel household;
   private String username;
+  private String userID;
 
   // TODO: receive chores list from the model and add to display
-  // TODO: replace name TextView with user's first and last name
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_profile);
 
+    Intent data = getIntent();
+    // userID = data.getStringExtra("tidy_user_id");
+    userID = "test"; // test string
+
     // initialize firestore instance
       modelInterface = new ModelInterface(FirebaseFirestore.getInstance());
+      setModelCallbacks();
+      modelInterface.setUser(userID);
+
       user = modelInterface.getCurrentUser();
       household = modelInterface.getHousehold();
 
     // Button for going back to main activity
     ImageButton backToMain = (ImageButton) findViewById(R.id.profile_back);
     backToMain.setOnClickListener(new View.OnClickListener() {
+
       @Override
       public void onClick(View v) {
         Intent intent = new Intent(v.getContext(), MainActivity.class);
@@ -76,12 +84,6 @@ public class ProfileActivity extends AppCompatActivity {
     TextView nameView = (TextView) findViewById(R.id.profile_username);
     nameView.setText(username);
 
-    // initialize example chores for testing - should be replaced with just acquiring the list from the model
-    exampleChores.add("wash dishes");
-    exampleChores.add("take out garbage");
-    exampleChores.add("clean bathroom");
-    exampleChores.add("vacuum");
-
     // this section makes the profile picture circular
     ImageView profilePic = (ImageView) findViewById(R.id.profile_picture);
     // might be able to replace R.drawable.example_user with user's selected image later on in the
@@ -95,7 +97,7 @@ public class ProfileActivity extends AppCompatActivity {
     // Set up recycler view for drag and drop chore preference list
     recyclerView = findViewById(R.id.chore_preference_list);
     mLayoutManager = new LinearLayoutManager(this);
-    recyclerAdapter = new RecyclerAdapter(exampleChores);
+    recyclerAdapter = new RecyclerAdapter(choreList);
     recyclerView.setLayoutManager(mLayoutManager);
     recyclerView.setAdapter(recyclerAdapter);
 
@@ -115,7 +117,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                 int targetPosition = target.getAdapterPosition();
 
-                Collections.swap(exampleChores, draggedPosition, targetPosition); // probably work with backend on chore preference algo
+                Collections.swap(choreList, draggedPosition, targetPosition); // probably work with backend on chore preference algo
                 // needs to update preference list
                 recyclerAdapter.notifyItemMoved(draggedPosition, targetPosition);
 
@@ -127,5 +129,9 @@ public class ProfileActivity extends AppCompatActivity {
             });
 
     helper.attachToRecyclerView(recyclerView);
+  }
+
+  private void setModelCallbacks() {
+
   }
 }
