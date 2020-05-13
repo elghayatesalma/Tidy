@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+// Firebase plugin
+apply plugin: 'com.google.gms.google-services'
 
 apply plugin: 'com.google.gms.google-services'
 

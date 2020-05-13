@@ -9,6 +9,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
+
 import cse403.sp2020.tidy.R;
 import cse403.sp2020.tidy.data.ModelInterface;
 import cse403.sp2020.tidy.ui.main.AllChoresFragment;
@@ -18,7 +19,6 @@ import cse403.sp2020.tidy.ui.main.SectionsPagerAdapter;
 public class MainActivity extends AppCompatActivity {
 
   private static final String TAG = "MainActivity";
-
   private ModelInterface model;
 
   @Override
