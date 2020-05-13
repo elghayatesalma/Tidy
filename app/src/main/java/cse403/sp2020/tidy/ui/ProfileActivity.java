@@ -140,6 +140,7 @@ public class ProfileActivity extends AppCompatActivity {
           @Override
           public void taskCallback(List<TaskModel> users) {
               Log.d("test", "Profile task callback success tasks == null = " + (users == null));
+              choreList.clear();
               for (int i = 0; i < users.size(); i++) {
                   choreList.add(users.get(i).getName());
                   recyclerAdapter.notifyDataSetChanged();
