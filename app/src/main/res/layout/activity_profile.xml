@@ -21,7 +21,20 @@
             android:backgroundTint="#00FFFFFF"
             android:scaleType="fitStart"
             android:layout_marginLeft="30dp"
-            android:src="@drawable/back">
+            android:src="@drawable/back"
+            android:layout_centerVertical="true">
+
+        </ImageButton>
+
+        <ImageButton
+            android:id="@+id/settings_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/settings"
+            android:layout_alignParentRight="true"
+            android:backgroundTint="@color/white"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/appbar_padding">
 
         </ImageButton>
 
@@ -88,7 +101,8 @@
             android:layout_centerHorizontal="true"
             android:fontFamily="@font/hind_semibold"
             android:text="chore preferences"
-            android:textSize="18sp">
+            android:textSize="18sp"
+            android:layout_marginBottom="4dp">
 
         </TextView>
 
