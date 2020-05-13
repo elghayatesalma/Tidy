@@ -11,13 +11,8 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
 
-import java.util.List;
-
 import cse403.sp2020.tidy.R;
 import cse403.sp2020.tidy.data.ModelInterface;
-import cse403.sp2020.tidy.data.callbacks.UserCallbackInterface;
-import cse403.sp2020.tidy.data.model.HouseholdModel;
-import cse403.sp2020.tidy.data.model.UserModel;
 import cse403.sp2020.tidy.ui.main.AllChoresFragment;
 import cse403.sp2020.tidy.ui.main.MyChoresFragment;
 import cse403.sp2020.tidy.ui.main.SectionsPagerAdapter;
@@ -33,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
     Intent creationIntent = getIntent();
     final String userId = creationIntent.getStringExtra("tidy_user_id");
-    Log.d("test", "main userid = "+userId);
+    Log.d("test", "main userid = " + userId);
     FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
     model = new ModelInterface(mFirestore);
     // Initiate fragments and tabs
