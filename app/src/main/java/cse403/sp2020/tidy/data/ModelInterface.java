@@ -21,6 +21,10 @@ import cse403.sp2020.tidy.data.model.UserModel;
  *  - Add event listeners for realtime updates, use get with success/fail/complete for one-time
  *  - Documents can be create by / used to create objects (See helper methods and add methods)
  *
+ * TODO list:
+ *  - Invalidate listeners?
+ *  - Without using listeners, data will not be up to date (MUST SET UP LISTENERS)
+ *
  */
 
 /*** Interface Methods ***
@@ -211,7 +215,11 @@ public class ModelInterface {
       return;
     }
 
-    opCreateHousehold(household, callback);
+    // Create a new household object with cleared Id
+    HouseholdModel newHousehold = new HouseholdModel(household);
+    newHousehold.setHouseholdId(null);
+
+    opCreateHousehold(newHousehold, callback);
   }
 
   // Attempts to update the household of the current user
@@ -257,6 +265,9 @@ public class ModelInterface {
       callback.callback(null);
       return;
     }
+
+    // Make sure id is not overridden
+    user.setFirebaseId(mFirebaseUser.getFirebaseId());
 
     opUpdateUser(user, callback);
   }
@@ -512,6 +523,7 @@ public class ModelInterface {
     // Create a batch write to move the user from unassigned to the new household
     WriteBatch batch = mFirestore.batch();
     batch
+        .set(householdDoc, household)
         .set(newDoc, mFirebaseUser)
         .delete(oldDoc)
         .commit()
@@ -520,7 +532,7 @@ public class ModelInterface {
               if (task.isSuccessful()) {
                 Log.d(TAG, "Household has been created and user has been assigned");
                 mHousehold = household;
-                callback.callback(household);
+                callback.callback(getHousehold());
               } else {
                 Log.w(TAG, "Failed to create a new household: " + task.getException());
                 callback.callback(null);
@@ -549,6 +561,7 @@ public class ModelInterface {
                           if (task.isSuccessful()) {
                             QuerySnapshot uSnapshot = task.getResult();
                             if (uSnapshot.isEmpty()) {
+                              Log.d(TAG, "User not found in unassigned, creating new");
                               // User does not exist, create one
                               UserModel newUser = new UserModel();
                               newUser.setFirebaseId(firebaseId);
@@ -559,7 +572,9 @@ public class ModelInterface {
                                   .addOnCompleteListener(
                                       utask -> {
                                         if (utask.isSuccessful()) {
-                                          callback.callback(newUser);
+                                          Log.d(TAG, "Created new user");
+                                          mFirebaseUser = newUser;
+                                          callback.callback(getCurrentUser());
                                         } else {
                                           callback.callback(null);
                                           Log.w(
@@ -609,6 +624,8 @@ public class ModelInterface {
 
   private void opFindAndSetHousehold(
       String householdId, final CallbackInterface<HouseholdModel> callback) {
+
+    Log.d(TAG, "Attempting to set current household");
     // Check that household exists first
     mFirestore
         .collection(HOUSEHOLD_COLLECTION_NAME)
@@ -617,9 +634,8 @@ public class ModelInterface {
         .addOnCompleteListener(
             task -> {
               if (task.isSuccessful()) {
-                Log.d(TAG, "Household found, proceeding to set");
-
                 if (task.getResult().exists()) {
+                  Log.d(TAG, "Household found, proceeding to set");
                   // Get the household object
                   HouseholdModel household = buildHousehold(task.getResult());
 
@@ -646,7 +662,7 @@ public class ModelInterface {
 
                               // Set a new household and send it back
                               mHousehold = household;
-                              callback.callback(household);
+                              callback.callback(getHousehold());
                             } else {
                               Log.w(
                                   TAG,
@@ -655,7 +671,7 @@ public class ModelInterface {
                             }
                           });
                 } else {
-                  // No household
+                  Log.w(TAG, "No household found with Id");
                   callback.callback(null);
                 }
               } else {
@@ -693,7 +709,9 @@ public class ModelInterface {
             task -> {
               if (task.isSuccessful()) {
                 Log.d(TAG, "User updated successfully");
-                mFirebaseUser = new UserModel(user);
+                UserModel newUser = new UserModel(user);
+                newUser.setFirebaseId(mFirebaseUser.getFirebaseId());
+                mFirebaseUser = newUser;
                 callback.callback(getCurrentUser());
               } else {
                 Log.w(TAG, "Failed to update user", task.getException());
@@ -720,6 +738,8 @@ public class ModelInterface {
             task -> {
               if (task.isSuccessful()) {
                 Log.d(TAG, "User removed successfully");
+                clearListeners();  // Important, user should not get updates from old household
+                clearHousehold();  // Data from current household is no longer needed
                 callback.callback(getCurrentUser());
               } else {
                 Log.w(TAG, "Failed to remove user: " + task.getException());
@@ -931,11 +951,9 @@ public class ModelInterface {
     return null;
   }
 
-  // Removes all local data and references for the current household
-  private void clearData() {
-    Log.d(TAG, "Clearing all data");
-
-    // Remove listeners if they exist
+  // Remove listeners if they exist
+  private void clearListeners() {
+    Log.d(TAG, "Clearing listeners");
     if (mHouseholdListener != null) {
       mHouseholdListener.remove();
       mHouseholdListener = null;
@@ -948,12 +966,27 @@ public class ModelInterface {
       mUsersListener.remove();
       mUsersListener = null;
     }
+  }
 
-    // Clear local data
-    mFirebaseUser = null;
+  private void clearHousehold() {
+    Log.d(TAG, "Clearing household data");
     mHousehold = null;
     mUsers.clear();
     mTasks.clear();
+  }
+
+  // Removes all local data and references for the current household
+  private void clearData() {
+    Log.d(TAG, "Clearing all data");
+
+    // Stop any active listeners
+    clearListeners();
+
+    // Remove household data
+    clearHousehold();
+
+    // Remove user reference
+    mFirebaseUser = null;
   }
 
   // Logs excess results when only one is expected
