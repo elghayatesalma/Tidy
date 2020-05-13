@@ -21,7 +21,7 @@ import cse403.sp2020.tidy.data.model.UserModel;
  *  - Add event listeners for realtime updates, use get with success/fail/complete for one-time
  *  - Documents can be create by / used to create objects (See helper methods and add methods)
  *
-*/
+ */
 
 /*** Interface Methods ***
  *
@@ -138,7 +138,6 @@ public class ModelInterface {
     mFirebaseUser = null;
   }
 
-
   // Use to clear all data and stop listeners
   // Also removes callbacks
   public void cleanUp() {
@@ -167,7 +166,8 @@ public class ModelInterface {
   // Attempts to set the household of the current user
   // Requires that user is already set
   // Returns the new household via callback
-  public void setCurrentHousehold(String householdId, final CallbackInterface<HouseholdModel> callback) {
+  public void setCurrentHousehold(
+      String householdId, final CallbackInterface<HouseholdModel> callback) {
     if (callback == null) {
       Log.w(TAG, "Callback is null -- setCurrentHousehold");
       return;
@@ -189,7 +189,8 @@ public class ModelInterface {
   // Attempts to create a household, ignores the Id field in the household object
   // Requires that the user is set AND that there is no household
   // Returns the new household object via callback
-  public void createHousehold(final HouseholdModel household, final CallbackInterface<HouseholdModel> callback) {
+  public void createHousehold(
+      final HouseholdModel household, final CallbackInterface<HouseholdModel> callback) {
     if (callback == null) {
       Log.w(TAG, "Callback is null -- createHousehold");
       return;
@@ -216,7 +217,8 @@ public class ModelInterface {
   // Attempts to update the household of the current user
   // Requires that the user is set AND is in a household
   // Returns the updated household via callback
-  public void updateHousehold(final HouseholdModel household, final CallbackInterface<HouseholdModel> callback) {
+  public void updateHousehold(
+      final HouseholdModel household, final CallbackInterface<HouseholdModel> callback) {
     if (callback == null) {
       Log.w(TAG, "Callback is null -- updateHousehold");
       return;
@@ -318,7 +320,6 @@ public class ModelInterface {
     opAddTask(task, callback);
   }
 
-
   // Attempts to update the task in the current household
   // Requires that the user is set AND is in a household
   // Returns the task object via callback
@@ -385,34 +386,29 @@ public class ModelInterface {
 
   // Returns the current user if it exists
   public UserModel getCurrentUser() {
-    if (mFirebaseUser != null)
-      return new UserModel(mFirebaseUser);
+    if (mFirebaseUser != null) return new UserModel(mFirebaseUser);
     return null;
   }
 
   // Returns the current household (or null if there isn't one)
   public HouseholdModel getHousehold() {
-    if (mHousehold != null)
-      return new HouseholdModel(mHousehold);
+    if (mHousehold != null) return new HouseholdModel(mHousehold);
     return null;
   }
 
   // Returns a (potentially empty) list of users if household exists
   // Returns null if household doesn't exist
   public List<UserModel> getUsers() {
-    if (mHousehold != null)
-      return new ArrayList<>(mUsers);
+    if (mHousehold != null) return new ArrayList<>(mUsers);
     return null;
   }
 
   // Returns a (potentially empty) list of tasks if household exists
   // Returns null if household doesn't exist
   public List<TaskModel> getTasks() {
-    if (mHousehold != null)
-      return new ArrayList<>(mTasks);
+    if (mHousehold != null) return new ArrayList<>(mTasks);
     return null;
   }
-
 
   /* Event Listener Setup Methods */
 
@@ -496,196 +492,205 @@ public class ModelInterface {
 
   /* Operations */
 
-  private void opCreateHousehold(final HouseholdModel household, final CallbackInterface<HouseholdModel> callback) {
+  private void opCreateHousehold(
+      final HouseholdModel household, final CallbackInterface<HouseholdModel> callback) {
     // Generate a new household doc and Id
     DocumentReference householdDoc = mFirestore.collection(HOUSEHOLD_COLLECTION_NAME).document();
     Log.d(TAG, "Making new household: " + householdDoc.getId());
     household.setHouseholdId(householdDoc.getId());
 
     // Doc to move user to
-    DocumentReference newDoc = householdDoc
-        .collection(USERS_COLLECTION_NAME)
-        .document(mFirebaseUser.getFirebaseId());
+    DocumentReference newDoc =
+        householdDoc.collection(USERS_COLLECTION_NAME).document(mFirebaseUser.getFirebaseId());
 
     // Doc to remove user from
-    DocumentReference oldDoc = mFirestore
+    DocumentReference oldDoc =
+        mFirestore
             .collection(UNASSIGNED_USER_COLLECTION_NAME)
             .document(mFirebaseUser.getFirebaseId());
 
     // Create a batch write to move the user from unassigned to the new household
     WriteBatch batch = mFirestore.batch();
     batch
-      .set(newDoc, mFirebaseUser)
-      .delete(oldDoc)
-      .commit()
-      .addOnCompleteListener(
-        task -> {
-          if (task.isSuccessful()) {
-            Log.d(TAG, "Household has been created and user has been assigned");
-            mHousehold = household;
-            callback.callback(household);
-          } else {
-            Log.w(TAG, "Failed to create a new household: " + task.getException());
-            callback.callback(null);
-          }
-        });
+        .set(newDoc, mFirebaseUser)
+        .delete(oldDoc)
+        .commit()
+        .addOnCompleteListener(
+            task -> {
+              if (task.isSuccessful()) {
+                Log.d(TAG, "Household has been created and user has been assigned");
+                mHousehold = household;
+                callback.callback(household);
+              } else {
+                Log.w(TAG, "Failed to create a new household: " + task.getException());
+                callback.callback(null);
+              }
+            });
   }
 
-
-  private void opFindOrCreateUser(final String firebaseId, final CallbackInterface<UserModel> callback) {
+  private void opFindOrCreateUser(
+      final String firebaseId, final CallbackInterface<UserModel> callback) {
     // First, search all households for the user
     mFirestore
-      .collectionGroup(USERS_COLLECTION_NAME)
-      .whereEqualTo(USER_ID_FIELD, firebaseId)
-      .get()
-      .addOnSuccessListener(
-        snapshot -> {
-          if (snapshot.isEmpty() && snapshot.getDocuments().isEmpty()) {
-            Log.d(TAG, "User not found to be part of a household, checking unassigned");
+        .collectionGroup(USERS_COLLECTION_NAME)
+        .whereEqualTo(USER_ID_FIELD, firebaseId)
+        .get()
+        .addOnSuccessListener(
+            snapshot -> {
+              if (snapshot.isEmpty() && snapshot.getDocuments().isEmpty()) {
+                Log.d(TAG, "User not found to be part of a household, checking unassigned");
 
-            // Search unassigned for the user
-            mFirestore
-              .collection(UNASSIGNED_USER_COLLECTION_NAME)
-              .get()
-              .addOnCompleteListener(
-                task -> {
-                  if (task.isSuccessful()) {
-                    QuerySnapshot uSnapshot = task.getResult();
-                    if (uSnapshot.isEmpty()) {
-                      // User does not exist, create one
-                      UserModel newUser = new UserModel();
-                      newUser.setFirebaseId(firebaseId);
-                      mFirestore
-                        .collection(UNASSIGNED_USER_COLLECTION_NAME)
-                        .document(firebaseId)
-                        .set(newUser)
-                        .addOnCompleteListener(
-                          utask -> {
-                            if (utask.isSuccessful()) {
-                              callback.callback(newUser);
+                // Search unassigned for the user
+                mFirestore
+                    .collection(UNASSIGNED_USER_COLLECTION_NAME)
+                    .get()
+                    .addOnCompleteListener(
+                        task -> {
+                          if (task.isSuccessful()) {
+                            QuerySnapshot uSnapshot = task.getResult();
+                            if (uSnapshot.isEmpty()) {
+                              // User does not exist, create one
+                              UserModel newUser = new UserModel();
+                              newUser.setFirebaseId(firebaseId);
+                              mFirestore
+                                  .collection(UNASSIGNED_USER_COLLECTION_NAME)
+                                  .document(firebaseId)
+                                  .set(newUser)
+                                  .addOnCompleteListener(
+                                      utask -> {
+                                        if (utask.isSuccessful()) {
+                                          callback.callback(newUser);
+                                        } else {
+                                          callback.callback(null);
+                                          Log.w(
+                                              TAG, "Failed to create user: ", utask.getException());
+                                        }
+                                      });
+
                             } else {
-                              callback.callback(null);
-                              Log.w(TAG, "Failed to create user: ", utask.getException());
+                              // Found the user, callback with it
+                              logExcess("Unassigned User", task.getResult());
+                              Log.w(TAG, "User found in unassigned");
+                              callback.callback(buildUser(task.getResult().getDocuments().get(0)));
                             }
-                          });
 
-                    } else {
-                      // Found the user, callback with it
-                      logExcess("Unassigned User", task.getResult());
-                      Log.w(TAG, "User found in unassigned");
-                      callback.callback(buildUser(task.getResult().getDocuments().get(0)));
-                    }
+                          } else {
+                            Log.w(TAG, "Failed to search unassigned: ", task.getException());
+                            callback.callback(buildUser(null));
+                          }
+                        });
+              } else {
+                logExcess("User", snapshot);
 
-                  } else {
-                    Log.w(TAG, "Failed to search unassigned: ", task.getException());
-                    callback.callback(buildUser(null));
-                  }
-                });
-          } else {
-            logExcess("User", snapshot);
-
-            // Get the household the user belongs to first, then use callback
-            DocumentSnapshot userDoc = snapshot.getDocuments().get(0);
-            DocumentReference household = userDoc.getReference().getParent().getParent();
-            household.get().addOnCompleteListener(
-              task -> {
-                if (task.isSuccessful()) {
-                  Log.w(TAG, "Got user's household: " + household.getId());
-                  mHousehold = buildHousehold(task.getResult());
-                  callback.callback(buildUser(userDoc));
-                } else {
-                  Log.w(TAG, "Failed to get household ", task.getException());
-                  callback.callback(buildUser(null));
-                }
-              });
-          }
-        })
-      .addOnFailureListener(
-        e -> {
-          Log.w(TAG, "Failed to find user in household by id: ", e);
-          callback.callback(null);
-        });
+                // Get the household the user belongs to first, then use callback
+                DocumentSnapshot userDoc = snapshot.getDocuments().get(0);
+                DocumentReference household = userDoc.getReference().getParent().getParent();
+                household
+                    .get()
+                    .addOnCompleteListener(
+                        task -> {
+                          if (task.isSuccessful()) {
+                            Log.w(TAG, "Got user's household: " + household.getId());
+                            mHousehold = buildHousehold(task.getResult());
+                            callback.callback(buildUser(userDoc));
+                          } else {
+                            Log.w(TAG, "Failed to get household ", task.getException());
+                            callback.callback(buildUser(null));
+                          }
+                        });
+              }
+            })
+        .addOnFailureListener(
+            e -> {
+              Log.w(TAG, "Failed to find user in household by id: ", e);
+              callback.callback(null);
+            });
   }
 
-  private void opFindAndSetHousehold(String householdId, final CallbackInterface<HouseholdModel> callback) {
+  private void opFindAndSetHousehold(
+      String householdId, final CallbackInterface<HouseholdModel> callback) {
     // Check that household exists first
     mFirestore
-      .collection(HOUSEHOLD_COLLECTION_NAME)
-      .document(householdId)
-      .get()
-      .addOnCompleteListener(
-        task -> {
-          if (task.isSuccessful()) {
-            Log.d(TAG, "Household found, proceeding to set");
+        .collection(HOUSEHOLD_COLLECTION_NAME)
+        .document(householdId)
+        .get()
+        .addOnCompleteListener(
+            task -> {
+              if (task.isSuccessful()) {
+                Log.d(TAG, "Household found, proceeding to set");
 
-            if (task.getResult().exists()) {
-              // Get the household object
-              HouseholdModel household = buildHousehold(task.getResult());
+                if (task.getResult().exists()) {
+                  // Get the household object
+                  HouseholdModel household = buildHousehold(task.getResult());
 
-              // Create a batch to move a user from unassigned to the household
-              WriteBatch batch = mFirestore.batch();
-              DocumentReference moveToDoc =
-                mFirestore
-                  .collection(HOUSEHOLD_COLLECTION_NAME)
-                  .document(householdId)
-                  .collection(USERS_COLLECTION_NAME)
-                  .document(mFirebaseUser.getFirebaseId());
-              DocumentReference unassignedDoc =
-                mFirestore
-                  .collection(UNASSIGNED_USER_COLLECTION_NAME)
-                  .document(mFirebaseUser.getFirebaseId());
-              batch.delete(unassignedDoc);
-              batch.set(moveToDoc, mFirebaseUser);
-              batch
-                .commit()
-                .addOnCompleteListener(
-                  task1 -> {
-                    if (task1.isSuccessful()) {
-                      Log.d(TAG, "User has been assigned to household");
+                  // Create a batch to move a user from unassigned to the household
+                  WriteBatch batch = mFirestore.batch();
+                  DocumentReference moveToDoc =
+                      mFirestore
+                          .collection(HOUSEHOLD_COLLECTION_NAME)
+                          .document(householdId)
+                          .collection(USERS_COLLECTION_NAME)
+                          .document(mFirebaseUser.getFirebaseId());
+                  DocumentReference unassignedDoc =
+                      mFirestore
+                          .collection(UNASSIGNED_USER_COLLECTION_NAME)
+                          .document(mFirebaseUser.getFirebaseId());
+                  batch.delete(unassignedDoc);
+                  batch.set(moveToDoc, mFirebaseUser);
+                  batch
+                      .commit()
+                      .addOnCompleteListener(
+                          task1 -> {
+                            if (task1.isSuccessful()) {
+                              Log.d(TAG, "User has been assigned to household");
 
-                      // Set a new household and send it back
-                      mHousehold = household;
-                      callback.callback(household);
-                    } else {
-                      Log.w(TAG, "Failed to assign user to household: " + task1.getException());
-                      callback.callback(null);
-                    }
-                  });
-            } else {
-              // No household
-              callback.callback(null);
-            }
-          } else {
-            Log.w(TAG, "Failed to find household: " + task.getException());
-            callback.callback(null);
-          }
-        });
+                              // Set a new household and send it back
+                              mHousehold = household;
+                              callback.callback(household);
+                            } else {
+                              Log.w(
+                                  TAG,
+                                  "Failed to assign user to household: " + task1.getException());
+                              callback.callback(null);
+                            }
+                          });
+                } else {
+                  // No household
+                  callback.callback(null);
+                }
+              } else {
+                Log.w(TAG, "Failed to find household: " + task.getException());
+                callback.callback(null);
+              }
+            });
   }
 
-  private void opUpdateHousehold(final HouseholdModel household, final CallbackInterface<HouseholdModel> callback) {
+  private void opUpdateHousehold(
+      final HouseholdModel household, final CallbackInterface<HouseholdModel> callback) {
     mFirestore
-      .collection(HOUSEHOLD_COLLECTION_NAME)
-      .document(mHousehold.getHouseholdId())
-      .set(household)
-      .addOnCompleteListener(
-        task -> {
-          if (task.isSuccessful()) {
-            Log.w(TAG, "Household updated successfully");
-            callback.callback(household);
-          } else {
-            Log.w(TAG, "Failed to update household: " + task.getException());
-            callback.callback(null);
-          }
-        });
+        .collection(HOUSEHOLD_COLLECTION_NAME)
+        .document(mHousehold.getHouseholdId())
+        .set(household)
+        .addOnCompleteListener(
+            task -> {
+              if (task.isSuccessful()) {
+                Log.w(TAG, "Household updated successfully");
+                callback.callback(household);
+              } else {
+                Log.w(TAG, "Failed to update household: " + task.getException());
+                callback.callback(null);
+              }
+            });
   }
 
   private void opUpdateUser(final UserModel user, final CallbackInterface<UserModel> callback) {
     Log.w(TAG, "Updating current user");
     mFirestore
-            .collection(USERS_COLLECTION_NAME)
-            .document(mFirebaseUser.getFirebaseId())
-            .set(user)
-            .addOnCompleteListener(task -> {
+        .collection(USERS_COLLECTION_NAME)
+        .document(mFirebaseUser.getFirebaseId())
+        .set(user)
+        .addOnCompleteListener(
+            task -> {
               if (task.isSuccessful()) {
                 Log.d(TAG, "User updated successfully");
                 mFirebaseUser = new UserModel(user);
@@ -704,23 +709,23 @@ public class ModelInterface {
     WriteBatch batch = mFirestore.batch();
     DocumentReference currentDoc = getUserCollection().document(mFirebaseUser.getFirebaseId());
     DocumentReference unassignedDoc =
-      mFirestore
-        .collection(UNASSIGNED_USER_COLLECTION_NAME)
-        .document(mFirebaseUser.getFirebaseId());
+        mFirestore
+            .collection(UNASSIGNED_USER_COLLECTION_NAME)
+            .document(mFirebaseUser.getFirebaseId());
     batch.delete(currentDoc);
     batch.set(unassignedDoc, mFirebaseUser);
     batch
-      .commit()
-      .addOnCompleteListener(
-        task -> {
-          if (task.isSuccessful()) {
-            Log.d(TAG, "User removed successfully");
-            callback.callback(getCurrentUser());
-          } else {
-            Log.w(TAG, "Failed to remove user: " + task.getException());
-            callback.callback(null);
-          }
-        });
+        .commit()
+        .addOnCompleteListener(
+            task -> {
+              if (task.isSuccessful()) {
+                Log.d(TAG, "User removed successfully");
+                callback.callback(getCurrentUser());
+              } else {
+                Log.w(TAG, "Failed to remove user: " + task.getException());
+                callback.callback(null);
+              }
+            });
   }
 
   private void opSetHouseholdListener(final CallbackInterface<HouseholdModel> callback) {
@@ -731,25 +736,25 @@ public class ModelInterface {
     }
 
     mHouseholdListener =
-      mFirestore
-        .collection(HOUSEHOLD_COLLECTION_NAME)
-        .document(mHousehold.getHouseholdId())
-        .addSnapshotListener(
-          (snapshot, e) -> {
-            if (e != null || snapshot == null) {
-              Log.w(TAG, "Listen failed on household", e);
-              callback.callback(null);
-              return;
-            }
+        mFirestore
+            .collection(HOUSEHOLD_COLLECTION_NAME)
+            .document(mHousehold.getHouseholdId())
+            .addSnapshotListener(
+                (snapshot, e) -> {
+                  if (e != null || snapshot == null) {
+                    Log.w(TAG, "Listen failed on household", e);
+                    callback.callback(null);
+                    return;
+                  }
 
-            if (snapshot.exists()) {
-              Log.d(TAG, "Sending household update");
-              mHousehold = buildHousehold(snapshot);
-              callback.callback(buildHousehold(snapshot));
-            } else {
-              callback.callback(null);
-            }
-          });
+                  if (snapshot.exists()) {
+                    Log.d(TAG, "Sending household update");
+                    mHousehold = buildHousehold(snapshot);
+                    callback.callback(buildHousehold(snapshot));
+                  } else {
+                    callback.callback(null);
+                  }
+                });
   }
 
   private void opSetUsersListener(final CallbackInterface<List<UserModel>> callback) {
@@ -760,22 +765,22 @@ public class ModelInterface {
     }
 
     mUsersListener =
-      getUserCollection()
-      .addSnapshotListener(
-        (snapshot, e) -> {
-          if (e != null || snapshot == null) {
-            Log.w(TAG, "Listen failed on household", e);
-            callback.callback(null);
-            return;
-          }
+        getUserCollection()
+            .addSnapshotListener(
+                (snapshot, e) -> {
+                  if (e != null || snapshot == null) {
+                    Log.w(TAG, "Listen failed on household", e);
+                    callback.callback(null);
+                    return;
+                  }
 
-          Log.d(TAG, "Sending users list update");
-          mUsers.clear();
-          for (DocumentSnapshot doc : snapshot) {
-            mUsers.add(buildUser(doc));
-          }
-          callback.callback(getUsers());
-        });
+                  Log.d(TAG, "Sending users list update");
+                  mUsers.clear();
+                  for (DocumentSnapshot doc : snapshot) {
+                    mUsers.add(buildUser(doc));
+                  }
+                  callback.callback(getUsers());
+                });
   }
 
   private void opSetTasksListener(final CallbackInterface<List<TaskModel>> callback) {
@@ -786,22 +791,22 @@ public class ModelInterface {
     }
 
     mTasksListener =
-      getTaskCollection()
-      .addSnapshotListener(
-        (snapshot, e) -> {
-          if (e != null || snapshot == null) {
-            Log.w(TAG, "Listen failed on household", e);
-            callback.callback(null);
-            return;
-          }
+        getTaskCollection()
+            .addSnapshotListener(
+                (snapshot, e) -> {
+                  if (e != null || snapshot == null) {
+                    Log.w(TAG, "Listen failed on household", e);
+                    callback.callback(null);
+                    return;
+                  }
 
-          Log.d(TAG, "Sending users list update");
-          mTasks.clear();
-          for (DocumentSnapshot doc : snapshot) {
-            mTasks.add(buildTask(doc));
-          }
-          callback.callback(getTasks());
-        });
+                  Log.d(TAG, "Sending users list update");
+                  mTasks.clear();
+                  for (DocumentSnapshot doc : snapshot) {
+                    mTasks.add(buildTask(doc));
+                  }
+                  callback.callback(getTasks());
+                });
   }
 
   private void opAddTask(final TaskModel taskData, final CallbackInterface<TaskModel> callback) {
@@ -809,113 +814,109 @@ public class ModelInterface {
     taskData.setTaskId(taskDoc.getId());
 
     taskDoc
-      .set(taskData)
-      .addOnCompleteListener(
-        task1 -> {
-          if (task1.isSuccessful()) {
-            Log.w(TAG, "Task added successfully");
-            callback.callback(taskData);
-          } else {
-            Log.w(TAG, "Failed to add task: " + task1.getException());
-            callback.callback(null);
-          }
-        });
+        .set(taskData)
+        .addOnCompleteListener(
+            task1 -> {
+              if (task1.isSuccessful()) {
+                Log.w(TAG, "Task added successfully");
+                callback.callback(taskData);
+              } else {
+                Log.w(TAG, "Failed to add task: " + task1.getException());
+                callback.callback(null);
+              }
+            });
   }
 
   private void opUpdateTask(final TaskModel taskData, final CallbackInterface<TaskModel> callback) {
     final DocumentReference taskDoc = getTaskCollection().document(taskData.getTaskId());
 
     taskDoc
-      .get()
-      .addOnCompleteListener(
-        task -> {
-          if (task.isSuccessful()) {
-            if (task.getResult().exists()) {
-              taskDoc
-                .set(taskData)
-                .addOnCompleteListener(
-                  task1 -> {
-                    if (task1.isSuccessful()) {
-                      Log.w(TAG, "Task updated successfully");
-                      callback.callback(taskData);
-                    } else {
-                      Log.w(TAG, "Failed to add task: " + task1.getException());
-                      callback.callback(null);
-                    }
-                  });
-            } else {
-              Log.w(TAG, "Task not found, not updating task");
-              callback.callback(null);
-            }
-          } else {
-            Log.w(TAG, "Task lookup failed during update: " + task.getException());
-            callback.callback(null);
-          }
-        });
+        .get()
+        .addOnCompleteListener(
+            task -> {
+              if (task.isSuccessful()) {
+                if (task.getResult().exists()) {
+                  taskDoc
+                      .set(taskData)
+                      .addOnCompleteListener(
+                          task1 -> {
+                            if (task1.isSuccessful()) {
+                              Log.w(TAG, "Task updated successfully");
+                              callback.callback(taskData);
+                            } else {
+                              Log.w(TAG, "Failed to add task: " + task1.getException());
+                              callback.callback(null);
+                            }
+                          });
+                } else {
+                  Log.w(TAG, "Task not found, not updating task");
+                  callback.callback(null);
+                }
+              } else {
+                Log.w(TAG, "Task lookup failed during update: " + task.getException());
+                callback.callback(null);
+              }
+            });
   }
 
   private void opRemoveTask(final TaskModel taskData, final CallbackInterface<TaskModel> callback) {
     final DocumentReference taskDoc = getTaskCollection().document(taskData.getTaskId());
 
     taskDoc
-      .get()
-      .addOnCompleteListener(
-        task -> {
-          if (task.isSuccessful()) {
-            if (task.getResult().exists()) {
-              taskDoc
-                .delete()
-                .addOnCompleteListener(
-                  task1 -> {
-                    if (task1.isSuccessful()) {
-                      Log.w(TAG, "Task deleted successfully");
-                      callback.callback(taskData);
-                    } else {
-                      Log.w(TAG, "Failed to add task: " + task1.getException());
-                      callback.callback(null);
-                    }
-                  });
-            } else {
-              Log.w(TAG, "Task not found, not deleting task");
-              callback.callback(null);
-            }
-          } else {
-            Log.w(TAG, "Task lookup failed during delete: " + task.getException());
-            callback.callback(null);
-          }
-        });
+        .get()
+        .addOnCompleteListener(
+            task -> {
+              if (task.isSuccessful()) {
+                if (task.getResult().exists()) {
+                  taskDoc
+                      .delete()
+                      .addOnCompleteListener(
+                          task1 -> {
+                            if (task1.isSuccessful()) {
+                              Log.w(TAG, "Task deleted successfully");
+                              callback.callback(taskData);
+                            } else {
+                              Log.w(TAG, "Failed to add task: " + task1.getException());
+                              callback.callback(null);
+                            }
+                          });
+                } else {
+                  Log.w(TAG, "Task not found, not deleting task");
+                  callback.callback(null);
+                }
+              } else {
+                Log.w(TAG, "Task lookup failed during delete: " + task.getException());
+                callback.callback(null);
+              }
+            });
   }
-
 
   /* Helper methods */
 
   // Builds and returns a household object from the provided document snapshot
   private HouseholdModel buildHousehold(DocumentSnapshot householdData) {
-    if (householdData != null)
-      return householdData.toObject(HouseholdModel.class);
+    if (householdData != null) return householdData.toObject(HouseholdModel.class);
     return null;
   }
 
   // Builds and returns a task object from document
   private TaskModel buildTask(DocumentSnapshot taskData) {
-    if (taskData != null)
-      return taskData.toObject(TaskModel.class);
+    if (taskData != null) return taskData.toObject(TaskModel.class);
     return null;
   }
 
   // Builds and returns a user object from document
   private UserModel buildUser(DocumentSnapshot userData) {
-    if (userData != null)
-      return userData.toObject(UserModel.class);
+    if (userData != null) return userData.toObject(UserModel.class);
     return null;
   }
 
   private CollectionReference getTaskCollection() {
     if (mHousehold != null && mHousehold.getHouseholdId() != null) {
       return mFirestore
-              .collection(HOUSEHOLD_COLLECTION_NAME)
-              .document(mHousehold.getHouseholdId())
-              .collection(TASK_COLLECTION_NAME);
+          .collection(HOUSEHOLD_COLLECTION_NAME)
+          .document(mHousehold.getHouseholdId())
+          .collection(TASK_COLLECTION_NAME);
     }
     return null;
   }
@@ -923,9 +924,9 @@ public class ModelInterface {
   private CollectionReference getUserCollection() {
     if (mHousehold != null && mHousehold.getHouseholdId() != null) {
       return mFirestore
-              .collection(HOUSEHOLD_COLLECTION_NAME)
-              .document(mHousehold.getHouseholdId())
-              .collection(USERS_COLLECTION_NAME);
+          .collection(HOUSEHOLD_COLLECTION_NAME)
+          .document(mHousehold.getHouseholdId())
+          .collection(USERS_COLLECTION_NAME);
     }
     return null;
   }

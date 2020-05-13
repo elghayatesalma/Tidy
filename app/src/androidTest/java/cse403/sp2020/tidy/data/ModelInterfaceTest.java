@@ -1,29 +1,29 @@
-//package cse403.sp2020.tidy.data;
+// package cse403.sp2020.tidy.data;
 //
-//import android.util.Log;
+// import android.util.Log;
 //
-//import org.junit.After;
-//import org.junit.Before;
-//import org.junit.Test;
+// import org.junit.After;
+// import org.junit.Before;
+// import org.junit.Test;
 //
-//import static org.junit.Assert.*;
+// import static org.junit.Assert.*;
 //
-//import com.google.firebase.firestore.FirebaseFirestoreSettings;
-//import com.google.firebase.firestore.FirebaseFirestore;
+// import com.google.firebase.firestore.FirebaseFirestoreSettings;
+// import com.google.firebase.firestore.FirebaseFirestore;
 //
-//import java.util.ArrayList;
-//import java.util.HashSet;
-//import java.util.List;
-//import java.util.Set;
+// import java.util.ArrayList;
+// import java.util.HashSet;
+// import java.util.List;
+// import java.util.Set;
 //
-//import cse403.sp2020.tidy.data.callbacks.HouseholdCallbackInterface;
-//import cse403.sp2020.tidy.data.callbacks.TaskCallbackInterface;
-//import cse403.sp2020.tidy.data.callbacks.UserCallbackInterface;
-//import cse403.sp2020.tidy.data.model.HouseholdModel;
-//import cse403.sp2020.tidy.data.model.TaskModel;
-//import cse403.sp2020.tidy.data.model.UserModel;
+// import cse403.sp2020.tidy.data.callbacks.HouseholdCallbackInterface;
+// import cse403.sp2020.tidy.data.callbacks.TaskCallbackInterface;
+// import cse403.sp2020.tidy.data.callbacks.UserCallbackInterface;
+// import cse403.sp2020.tidy.data.model.HouseholdModel;
+// import cse403.sp2020.tidy.data.model.TaskModel;
+// import cse403.sp2020.tidy.data.model.UserModel;
 //
-//public class ModelInterfaceTest {
+// public class ModelInterfaceTest {
 //  private FirebaseFirestore mFirestore;
 //
 //  @Before
@@ -469,14 +469,14 @@
 //      throws InterruptedException {
 //    basicSetup(userId, model, checker, null, false);
 //  }
-//}
+// }
 //
 //// Simple class to keep track of callbacks and mark when the callbacks have succeeded
 //// Uses callback counting, but does nothing to handle too many/few callbacks
 ////  - If the number of callbacks is greater than the wait amount, nothing will happen on excess
 //// calls
 ////  - If it is less, block will never stop
-//class CallbackChecker
+// class CallbackChecker
 //    implements HouseholdCallbackInterface, TaskCallbackInterface, UserCallbackInterface {
 //  private int mHouseholdWaiting;
 //  private int mTaskWaiting;
@@ -564,4 +564,4 @@
 //      mUserWaiting--;
 //    }
 //  }
-//}
+// }
