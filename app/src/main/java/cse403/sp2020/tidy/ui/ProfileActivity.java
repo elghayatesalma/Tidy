@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -28,7 +29,11 @@ import com.google.firebase.firestore.auth.User;
 
 import cse403.sp2020.tidy.R;
 import cse403.sp2020.tidy.data.ModelInterface;
+import cse403.sp2020.tidy.data.callbacks.HouseholdCallbackInterface;
+import cse403.sp2020.tidy.data.callbacks.TaskCallbackInterface;
+import cse403.sp2020.tidy.data.callbacks.UserCallbackInterface;
 import cse403.sp2020.tidy.data.model.HouseholdModel;
+import cse403.sp2020.tidy.data.model.TaskModel;
 import cse403.sp2020.tidy.data.model.UserModel;
 import cse403.sp2020.tidy.ui.profile.RecyclerAdapter;
 
@@ -51,8 +56,7 @@ public class ProfileActivity extends AppCompatActivity {
     setContentView(R.layout.activity_profile);
 
     Intent data = getIntent();
-    // userID = data.getStringExtra("tidy_user_id");
-    userID = "test"; // test string
+    userID = data.getStringExtra("tidy_user_id");
 
     // initialize firestore instance
       modelInterface = new ModelInterface(FirebaseFirestore.getInstance());
@@ -132,6 +136,65 @@ public class ProfileActivity extends AppCompatActivity {
   }
 
   private void setModelCallbacks() {
+      modelInterface.registerTaskCallback(new TaskCallbackInterface() {
+          @Override
+          public void taskCallback(List<TaskModel> users) {
+              Log.d("test", "Profile task callback success tasks == null = " + (users == null));
+              for (int i = 0; i < users.size(); i++) {
+                  choreList.add(users.get(i).getName());
+                  recyclerAdapter.notifyDataSetChanged();
+              }
+          }
 
+          @Override
+          public void taskCallbackFail(String message) {
+              Log.d("test", "task callback fail message = " + message);
+          }
+      });
+
+      modelInterface.registerHouseholdCallback(new HouseholdCallbackInterface() {
+          @Override
+          public void householdCallback(HouseholdModel household) {
+              Log.d(
+                      "test",
+                      "Profile house callback success household == null = " + (household == null));
+          }
+
+          @Override
+          public void householdCallbackFailed(String message) {
+              Log.d("test", "house callback fail message = " + message);
+          }
+      });
+
+      modelInterface.registerUserCallback(new UserCallbackInterface() {
+          @Override
+          public void userCallback(List<UserModel> users) {
+              Log.d("test", "Profile user callback success users == null = " + (users == null));
+          }
+
+          @Override
+          public void userCallbackFailed(String message) {
+              Log.d("test", "user callback fail message = " + message);
+          }
+      });
   }
+
+  /*
+  private List<String> compareList(List<String> original, List<String> updated) {
+      List<String> returned = new ArrayList<>(original);
+      for (int i = 0; i < updated.size(); i++) { // see new additions
+          if (!original.contains(updated.get(i))) {
+              returned.add(updated.get(i));
+          }
+      }
+
+      for (int i = 0; i < original.size(); i++) { // see removals
+          if (!updated.contains(original.get(i))) {
+              returned.remove(original.get(i));
+          }
+      }
+      return returned;
+  }
+
+   */
 }
