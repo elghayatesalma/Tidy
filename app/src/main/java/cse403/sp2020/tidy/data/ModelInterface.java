@@ -326,13 +326,22 @@ public class ModelInterface {
                 Log.d(TAG, "Household found, proceeding to set");
 
                 if (task.getResult().exists()) {
-                  // Household exists, put the user in it
-                  mFirestore
-                      .collection(HOUSEHOLD_COLLECTION_NAME)
-                      .document(household.getHouseholdId())
-                      .collection(USERS_COLLECTION_NAME)
-                      .document(mFirebaseUser.getFirebaseId())
-                      .set(mFirebaseUser)
+                  // Create a batch to move a user from the unassigned batch to the household
+                  WriteBatch batch = mFirestore.batch();
+                  DocumentReference moveToDoc =
+                          mFirestore
+                                  .collection(HOUSEHOLD_COLLECTION_NAME)
+                                  .document(household.getHouseholdId())
+                                  .collection(USERS_COLLECTION_NAME)
+                                  .document(mFirebaseUser.getFirebaseId());
+                  DocumentReference unassignedDoc =
+                          mFirestore
+                                  .collection(UNASSIGNED_USER_COLLECTION_NAME)
+                                  .document(mFirebaseUser.getFirebaseId());
+                  batch.delete(unassignedDoc);
+                  batch.set(moveToDoc, mFirebaseUser);
+                  batch
+                      .commit()
                       .addOnCompleteListener(
                           task1 -> {
                             if (task1.isSuccessful()) {
@@ -1005,7 +1014,7 @@ public class ModelInterface {
   }
 
   private CollectionReference getTaskCollection() {
-    if (mHousehold != null) {
+    if (mHousehold != null && mHousehold.getHouseholdId() != null) {
       return mFirestore
           .collection(HOUSEHOLD_COLLECTION_NAME)
           .document(mHousehold.getHouseholdId())
@@ -1015,7 +1024,7 @@ public class ModelInterface {
   }
 
   private CollectionReference getUserCollection() {
-    if (mHousehold != null) {
+    if (mHousehold != null && mHousehold.getHouseholdId() != null) {
       return mFirestore
           .collection(HOUSEHOLD_COLLECTION_NAME)
           .document(mHousehold.getHouseholdId())
