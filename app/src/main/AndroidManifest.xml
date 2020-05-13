@@ -10,8 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ui.ProfileActivity"
-            android:theme="@style/ProfileTheme"
-            android:exported="true">
+            android:theme="@style/ProfileTheme">
         </activity>
         <activity
             android:name=".ui.MainActivity"
