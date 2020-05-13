@@ -87,7 +87,7 @@ public class MyChoresFragment extends Fragment {
                           valid = false;
                         }
                         if (valid) {
-                          model.addTaskToHousehold(new TaskModel(name, description, priority));
+//                          model.addTaskToHousehold(new TaskModel(name, description, priority));
                           dialog.dismiss();
                         } else {
                           Toast.makeText(
@@ -117,48 +117,48 @@ public class MyChoresFragment extends Fragment {
   }
 
   private void setModelCallBacks() {
-    model.registerTaskCallback(
-        new TaskCallbackInterface() {
-          @Override
-          public void taskCallback(List<TaskModel> users) {
-            Log.d("test", "My Chore task callback success tasks == null = " + (users == null));
-            choreList.clear();
-            if (users != null) choreList.addAll(users);
-            choreListAdapter.notifyDataSetChanged();
-          }
-
-          @Override
-          public void taskCallbackFail(String message) {
-            Log.d("test", "task callback fail message = " + message);
-          }
-        });
-
-    model.registerHouseholdCallback(
-        new HouseholdCallbackInterface() {
-          @Override
-          public void householdCallback(HouseholdModel household) {
-            Log.d(
-                "test",
-                "My Chore house callback success household == null = " + (household == null));
-          }
-
-          @Override
-          public void householdCallbackFailed(String message) {
-            Log.d("test", "house callback fail message = " + message);
-          }
-        });
-
-    model.registerUserCallback(
-        new UserCallbackInterface() {
-          @Override
-          public void userCallback(List<UserModel> users) {
-            Log.d("test", "My Chore user callback success users == null = " + (users == null));
-          }
-
-          @Override
-          public void userCallbackFailed(String message) {
-            Log.d("test", "user callback fail message = " + message);
-          }
-        });
+//    model.registerTaskCallback(
+//        new TaskCallbackInterface() {
+//          @Override
+//          public void taskCallback(List<TaskModel> users) {
+//            Log.d("test", "My Chore task callback success tasks == null = " + (users == null));
+//            choreList.clear();
+//            if (users != null) choreList.addAll(users);
+//            choreListAdapter.notifyDataSetChanged();
+//          }
+//
+//          @Override
+//          public void taskCallbackFail(String message) {
+//            Log.d("test", "task callback fail message = " + message);
+//          }
+//        });
+//
+//    model.registerHouseholdCallback(
+//        new HouseholdCallbackInterface() {
+//          @Override
+//          public void householdCallback(HouseholdModel household) {
+//            Log.d(
+//                "test",
+//                "My Chore house callback success household == null = " + (household == null));
+//          }
+//
+//          @Override
+//          public void householdCallbackFailed(String message) {
+//            Log.d("test", "house callback fail message = " + message);
+//          }
+//        });
+//
+//    model.registerUserCallback(
+//        new UserCallbackInterface() {
+//          @Override
+//          public void userCallback(List<UserModel> users) {
+//            Log.d("test", "My Chore user callback success users == null = " + (users == null));
+//          }
+//
+//          @Override
+//          public void userCallbackFailed(String message) {
+//            Log.d("test", "user callback fail message = " + message);
+//          }
+//        });
   }
 }

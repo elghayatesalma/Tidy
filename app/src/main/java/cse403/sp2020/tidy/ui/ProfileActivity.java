@@ -76,9 +76,9 @@ public class ProfileActivity extends AppCompatActivity {
           }
         };
     Log.w("PROFILE", userID);
-    modelInterface.setUser(userID);
-
-    modelInterface.registerUserCallback(c);
+//    modelInterface.setUser(userID);
+//
+//    modelInterface.registerUserCallback(c);
     user = modelInterface.getCurrentUser();
     household = modelInterface.getHousehold();
 
@@ -155,50 +155,50 @@ public class ProfileActivity extends AppCompatActivity {
   }
 
   private void setModelCallbacks() {
-    modelInterface.registerTaskCallback(
-        new TaskCallbackInterface() {
-          @Override
-          public void taskCallback(List<TaskModel> users) {
-            Log.d("test", "Profile task callback success tasks == null = " + (users == null));
-            for (int i = 0; i < users.size(); i++) {
-              choreList.add(users.get(i).getName());
-              recyclerAdapter.notifyDataSetChanged();
-            }
-          }
-
-          @Override
-          public void taskCallbackFail(String message) {
-            Log.d("test", "task callback fail message = " + message);
-          }
-        });
-
-    modelInterface.registerHouseholdCallback(
-        new HouseholdCallbackInterface() {
-          @Override
-          public void householdCallback(HouseholdModel household) {
-            Log.d(
-                "test",
-                "Profile house callback success household == null = " + (household == null));
-          }
-
-          @Override
-          public void householdCallbackFailed(String message) {
-            Log.d("test", "house callback fail message = " + message);
-          }
-        });
-
-    modelInterface.registerUserCallback(
-        new UserCallbackInterface() {
-          @Override
-          public void userCallback(List<UserModel> users) {
-            Log.d("test", "Profile user callback success users == null = " + (users == null));
-          }
-
-          @Override
-          public void userCallbackFailed(String message) {
-            Log.d("test", "user callback fail message = " + message);
-          }
-        });
+//    modelInterface.registerTaskCallback(
+//        new TaskCallbackInterface() {
+//          @Override
+//          public void taskCallback(List<TaskModel> users) {
+//            Log.d("test", "Profile task callback success tasks == null = " + (users == null));
+//            for (int i = 0; i < users.size(); i++) {
+//              choreList.add(users.get(i).getName());
+//              recyclerAdapter.notifyDataSetChanged();
+//            }
+//          }
+//
+//          @Override
+//          public void taskCallbackFail(String message) {
+//            Log.d("test", "task callback fail message = " + message);
+//          }
+//        });
+//
+//    modelInterface.registerHouseholdCallback(
+//        new HouseholdCallbackInterface() {
+//          @Override
+//          public void householdCallback(HouseholdModel household) {
+//            Log.d(
+//                "test",
+//                "Profile house callback success household == null = " + (household == null));
+//          }
+//
+//          @Override
+//          public void householdCallbackFailed(String message) {
+//            Log.d("test", "house callback fail message = " + message);
+//          }
+//        });
+//
+//    modelInterface.registerUserCallback(
+//        new UserCallbackInterface() {
+//          @Override
+//          public void userCallback(List<UserModel> users) {
+//            Log.d("test", "Profile user callback success users == null = " + (users == null));
+//          }
+//
+//          @Override
+//          public void userCallbackFailed(String message) {
+//            Log.d("test", "user callback fail message = " + message);
+//          }
+//        });
   }
 
   /*

@@ -293,28 +293,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         // Start temporary household registry
         FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
         ModelInterface model = new ModelInterface(mFirestore);
-        model.registerUserCallback(
-            new UserCallbackInterface() {
-              @Override
-              public void userCallback(List<UserModel> users) {
-                model.makeHousehold(new HouseholdModel(mAuth.getUid() + "_house"));
-              }
-
-              @Override
-              public void userCallbackFailed(String message) {}
-            });
-        model.registerHouseholdCallback(
-            new HouseholdCallbackInterface() {
-              @Override
-              public void householdCallback(HouseholdModel household) {
-                startActivity(mainActivityIntent);
-                model.cleanUp();
-              }
-
-              @Override
-              public void householdCallbackFailed(String message) {}
-            });
-        model.setUser(mAuth.getUid());
+//        model.registerUserCallback(
+//            new UserCallbackInterface() {
+//              @Override
+//              public void userCallback(List<UserModel> users) {
+//                model.makeHousehold(new HouseholdModel(mAuth.getUid() + "_house"));
+//              }
+//
+//              @Override
+//              public void userCallbackFailed(String message) {}
+//            });
+//        model.registerHouseholdCallback(
+//            new HouseholdCallbackInterface() {
+//              @Override
+//              public void householdCallback(HouseholdModel household) {
+//                startActivity(mainActivityIntent);
+//                model.cleanUp();
+//              }
+//
+//              @Override
+//              public void householdCallbackFailed(String message) {}
+//            });
+//        model.setUser(mAuth.getUid());
         // End temporary household registry
         // startActivity(mainActivityIntent);
         break;
