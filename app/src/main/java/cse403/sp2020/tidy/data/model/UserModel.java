@@ -38,6 +38,10 @@ public class UserModel {
     this.firebaseId = newId;
   }
 
+  public void setFirstName(String newName) {
+    this.firstName = newName;
+  }
+
   public boolean equals(UserModel other) {
     if (other != null) {
       return other.getFirebaseId() == getFirebaseId();
