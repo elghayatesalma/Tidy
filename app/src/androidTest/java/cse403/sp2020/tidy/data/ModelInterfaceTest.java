@@ -1,50 +1,41 @@
- package cse403.sp2020.tidy.data;
+package cse403.sp2020.tidy.data;
 
- import android.util.Log;
 
- import org.junit.After;
- import org.junit.Before;
- import org.junit.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
- import static org.junit.Assert.*;
+import static org.junit.Assert.*;
 
- import com.google.firebase.firestore.FirebaseFirestoreSettings;
- import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.FirebaseFirestore;
 
- import java.util.ArrayList;
- import java.util.HashSet;
- import java.util.List;
- import java.util.Set;
+import cse403.sp2020.tidy.data.model.HouseholdModel;
+import cse403.sp2020.tidy.data.model.UserModel;
 
- import cse403.sp2020.tidy.data.callbacks.HouseholdCallbackInterface;
- import cse403.sp2020.tidy.data.callbacks.TaskCallbackInterface;
- import cse403.sp2020.tidy.data.callbacks.UserCallbackInterface;
- import cse403.sp2020.tidy.data.model.HouseholdModel;
- import cse403.sp2020.tidy.data.model.TaskModel;
- import cse403.sp2020.tidy.data.model.UserModel;
 
- public class ModelInterfaceTest {
-   private FirebaseFirestore mFirestore;
+public class ModelInterfaceTest {
+  private FirebaseFirestore mFirestore;
 
-   @Before
-   public void setUp() throws Exception {
-     // 10.0.2.2 is the special IP address to connect to the 'localhost' of
-     // the host computer from an Android emulator.
-     FirebaseFirestoreSettings settings =
-             new FirebaseFirestoreSettings.Builder()
-                     .setHost("10.0.2.2:8080")
-                     .setSslEnabled(false)
-                     .setPersistenceEnabled(false)
-                     .build();
+  @Before
+  public void setUp() throws Exception {
+    // 10.0.2.2 is the special IP address to connect to the 'localhost' of
+    // the host computer from an Android emulator.
+    FirebaseFirestoreSettings settings =
+        new FirebaseFirestoreSettings.Builder()
+            .setHost("10.0.2.2:8080")
+            .setSslEnabled(false)
+            .setPersistenceEnabled(false)
+            .build();
 
-     mFirestore = FirebaseFirestore.getInstance();
-     mFirestore.setFirestoreSettings(settings);
-   }
+    mFirestore = FirebaseFirestore.getInstance();
+    mFirestore.setFirestoreSettings(settings);
+  }
 
-   @After
-   public void tearDown() throws Exception {
-     mFirestore.terminate();
-   }
+  @After
+  public void tearDown() throws Exception {
+    mFirestore.terminate();
+  }
 
    @Test
    // Tests basic household operations
@@ -168,35 +159,35 @@
  class CallbackCounter {
    private int count;
 
-   public boolean isPending() {
-     return count > 0;
-   }
+  public boolean isPending() {
+    return count > 0;
+  }
 
-   public void block() throws InterruptedException{
+  public void block() throws InterruptedException {
     while (isPending()) {
       // Just wait... maybe add a really small sleep?
       Thread.sleep(10);
     }
-   }
+  }
 
-   public void increment() {
-     increment(0);
-   }
+  public void increment() {
+    increment(0);
+  }
 
-   public void increment(int amount) {
-     count++;
-   }
+  public void increment(int amount) {
+    count++;
+  }
 
-   public void decrement() {
-     decrement(0);
-   }
+  public void decrement() {
+    decrement(0);
+  }
 
-   public void decrement(int amount) {
-     if (count > 0) {
-       count--;
-     }
-   }
- }
+  public void decrement(int amount) {
+    if (count > 0) {
+      count--;
+    }
+  }
+}
 
 //
 //  @Test
