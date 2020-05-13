@@ -26,8 +26,16 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.List;
 
 import cse403.sp2020.tidy.R;
+import cse403.sp2020.tidy.data.ModelInterface;
+import cse403.sp2020.tidy.data.callbacks.HouseholdCallbackInterface;
+import cse403.sp2020.tidy.data.callbacks.UserCallbackInterface;
+import cse403.sp2020.tidy.data.model.HouseholdModel;
+import cse403.sp2020.tidy.data.model.UserModel;
 import cse403.sp2020.tidy.ui.MainActivity;
 
 /**
@@ -280,7 +288,37 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     switch (v.getId()) {
       case R.id.go_to_main_button:
         Intent mainActivityIntent = new Intent(this, MainActivity.class);
-        startActivity(mainActivityIntent);
+        mainActivityIntent.putExtra("tidy_user_id", mAuth.getUid());
+        // TODO Remove this when setup activity is completed
+        // Start temporary household registry
+        FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
+        ModelInterface model = new ModelInterface(mFirestore);
+        model.registerUserCallback(new UserCallbackInterface() {
+          @Override
+          public void userCallback(List<UserModel> users) {
+            model.makeHousehold(new HouseholdModel(mAuth.getUid() + "_house"));
+          }
+
+          @Override
+          public void userCallbackFailed(String message) {
+
+          }
+        });
+        model.registerHouseholdCallback(new HouseholdCallbackInterface() {
+          @Override
+          public void householdCallback(HouseholdModel household) {
+            startActivity(mainActivityIntent);
+            model.cleanUp();
+          }
+
+          @Override
+          public void householdCallbackFailed(String message) {
+
+          }
+        });
+        model.setUser(mAuth.getUid());
+        //End temporary household registry
+        //startActivity(mainActivityIntent);
         break;
       case R.id.sign_in_button:
         signInGoogle();

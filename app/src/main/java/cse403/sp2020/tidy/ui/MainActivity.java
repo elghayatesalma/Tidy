@@ -2,6 +2,7 @@ package cse403.sp2020.tidy.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -10,8 +11,13 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import java.util.List;
+
 import cse403.sp2020.tidy.R;
 import cse403.sp2020.tidy.data.ModelInterface;
+import cse403.sp2020.tidy.data.callbacks.UserCallbackInterface;
+import cse403.sp2020.tidy.data.model.HouseholdModel;
+import cse403.sp2020.tidy.data.model.UserModel;
 import cse403.sp2020.tidy.ui.main.AllChoresFragment;
 import cse403.sp2020.tidy.ui.main.MyChoresFragment;
 import cse403.sp2020.tidy.ui.main.SectionsPagerAdapter;
@@ -25,10 +31,9 @@ public class MainActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    final String userId = "test";
-    //    if(savedInstanceState != null)
-    //      userId = savedInstanceState.getString("tidy_user_id", "test");//TODO Update when login
-    // works
+    Intent creationIntent = getIntent();
+    final String userId = creationIntent.getStringExtra("tidy_user_id");
+    Log.d("test", "main userid = "+userId);
     FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
     model = new ModelInterface(mFirestore);
     // Initiate fragments and tabs
