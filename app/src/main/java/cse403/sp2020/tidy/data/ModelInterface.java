@@ -329,15 +329,15 @@ public class ModelInterface {
                   // Create a batch to move a user from the unassigned batch to the household
                   WriteBatch batch = mFirestore.batch();
                   DocumentReference moveToDoc =
-                          mFirestore
-                                  .collection(HOUSEHOLD_COLLECTION_NAME)
-                                  .document(household.getHouseholdId())
-                                  .collection(USERS_COLLECTION_NAME)
-                                  .document(mFirebaseUser.getFirebaseId());
+                      mFirestore
+                          .collection(HOUSEHOLD_COLLECTION_NAME)
+                          .document(household.getHouseholdId())
+                          .collection(USERS_COLLECTION_NAME)
+                          .document(mFirebaseUser.getFirebaseId());
                   DocumentReference unassignedDoc =
-                          mFirestore
-                                  .collection(UNASSIGNED_USER_COLLECTION_NAME)
-                                  .document(mFirebaseUser.getFirebaseId());
+                      mFirestore
+                          .collection(UNASSIGNED_USER_COLLECTION_NAME)
+                          .document(mFirebaseUser.getFirebaseId());
                   batch.delete(unassignedDoc);
                   batch.set(moveToDoc, mFirebaseUser);
                   batch
