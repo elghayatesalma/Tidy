@@ -2,6 +2,7 @@ package cse403.sp2020.tidy.ui.main;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +21,12 @@ import java.util.Objects;
 
 import cse403.sp2020.tidy.R;
 import cse403.sp2020.tidy.data.ModelInterface;
+import cse403.sp2020.tidy.data.callbacks.HouseholdCallbackInterface;
 import cse403.sp2020.tidy.data.callbacks.TaskCallbackInterface;
+import cse403.sp2020.tidy.data.callbacks.UserCallbackInterface;
+import cse403.sp2020.tidy.data.model.HouseholdModel;
 import cse403.sp2020.tidy.data.model.TaskModel;
+import cse403.sp2020.tidy.data.model.UserModel;
 import cse403.sp2020.tidy.ui.MainActivity;
 
 public class AllChoresFragment extends Fragment {
@@ -34,8 +39,9 @@ public class AllChoresFragment extends Fragment {
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     model = ((MainActivity) Objects.requireNonNull(getActivity())).getModelInterface();
-    if(savedInstanceState != null)
-      userId = savedInstanceState.getString("tidy_user_id", null);
+    Bundle b = getArguments();
+    assert b != null;
+    userId = b.getString("tidy_user_id", "test");
   }
 
   @Nullable
@@ -79,6 +85,7 @@ public class AllChoresFragment extends Fragment {
     allChoreListView.setAdapter(allChoreAdapter);
     setModelCallBacks();
     model.setUser(userId);//Initiates data collection callbacks to initialize tasks
+
     return frag;
   }
 
@@ -98,13 +105,40 @@ public class AllChoresFragment extends Fragment {
     model.registerTaskCallback(new TaskCallbackInterface() {
       @Override
       public void taskCallback(List<TaskModel> users) {
+        Log.d("test", "All Chore task callback success tasks == null = "+(users == null));
         choreList.clear();
-        choreList.addAll(users);
+        if(users != null) choreList.addAll(users);
         allChoreAdapter.notifyDataSetChanged();
       }
 
       @Override
-      public void taskCallbackFail(String message) { }
+      public void taskCallbackFail(String message) {
+        Log.d("test", "task callback fail message = "+message);
+      }
+    });
+
+    model.registerHouseholdCallback(new HouseholdCallbackInterface() {
+      @Override
+      public void householdCallback(HouseholdModel household) {
+        Log.d("test", "All Chore house callback success household == null = "+(household == null));
+      }
+
+      @Override
+      public void householdCallbackFailed(String message) {
+        Log.d("test", "house callback fail message = "+message);
+      }
+    });
+
+    model.registerUserCallback(new UserCallbackInterface() {
+      @Override
+      public void userCallback(List<UserModel> users) {
+        Log.d("test", "All Chore user callback success users == null = "+(users == null));
+      }
+
+      @Override
+      public void userCallbackFailed(String message) {
+        Log.d("test", "user callback fail message = "+message);
+      }
     });
   }
 }
