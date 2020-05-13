@@ -54,13 +54,30 @@ public class ProfileActivity extends AppCompatActivity {
     setContentView(R.layout.activity_profile);
 
     Intent data = getIntent();
+    final TextView nameView = (TextView) findViewById(R.id.profile_username);
     userID = data.getStringExtra("tidy_user_id");
 
     // initialize firestore instance
     modelInterface = new ModelInterface(FirebaseFirestore.getInstance());
     setModelCallbacks();
+    UserCallbackInterface c = new UserCallbackInterface() {
+        @Override
+        public void userCallback(List<UserModel> users) {
+            user = modelInterface.getCurrentUser();
+            username = user.getFirstName() + " " + user.getLastName();
+            nameView.setText(username);
+        }
+
+        @Override
+        public void userCallbackFailed(String message) {
+            username = "No Name";
+            nameView.setText(username);
+        }
+    };
+    Log.w("PROFILE", userID);
     modelInterface.setUser(userID);
 
+    modelInterface.registerUserCallback(c);
     user = modelInterface.getCurrentUser();
     household = modelInterface.getHousehold();
 
@@ -84,7 +101,6 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     // set textView to username
-    TextView nameView = (TextView) findViewById(R.id.profile_username);
     nameView.setText(username);
 
     // this section makes the profile picture circular
