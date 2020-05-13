@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -47,43 +46,61 @@ public class MyChoresFragment extends Fragment {
   @Nullable
   @Override
   public View onCreateView(
-          @NonNull LayoutInflater inflater,
-          @Nullable ViewGroup container,
-          @Nullable Bundle savedInstanceState) {
+      @NonNull LayoutInflater inflater,
+      @Nullable ViewGroup container,
+      @Nullable Bundle savedInstanceState) {
     final View frag = inflater.inflate(R.layout.mychores_fragment, container, false);
     ListView myChoreListView = frag.findViewById(R.id.my_chores_list);
-    frag.findViewById(R.id.my_chores_add).setOnClickListener(view -> {
-      //Model add task
-      final Dialog dialog = new Dialog(getContext());
-      dialog.setContentView(R.layout.add_chore_dialog);
-      dialog.show();
-      dialog.findViewById(R.id.add_chore_dialog_cancel).setOnClickListener(view1 -> dialog.dismiss());
-      dialog.findViewById(R.id.add_chore_dialog_submit).setOnClickListener(view12 -> {
-        String name = ((EditText)dialog.findViewById(R.id.add_chore_dialog_name)).getText().toString();
-        String description = ((EditText)dialog.findViewById(R.id.add_chore_dialog_description)).getText().toString();
-        String priorityStr = ((EditText)dialog.findViewById(R.id.add_chore_dialog_priority)).getText().toString();
-        boolean valid = !name.isEmpty();
-        valid &= !description.isEmpty();
-        valid &= !priorityStr.isEmpty();
-        int priority = -1; //Dummy value
-        try{
-          priority = Integer.parseInt(priorityStr, 10);
-        }catch (NumberFormatException ex){
-          valid = false;
-        }
-        if(valid){
-          model.addTaskToHousehold(new TaskModel(name, description, priority));
-          dialog.dismiss();
-        }else{
-          Toast.makeText(getContext(), "All fields must be filled", Toast.LENGTH_SHORT).show();
-        }
-      });
-    });
+    frag.findViewById(R.id.my_chores_add)
+        .setOnClickListener(
+            view -> {
+              // Model add task
+              final Dialog dialog = new Dialog(getContext());
+              dialog.setContentView(R.layout.add_chore_dialog);
+              dialog.show();
+              dialog
+                  .findViewById(R.id.add_chore_dialog_cancel)
+                  .setOnClickListener(view1 -> dialog.dismiss());
+              dialog
+                  .findViewById(R.id.add_chore_dialog_submit)
+                  .setOnClickListener(
+                      view12 -> {
+                        String name =
+                            ((EditText) dialog.findViewById(R.id.add_chore_dialog_name))
+                                .getText()
+                                .toString();
+                        String description =
+                            ((EditText) dialog.findViewById(R.id.add_chore_dialog_description))
+                                .getText()
+                                .toString();
+                        String priorityStr =
+                            ((EditText) dialog.findViewById(R.id.add_chore_dialog_priority))
+                                .getText()
+                                .toString();
+                        boolean valid = !name.isEmpty();
+                        valid &= !description.isEmpty();
+                        valid &= !priorityStr.isEmpty();
+                        int priority = -1; // Dummy value
+                        try {
+                          priority = Integer.parseInt(priorityStr, 10);
+                        } catch (NumberFormatException ex) {
+                          valid = false;
+                        }
+                        if (valid) {
+                          model.addTaskToHousehold(new TaskModel(name, description, priority));
+                          dialog.dismiss();
+                        } else {
+                          Toast.makeText(
+                                  getContext(), "All fields must be filled", Toast.LENGTH_SHORT)
+                              .show();
+                        }
+                      });
+            });
     choreList = new ArrayList<>();
     choreListAdapter = new ChoreListArrayAdapter<>(getContext(), choreList);
     myChoreListView.setAdapter(choreListAdapter);
-    //setModelCallBacks();
-    //model.setUser(userId);//Initiates data collection callbacks to initialize tasks
+    // setModelCallBacks();
+    // model.setUser(userId);//Initiates data collection callbacks to initialize tasks
     return frag;
   }
 
@@ -94,49 +111,54 @@ public class MyChoresFragment extends Fragment {
   }
 
   @Override
-  public void onDestroy(){
+  public void onDestroy() {
     super.onDestroy();
     model.cleanUp();
   }
 
-  private void setModelCallBacks(){
-    model.registerTaskCallback(new TaskCallbackInterface() {
-      @Override
-      public void taskCallback(List<TaskModel> users) {
-        Log.d("test", "My Chore task callback success tasks == null = "+(users == null));
-        choreList.clear();
-        if(users != null) choreList.addAll(users);
-        choreListAdapter.notifyDataSetChanged();
-      }
+  private void setModelCallBacks() {
+    model.registerTaskCallback(
+        new TaskCallbackInterface() {
+          @Override
+          public void taskCallback(List<TaskModel> users) {
+            Log.d("test", "My Chore task callback success tasks == null = " + (users == null));
+            choreList.clear();
+            if (users != null) choreList.addAll(users);
+            choreListAdapter.notifyDataSetChanged();
+          }
 
-      @Override
-      public void taskCallbackFail(String message) {
-        Log.d("test", "task callback fail message = "+message);
-      }
-    });
+          @Override
+          public void taskCallbackFail(String message) {
+            Log.d("test", "task callback fail message = " + message);
+          }
+        });
 
-    model.registerHouseholdCallback(new HouseholdCallbackInterface() {
-      @Override
-      public void householdCallback(HouseholdModel household) {
-        Log.d("test", "My Chore house callback success household == null = "+(household == null));
-      }
+    model.registerHouseholdCallback(
+        new HouseholdCallbackInterface() {
+          @Override
+          public void householdCallback(HouseholdModel household) {
+            Log.d(
+                "test",
+                "My Chore house callback success household == null = " + (household == null));
+          }
 
-      @Override
-      public void householdCallbackFailed(String message) {
-        Log.d("test", "house callback fail message = "+message);
-      }
-    });
+          @Override
+          public void householdCallbackFailed(String message) {
+            Log.d("test", "house callback fail message = " + message);
+          }
+        });
 
-    model.registerUserCallback(new UserCallbackInterface() {
-      @Override
-      public void userCallback(List<UserModel> users) {
-        Log.d("test", "My Chore user callback success users == null = "+(users == null));
-      }
+    model.registerUserCallback(
+        new UserCallbackInterface() {
+          @Override
+          public void userCallback(List<UserModel> users) {
+            Log.d("test", "My Chore user callback success users == null = " + (users == null));
+          }
 
-      @Override
-      public void userCallbackFailed(String message) {
-        Log.d("test", "user callback fail message = "+message);
-      }
-    });
+          @Override
+          public void userCallbackFailed(String message) {
+            Log.d("test", "user callback fail message = " + message);
+          }
+        });
   }
 }

@@ -19,37 +19,40 @@ public class MainActivity extends AppCompatActivity {
 
   private static final String TAG = "MainActivity";
 
-    private ModelInterface model;
+  private ModelInterface model;
 
-    @Override
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     final String userId = "test";
-//    if(savedInstanceState != null)
-//      userId = savedInstanceState.getString("tidy_user_id", "test");//TODO Update when login works
+    //    if(savedInstanceState != null)
+    //      userId = savedInstanceState.getString("tidy_user_id", "test");//TODO Update when login
+    // works
     FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
     model = new ModelInterface(mFirestore);
-    //Initiate fragments and tabs
+    // Initiate fragments and tabs
     ViewPager viewPager = findViewById(R.id.main_view_pager);
     setupViewPager(viewPager, userId);
     TabLayout tabLayout = findViewById(R.id.main_tabs);
     tabLayout.setupWithViewPager(viewPager);
-    //Enable navigation button to ProfileActivity
-    findViewById(R.id.main_to_profile_button).setOnClickListener(view -> {
-      Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
-      intent.putExtra("tidy_user_id", userId);
-      startActivity(intent);
-    });
+    // Enable navigation button to ProfileActivity
+    findViewById(R.id.main_to_profile_button)
+        .setOnClickListener(
+            view -> {
+              Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+              intent.putExtra("tidy_user_id", userId);
+              startActivity(intent);
+            });
   }
 
-  //Enables fragments to share ModelInterface
-  public ModelInterface getModelInterface(){
+  // Enables fragments to share ModelInterface
+  public ModelInterface getModelInterface() {
     return model;
   }
 
   private void setupViewPager(ViewPager viewPager, String userId) {
-    //Set arguments for the fragments
+    // Set arguments for the fragments
     Bundle bundle = new Bundle();
     bundle.putString("tidy_user_id", userId);
     AllChoresFragment allFrag = new AllChoresFragment();
