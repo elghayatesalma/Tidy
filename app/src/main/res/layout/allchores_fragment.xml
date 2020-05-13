@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/verticalLayout"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:gravity="center_horizontal">
 
-    <TextView
-        android:id="@+id/text_all_chores"
+    <Button android:id="@+id/all_chores_add"
+        android:text="Add Chore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="40dp"
-        android:text="All Chores"
-        android:textSize="25dp" />
-
-    <TableLayout
-        android:id="@+id/all_chores_table"
+        android:background="@null"
+        android:fontFamily="sans-serif"
+        android:textAllCaps="false"
+        android:textSize="25sp"/>
+    <ListView android:id="@+id/all_chores_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </TableLayout>
-
-
+        android:layout_height="match_parent" />
 </LinearLayout>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout android:id="@+id/add_chore_dialog_group"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <EditText android:id="@+id/add_chore_dialog_name"
+            android:hint="Chore Name"
+            android:importantForAutofill="no"
+            android:inputType="textAutoCorrect"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"/>
+        <EditText android:id="@+id/add_chore_dialog_description"
+            android:hint="Chore Description"
+            android:importantForAutofill="no"
+            android:inputType="textAutoCorrect"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"/>
+        <EditText android:id="@+id/add_chore_dialog_priority"
+            android:hint="Chore Priority"
+            android:importantForAutofill="no"
+            android:inputType="numberDecimal"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/add_chore_dialog_group">
+        <Button android:id="@+id/add_chore_dialog_cancel"
+            android:text="Cancel"
+            android:textAllCaps="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"/>
+        <Space android:layout_weight="1"
+            android:layout_width="0px"
+            android:layout_height="1px"/>
+        <Button android:id="@+id/add_chore_dialog_submit"
+            android:text="Submit"
+            android:textAllCaps="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"/>
+    </LinearLayout>
+</RelativeLayout>
