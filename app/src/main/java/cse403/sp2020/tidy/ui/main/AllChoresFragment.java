@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -33,7 +32,7 @@ public class AllChoresFragment extends Fragment {
   private ModelInterface model;
   private String userId;
   private ArrayList<TaskModel> choreList;
-  private ChoreListArrayAdapter<TaskModel> allChoreAdapter;
+  private ChoreListArrayAdapter<TaskModel> choreListAdapter;
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,8 +51,7 @@ public class AllChoresFragment extends Fragment {
       @Nullable Bundle savedInstanceState) {
     final View frag = inflater.inflate(R.layout.allchores_fragment, container, false);
     ListView allChoreListView = frag.findViewById(R.id.all_chores_list);
-    Button addChore = frag.findViewById(R.id.all_chores_add);
-    addChore.setOnClickListener(view -> {
+    frag.findViewById(R.id.all_chores_add).setOnClickListener(view -> {
       //Model add task
       final Dialog dialog = new Dialog(Objects.requireNonNull(getContext()));
       dialog.setContentView(R.layout.add_chore_dialog);
@@ -81,11 +79,10 @@ public class AllChoresFragment extends Fragment {
       });
     });
     choreList = new ArrayList<>();
-    allChoreAdapter = new ChoreListArrayAdapter<>(getContext(), choreList);
-    allChoreListView.setAdapter(allChoreAdapter);
+    choreListAdapter = new ChoreListArrayAdapter<>(getContext(), choreList);
+    allChoreListView.setAdapter(choreListAdapter);
     setModelCallBacks();
     model.setUser(userId);//Initiates data collection callbacks to initialize tasks
-
     return frag;
   }
 
@@ -108,7 +105,7 @@ public class AllChoresFragment extends Fragment {
         Log.d("test", "All Chore task callback success tasks == null = "+(users == null));
         choreList.clear();
         if(users != null) choreList.addAll(users);
-        allChoreAdapter.notifyDataSetChanged();
+        choreListAdapter.notifyDataSetChanged();
       }
 
       @Override
