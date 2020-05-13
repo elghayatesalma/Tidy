@@ -231,19 +231,19 @@ public class ModelInterface {
     userDoc
         .set(updateData)
         .addOnCompleteListener(
-                task -> {
-                  if (task.isSuccessful()) {
-                    Log.d(TAG, "User updated");
-                    mFirebaseUser = dataCopy;
-                    if (isUnassigned) {
-                      // manually trigger a callback, since unassigned does not have a listener
-                      callbackUsers(false);
-                    }
-                  } else {
-                    Log.w(TAG, "Failed to update user: " + task.getException());
-                    callbackUsers(true);
-                  }
-                });
+            task -> {
+              if (task.isSuccessful()) {
+                Log.d(TAG, "User updated");
+                mFirebaseUser = dataCopy;
+                if (isUnassigned) {
+                  // manually trigger a callback, since unassigned does not have a listener
+                  callbackUsers(false);
+                }
+              } else {
+                Log.w(TAG, "Failed to update user: " + task.getException());
+                callbackUsers(true);
+              }
+            });
   }
 
   // Takes in the new user to set, ignores if it is the same user
@@ -289,16 +289,16 @@ public class ModelInterface {
     householdDoc
         .set(household)
         .addOnCompleteListener(
-                task -> {
-                  if (task.isSuccessful()) {
-                    Log.d(TAG, "Household has been created");
-                    // Household created, assign user to it
-                    setHousehold(household);
-                  } else {
-                    Log.w(TAG, "Failed to create a new household: " + task.getException());
-                    callbackHousehold(true);
-                  }
-                });
+            task -> {
+              if (task.isSuccessful()) {
+                Log.d(TAG, "Household has been created");
+                // Household created, assign user to it
+                setHousehold(household);
+              } else {
+                Log.w(TAG, "Failed to create a new household: " + task.getException());
+                callbackHousehold(true);
+              }
+            });
   }
 
   // Takes in a household object to put the user in
@@ -486,14 +486,14 @@ public class ModelInterface {
                     taskDoc
                         .set(taskAdd)
                         .addOnCompleteListener(
-                                task1 -> {
-                                  if (task1.isSuccessful()) {
-                                    Log.w(TAG, "Task updated successfully");
-                                  } else {
-                                    Log.w(TAG, "Failed to update task: " + task1.getException());
-                                    callbackTasks(true);
-                                  }
-                                });
+                            task1 -> {
+                              if (task1.isSuccessful()) {
+                                Log.w(TAG, "Task updated successfully");
+                              } else {
+                                Log.w(TAG, "Failed to update task: " + task1.getException());
+                                callbackTasks(true);
+                              }
+                            });
                   }
                 } else {
                   Log.w(TAG, "Task lookup failed: " + task.getException());
@@ -532,14 +532,14 @@ public class ModelInterface {
                   taskDoc
                       .set(taskUpdate)
                       .addOnCompleteListener(
-                              task1 -> {
-                                if (task1.isSuccessful()) {
-                                  Log.w(TAG, "Task updated successfully");
-                                } else {
-                                  Log.w(TAG, "Failed to update task: " + task1.getException());
-                                  callbackTasks(true);
-                                }
-                              });
+                          task1 -> {
+                            if (task1.isSuccessful()) {
+                              Log.w(TAG, "Task updated successfully");
+                            } else {
+                              Log.w(TAG, "Failed to update task: " + task1.getException());
+                              callbackTasks(true);
+                            }
+                          });
                 } else {
                   Log.w(TAG, "Failed to find task: " + task.getException());
                   callbackTasks(true);
@@ -577,16 +577,16 @@ public class ModelInterface {
                   taskDoc
                       .delete()
                       .addOnCompleteListener(
-                              task1 -> {
-                                if (task1.isSuccessful()) {
-                                  // Note: Deleting non-existing documents DOES NOT fail, no way to
-                                  // tell either
-                                  Log.d(TAG, "Task removed successfully");
-                                } else {
-                                  Log.w(TAG, "Failed to remove task: " + task1.getException());
-                                  callbackTasks(true);
-                                }
-                              });
+                          task1 -> {
+                            if (task1.isSuccessful()) {
+                              // Note: Deleting non-existing documents DOES NOT fail, no way to
+                              // tell either
+                              Log.d(TAG, "Task removed successfully");
+                            } else {
+                              Log.w(TAG, "Failed to remove task: " + task1.getException());
+                              callbackTasks(true);
+                            }
+                          });
                 } else {
                   Log.w(TAG, "Failed to find task: " + task.getException());
                   callbackTasks(true);
@@ -702,8 +702,7 @@ public class ModelInterface {
                   return;
 
                 } else {
-                  Log.d(
-                      TAG, "Found " + snapshot.getDocuments().size() + " user with that ID");
+                  Log.d(TAG, "Found " + snapshot.getDocuments().size() + " user with that ID");
                   if (snapshot.getDocuments().size() > 1) {
                     Log.w(TAG, "Multiple entries of user found, logging them");
                     for (DocumentSnapshot d : snapshot.getDocuments()) {
