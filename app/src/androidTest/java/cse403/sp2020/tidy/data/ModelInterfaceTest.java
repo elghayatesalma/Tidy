@@ -12,7 +12,9 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import cse403.sp2020.tidy.data.callbacks.HouseholdCallbackInterface;
 import cse403.sp2020.tidy.data.callbacks.TaskCallbackInterface;
@@ -39,72 +41,158 @@ public class ModelInterfaceTest {
     mFirestore.setFirestoreSettings(settings);
   }
 
+  @After
+  public void tearDown() throws Exception {
+    mFirestore.terminate();
+  }
+
   @Test
-  // Runs through tests on a single model interface
+  // Runs through building and rebuilding the model interface for the same user
+  public void rebuildTest() throws InterruptedException {
+    String userId = "rebuildTest_userId";
+    CallbackChecker checker = new CallbackChecker();
+    ModelInterface model = new ModelInterface(mFirestore);
+
+    // Do initial build (includes checks
+    basicSetup(userId, model, checker);
+
+    // Grab household
+    HouseholdModel household = model.getHousehold();
+
+    // Destroy the current interface and rebuild
+    model.cleanUp();
+    model = new ModelInterface(mFirestore);
+    basicSetup(userId, model, checker, true);
+
+    // Destroy the current interface and rebuild with a new user in the same household
+    model.cleanUp();
+    model = new ModelInterface(mFirestore);
+    basicSetup(userId + "_2", model, checker, household);
+
+    // A second user should exist
+    assertTrue(household.equals(model.getHousehold()));
+    assertEquals(2, model.getUsers().size());
+
+    // Destroy the current interface and rebuild with original user
+    model.cleanUp();
+    model = new ModelInterface(mFirestore);
+    basicSetup(userId, model, checker, true);
+
+    // Add a task
+
+    // Destroy and rebuild again
+    model.cleanUp();
+    model = new ModelInterface(mFirestore);
+    basicSetup(userId, model, checker, true);
+
+    // Check that the data exists
+    assertEquals(2, model.getUsers().size());
+
+    // Always clean up and remove listeners
+    model.cleanUp();
+  }
+
+  @Test
+  // Does basic operations on tasks and checks for correctness
+  public void taskTest() throws InterruptedException {
+    String userId = "taskTest_userId";
+    CallbackChecker checker = new CallbackChecker();
+    ModelInterface model = new ModelInterface(mFirestore);
+    basicSetup(userId, model, checker);
+
+    // Add a task
+    checker.setTaskWaiting();
+    model.addTaskToHousehold(new TaskModel("name 1", "task 1", 1));
+    checker.block();
+    assertEquals(1, model.getTasks().size());
+    assertEquals("name 1", model.getTasks().get(0).getName());
+
+    // Update a task
+    checker.setTaskWaiting();
+    TaskModel task = new TaskModel("name 1 updated", "task 1", 1);
+    task.setTaskId(model.getTasks().get(0).getTaskId());
+    model.updateTask(task);
+    checker.block();
+    assertEquals(1, model.getTasks().size());
+    assertEquals("name 1 updated", model.getTasks().get(0).getName());
+
+    // Delete a task
+    checker.setTaskWaiting();
+    model.removeTaskFromHousehold(model.getTasks().get(0));
+    checker.block();
+    assertEquals(0, model.getTasks().size());
+
+    // Add a bunch of tasks
+    int numTasks = 10;
+    for (int i = 0; i < numTasks; i++) {
+      checker.setTaskWaiting();
+      model.addTaskToHousehold(new TaskModel("name " + i, "task " + i, i));
+      checker.block();
+      assertEquals(i + 1, model.getTasks().size());
+    }
+
+    // Update a bunch of tasks
+    List<TaskModel> tasks = model.getTasks();
+    checker.setTaskWaiting(tasks.size());
+    for (int i = 0; i < numTasks; i++) {
+      task = new TaskModel("updated", "task all", i);
+      task.setTaskId(tasks.get(i).getTaskId());
+      model.updateTask(task);
+    }
+    checker.block();
+
+    // Confirm updates
+    Set<Integer> prioritiesSeen = new HashSet<>();
+    for (TaskModel t : model.getTasks()) {
+      assertEquals("updated", t.getName());
+      assertFalse(prioritiesSeen.contains(t.getPriority()));
+      prioritiesSeen.add(t.getPriority());
+    }
+
+    // Delete a bunch of tasks
+    for (int i = 0; i < numTasks; i++) {
+      checker.setTaskWaiting();
+      model.removeTaskFromHousehold(model.getTasks().get(0));
+      checker.block();
+      assertEquals(numTasks - i - 1, model.getTasks().size());
+    }
+
+    assertTrue(model.getTasks().isEmpty());
+
+    model.cleanUp();
+  }
+
+  @Test
+  // Runs through mixed tests on a single model interface
   public void singleUserTest() throws InterruptedException {
     String userId = "single_test_user_id";
     CallbackChecker checker = new CallbackChecker();
     ModelInterface model = new ModelInterface(mFirestore);
-    model.registerHouseholdCallback(checker);
-    model.registerTaskCallback(checker);
-    model.registerUserCallback(checker);
-    // Wait for initial query to fail
-    checker.setUserWaiting();
-    model.setUser(userId); //  User should not exist, creates new blank user
-    checker.block();
 
-    // Blank user
-    assertNull(model.getCurrentUser().getFirstName());
+    // Do initial build (includes checks
+    basicSetup(userId, model, checker);
 
-    // Update user info
+    // Update the user's name
     checker.setUserWaiting();
-    UserModel currentUser = model.getCurrentUser();
-    UserModel updatedUser = new UserModel(currentUser.getFirebaseId(), "fname", "lname");
+    UserModel updatedUser = model.getCurrentUser();
+    updatedUser.setFirstName("New name");
     model.updateCurrentUser(updatedUser);
     checker.block();
 
-    // Check that metadata was updated
-    assertEquals(updatedUser.getFirstName(), model.getCurrentUser().getFirstName());
-
-    // Nothing is in the database yet, should be totally empty
-    assertNull("(Make sure to clear the database)", model.getHousehold());
-    assertNull(model.getTasks());
-    assertNull(model.getUsers());
-
-    // Create a household for the user and add 'em to it
-    checker.setHouseholdWaiting();
-    checker.setUserWaiting();
-    model.makeHousehold(new HouseholdModel());
-    checker.block();
-
-    // A household with a user should now exist
-    assertNotNull(model.getHousehold());
-    assertEquals(1, model.getUsers().size());
-
     // Add a number of tasks
-    checker.setTaskWaiting();
+    checker.setTaskWaiting(3);
     model.addTaskToHousehold(new TaskModel("name 1", "task 1", 1));
-    checker.block();
-    checker.setTaskWaiting();
     model.addTaskToHousehold(new TaskModel("name 2", "task 2", 2));
-    checker.block();
-    checker.setTaskWaiting();
     model.addTaskToHousehold(new TaskModel("name 3", "task 3", 3));
     checker.block();
-    assertEquals(model.getTasks().size(), 3);
-    // TODO: accuracy checks
+    assertEquals(3, model.getTasks().size());
 
     // Delete the tasks
-    checker.setTaskWaiting();
-    model.removeTaskFromHousehold(model.getTasks().get(0));
-    checker.block();
-    assertEquals(2, model.getTasks().size());
-    checker.setTaskWaiting();
-    model.removeTaskFromHousehold(model.getTasks().get(0));
-    checker.block();
-    assertEquals(1, model.getTasks().size());
-    checker.setTaskWaiting();
-    model.removeTaskFromHousehold(model.getTasks().get(0));
+    checker.setTaskWaiting(3);
+    List<TaskModel> tasks = model.getTasks();
+    model.removeTaskFromHousehold(tasks.get(0));
+    model.removeTaskFromHousehold(tasks.get(1));
+    model.removeTaskFromHousehold(tasks.get(2));
     checker.block();
     assertEquals(0, model.getTasks().size());
 
@@ -121,20 +209,17 @@ public class ModelInterfaceTest {
     model.removeUserFromHousehold();
     checker.block();
 
+    // Check that all local data was cleared after leaving
     assertNull(model.getHousehold());
     assertNull(model.getTasks());
     assertNull(model.getUsers());
 
-    // Throw in something to clear the local user
+    // Add some other user
     checker.setUserWaiting();
     model.setUser("some_new_id");
     checker.block();
 
-    assertNull(model.getHousehold());
-    assertNull(model.getTasks());
-    assertNull(model.getUsers());
-
-    // Get the user back
+    // Get the original user back
     checker.setUserWaiting();
     model.setUser(userId);
     checker.block();
@@ -153,15 +238,12 @@ public class ModelInterfaceTest {
     assertEquals(1, model.getUsers().size());
     assertEquals(1, model.getTasks().size());
 
-    // Check that a user's metadata is kept
-
     // Always clean up and remove listeners
     model.cleanUp();
   }
 
   @Test
-  // Tests adding a number of users to different households (each user has an interface)
-  // Each user has an associated model interface, each household has a checker
+  // Runs mixed tests on many users, each with a separate interface and divided into households
   // Users are assigned to households in alternating pattern, i.e.:
   //   users              : 1 2 3 4 ...
   //   household assigned : 1 2 1 2 ...
@@ -317,9 +399,75 @@ public class ModelInterfaceTest {
     }
   }
 
-  @After
-  public void tearDown() throws Exception {
-    mFirestore.terminate();
+  // Constructs a basic setup based on the input params
+  // Household ignored if the user exists
+  private void basicSetup(
+      String userId,
+      ModelInterface model,
+      CallbackChecker checker,
+      HouseholdModel household,
+      boolean userExists)
+      throws InterruptedException {
+
+    model.registerHouseholdCallback(checker);
+    model.registerTaskCallback(checker);
+    model.registerUserCallback(checker);
+
+    Thread.sleep(100);
+
+    if (!userExists) {
+      // Wait for initial query to fail
+      checker.setUserWaiting();
+      model.setUser(userId); //  User should not exist, creates new blank user
+      checker.block();
+
+      // Initial add, no data should exist
+      assertNull("(Make sure to clear the database)", model.getHousehold());
+      assertNull(model.getTasks());
+      assertNull(model.getUsers());
+
+      // Give the user a household
+      checker.setHouseholdWaiting();
+      checker.setUserWaiting();
+      if (household == null) {
+        model.makeHousehold(new HouseholdModel());
+      } else {
+        checker.setTaskWaiting();
+        model.setHousehold(household);
+      }
+      checker.block();
+    } else {
+      // Should get a house and all the data
+      checker.setUserWaiting();
+      checker.setTaskWaiting();
+      checker.setHouseholdWaiting();
+      model.setUser(userId);
+      checker.block();
+    }
+
+    // A household with a user should now exist
+    assertNotNull(model.getHousehold());
+    assertNotNull(model.getTasks());
+    assertNotNull(model.getUsers());
+    assertNotNull(model.getCurrentUser());
+    assertTrue(model.getUsers().size() > 0);
+  }
+
+  private void basicSetup(
+      String userId, ModelInterface model, CallbackChecker checker, boolean userExists)
+      throws InterruptedException {
+    basicSetup(userId, model, checker, null, userExists);
+  }
+
+  private void basicSetup(
+      String userId, ModelInterface model, CallbackChecker checker, HouseholdModel household)
+      throws InterruptedException {
+    basicSetup(userId, model, checker, household, false);
+  }
+
+  private void basicSetup(String userId, ModelInterface model, CallbackChecker checker)
+      throws InterruptedException {
+    basicSetup(userId, model, checker, null, false);
   }
 }
 

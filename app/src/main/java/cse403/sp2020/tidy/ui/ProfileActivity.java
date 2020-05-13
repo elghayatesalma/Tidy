@@ -15,7 +15,6 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 
 import com.google.firebase.firestore.*;
-import com.google.firebase.firestore.auth.User;
 
 import cse403.sp2020.tidy.R;
 import cse403.sp2020.tidy.data.ModelInterface;
@@ -56,36 +54,54 @@ public class ProfileActivity extends AppCompatActivity {
     setContentView(R.layout.activity_profile);
 
     Intent data = getIntent();
+    final TextView nameView = (TextView) findViewById(R.id.profile_username);
     userID = data.getStringExtra("tidy_user_id");
 
     // initialize firestore instance
-      modelInterface = new ModelInterface(FirebaseFirestore.getInstance());
-      setModelCallbacks();
-      modelInterface.setUser(userID);
+    modelInterface = new ModelInterface(FirebaseFirestore.getInstance());
+    setModelCallbacks();
+    UserCallbackInterface c =
+        new UserCallbackInterface() {
+          @Override
+          public void userCallback(List<UserModel> users) {
+            user = modelInterface.getCurrentUser();
+            username = user.getFirstName() + " " + user.getLastName();
+            nameView.setText(username);
+          }
 
-      user = modelInterface.getCurrentUser();
-      household = modelInterface.getHousehold();
+          @Override
+          public void userCallbackFailed(String message) {
+            username = "No Name";
+            nameView.setText(username);
+          }
+        };
+    Log.w("PROFILE", userID);
+    modelInterface.setUser(userID);
+
+    modelInterface.registerUserCallback(c);
+    user = modelInterface.getCurrentUser();
+    household = modelInterface.getHousehold();
 
     // Button for going back to main activity
     ImageButton backToMain = (ImageButton) findViewById(R.id.profile_back);
-    backToMain.setOnClickListener(new View.OnClickListener() {
+    backToMain.setOnClickListener(
+        new View.OnClickListener() {
 
-      @Override
-      public void onClick(View v) {
-        Intent intent = new Intent(v.getContext(), MainActivity.class);
-        v.getContext().startActivity(intent);
-      }
-    });
+          @Override
+          public void onClick(View v) {
+            Intent intent = new Intent(v.getContext(), MainActivity.class);
+            v.getContext().startActivity(intent);
+          }
+        });
 
     // get username if user != null, otherwise fill in name with default
     if (user != null) {
-        username = user.getFirstName() + " " + user.getLastName();
+      username = user.getFirstName() + " " + user.getLastName();
     } else {
-        username = "No Name";
+      username = "No Name";
     }
 
     // set textView to username
-    TextView nameView = (TextView) findViewById(R.id.profile_username);
     nameView.setText(username);
 
     // this section makes the profile picture circular
@@ -121,7 +137,10 @@ public class ProfileActivity extends AppCompatActivity {
 
                 int targetPosition = target.getAdapterPosition();
 
-                Collections.swap(choreList, draggedPosition, targetPosition); // probably work with backend on chore preference algo
+                Collections.swap(
+                    choreList,
+                    draggedPosition,
+                    targetPosition); // probably work with backend on chore preference algo
                 // needs to update preference list
                 recyclerAdapter.notifyItemMoved(draggedPosition, targetPosition);
 
@@ -136,48 +155,50 @@ public class ProfileActivity extends AppCompatActivity {
   }
 
   private void setModelCallbacks() {
-      modelInterface.registerTaskCallback(new TaskCallbackInterface() {
+    modelInterface.registerTaskCallback(
+        new TaskCallbackInterface() {
           @Override
           public void taskCallback(List<TaskModel> users) {
-              Log.d("test", "Profile task callback success tasks == null = " + (users == null));
-              choreList.clear();
-              for (int i = 0; i < users.size(); i++) {
-                  choreList.add(users.get(i).getName());
-                  recyclerAdapter.notifyDataSetChanged();
-              }
+            Log.d("test", "Profile task callback success tasks == null = " + (users == null));
+            for (int i = 0; i < users.size(); i++) {
+              choreList.add(users.get(i).getName());
+              recyclerAdapter.notifyDataSetChanged();
+            }
           }
 
           @Override
           public void taskCallbackFail(String message) {
-              Log.d("test", "task callback fail message = " + message);
+            Log.d("test", "task callback fail message = " + message);
           }
-      });
+        });
 
-      modelInterface.registerHouseholdCallback(new HouseholdCallbackInterface() {
+    modelInterface.registerHouseholdCallback(
+        new HouseholdCallbackInterface() {
           @Override
           public void householdCallback(HouseholdModel household) {
-              Log.d(
-                      "test",
-                      "Profile house callback success household == null = " + (household == null));
+            Log.d(
+                "test",
+                "Profile house callback success household == null = " + (household == null));
           }
 
           @Override
           public void householdCallbackFailed(String message) {
-              Log.d("test", "house callback fail message = " + message);
+            Log.d("test", "house callback fail message = " + message);
           }
-      });
+        });
 
-      modelInterface.registerUserCallback(new UserCallbackInterface() {
+    modelInterface.registerUserCallback(
+        new UserCallbackInterface() {
           @Override
           public void userCallback(List<UserModel> users) {
-              Log.d("test", "Profile user callback success users == null = " + (users == null));
+            Log.d("test", "Profile user callback success users == null = " + (users == null));
           }
 
           @Override
           public void userCallbackFailed(String message) {
-              Log.d("test", "user callback fail message = " + message);
+            Log.d("test", "user callback fail message = " + message);
           }
-      });
+        });
   }
 
   /*
