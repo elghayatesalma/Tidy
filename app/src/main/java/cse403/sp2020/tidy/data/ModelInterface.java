@@ -738,8 +738,8 @@ public class ModelInterface {
             task -> {
               if (task.isSuccessful()) {
                 Log.d(TAG, "User removed successfully");
-                clearListeners();  // Important, user should not get updates from old household
-                clearHousehold();  // Data from current household is no longer needed
+                clearListeners(); // Important, user should not get updates from old household
+                clearHousehold(); // Data from current household is no longer needed
                 callback.callback(getCurrentUser());
               } else {
                 Log.w(TAG, "Failed to remove user: " + task.getException());

@@ -1,6 +1,5 @@
 package cse403.sp2020.tidy.data;
 
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +11,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import cse403.sp2020.tidy.data.model.HouseholdModel;
 import cse403.sp2020.tidy.data.model.UserModel;
-
 
 public class ModelInterfaceTest {
   private FirebaseFirestore mFirestore;
@@ -37,127 +35,144 @@ public class ModelInterfaceTest {
     mFirestore.terminate();
   }
 
-   @Test
-   // Tests basic household operations
-   public void householdTest() throws InterruptedException {
-     ModelInterface model = new ModelInterface(mFirestore);
-     final String userId = "buildTest_userId";
-     final CallbackCounter counter = new CallbackCounter();
+  @Test
+  // Tests basic household operations
+  public void householdTest() throws InterruptedException {
+    ModelInterface model = new ModelInterface(mFirestore);
+    final String userId = "buildTest_userId";
+    final CallbackCounter counter = new CallbackCounter();
 
-     // Test that a user can be added
-     counter.increment();
-     model.setCurrentUser(userId, user ->{
-       counter.decrement();
-       assertNotNull(user);
-       assertNull("(Make sure to clear the database)", model.getHousehold());
-       assertNull(model.getUsers());
-       assertNull(model.getTasks());
-     });
-     counter.block();
+    // Test that a user can be added
+    counter.increment();
+    model.setCurrentUser(
+        userId,
+        user -> {
+          counter.decrement();
+          assertNotNull(user);
+          assertNull("(Make sure to clear the database)", model.getHousehold());
+          assertNull(model.getUsers());
+          assertNull(model.getTasks());
+        });
+    counter.block();
 
-     // Update the user
-     counter.increment();
-     UserModel updatedUser = new UserModel("ignore", "fname", "lname");
-     model.updateCurrentUser(updatedUser, user ->{
-       counter.decrement();
-       assertNotNull(user);
-       assertEquals(userId, user.getFirebaseId());
-       assertEquals("fname", user.getFirstName());
-       assertEquals("lname", user.getLastName());
-     });
-     counter.block();
+    // Update the user
+    counter.increment();
+    UserModel updatedUser = new UserModel("ignore", "fname", "lname");
+    model.updateCurrentUser(
+        updatedUser,
+        user -> {
+          counter.decrement();
+          assertNotNull(user);
+          assertEquals(userId, user.getFirebaseId());
+          assertEquals("fname", user.getFirstName());
+          assertEquals("lname", user.getLastName());
+        });
+    counter.block();
 
-     // Add the user to a new household
-     counter.increment();
-     model.createHousehold(new HouseholdModel("ignore"), household ->{
-       counter.decrement();
-       assertNotNull(household);
-       assertNotEquals("ignore", household.getHouseholdId());
-     });
-     counter.block();
+    // Add the user to a new household
+    counter.increment();
+    model.createHousehold(
+        new HouseholdModel("ignore"),
+        household -> {
+          counter.decrement();
+          assertNotNull(household);
+          assertNotEquals("ignore", household.getHouseholdId());
+        });
+    counter.block();
 
-     // Grab the first household data
-     HouseholdModel household1 = model.getHousehold();
+    // Grab the first household data
+    HouseholdModel household1 = model.getHousehold();
 
-     // Remove user
-     counter.increment();
-     model.removeUserFromHousehold(user ->{
-       counter.decrement();
-       assertNotNull(user);
-       assertEquals(userId, user.getFirebaseId());
-       assertEquals("fname", user.getFirstName());
-       assertEquals("lname", user.getLastName());
-       assertNull("(Make sure to clear the database)", model.getHousehold());
-       assertNull(model.getUsers());
-       assertNull(model.getTasks());
-     });
-     counter.block();
+    // Remove user
+    counter.increment();
+    model.removeUserFromHousehold(
+        user -> {
+          counter.decrement();
+          assertNotNull(user);
+          assertEquals(userId, user.getFirebaseId());
+          assertEquals("fname", user.getFirstName());
+          assertEquals("lname", user.getLastName());
+          assertNull("(Make sure to clear the database)", model.getHousehold());
+          assertNull(model.getUsers());
+          assertNull(model.getTasks());
+        });
+    counter.block();
 
-     // Add a new household
-     counter.increment();
-     model.createHousehold(household1, household -> {
-       counter.decrement();
-       assertNotNull(household);
-       assertNotEquals("ignore", household.getHouseholdId());
-       assertNotEquals(household1.getHouseholdId(), household.getHouseholdId());
-     });
-     counter.block();
+    // Add a new household
+    counter.increment();
+    model.createHousehold(
+        household1,
+        household -> {
+          counter.decrement();
+          assertNotNull(household);
+          assertNotEquals("ignore", household.getHouseholdId());
+          assertNotEquals(household1.getHouseholdId(), household.getHouseholdId());
+        });
+    counter.block();
 
-     // Again, remove user
-     counter.increment();
-     model.removeUserFromHousehold(user ->{
-       counter.decrement();
-       assertNotNull(user);
-       assertEquals(userId, user.getFirebaseId());
-       assertEquals("fname", user.getFirstName());
-       assertEquals("lname", user.getLastName());
-       assertNull("(Make sure to clear the database)", model.getHousehold());
-       assertNull(model.getUsers());
-       assertNull(model.getTasks());
-     });
-     counter.block();
+    // Again, remove user
+    counter.increment();
+    model.removeUserFromHousehold(
+        user -> {
+          counter.decrement();
+          assertNotNull(user);
+          assertEquals(userId, user.getFirebaseId());
+          assertEquals("fname", user.getFirstName());
+          assertEquals("lname", user.getLastName());
+          assertNull("(Make sure to clear the database)", model.getHousehold());
+          assertNull(model.getUsers());
+          assertNull(model.getTasks());
+        });
+    counter.block();
 
-     // Add the user back to original household
-     counter.increment();
-     model.setCurrentHousehold(household1.getHouseholdId(), household -> {
-       counter.decrement();
-       assertNotNull(household);
-       assertNotEquals("ignore", household.getHouseholdId());
-       assertEquals(household1.getHouseholdId(), household.getHouseholdId());
-     });
-     counter.block();
+    // Add the user back to original household
+    counter.increment();
+    model.setCurrentHousehold(
+        household1.getHouseholdId(),
+        household -> {
+          counter.decrement();
+          assertNotNull(household);
+          assertNotEquals("ignore", household.getHouseholdId());
+          assertEquals(household1.getHouseholdId(), household.getHouseholdId());
+        });
+    counter.block();
 
-     model.cleanUp();
-   }
+    model.cleanUp();
+  }
 
-   private void basicSetup(ModelInterface model, CallbackCounter counter, String userId) throws InterruptedException {
-     // Add user
-     counter.increment();
-     model.setCurrentUser(userId, user ->{
-       counter.decrement();
-       assertNotNull(user);
-       assertNull("(Make sure to clear the database)", model.getHousehold());
-       assertNull(model.getUsers());
-       assertNull(model.getTasks());
-     });
-     counter.block();
+  private void basicSetup(ModelInterface model, CallbackCounter counter, String userId)
+      throws InterruptedException {
+    // Add user
+    counter.increment();
+    model.setCurrentUser(
+        userId,
+        user -> {
+          counter.decrement();
+          assertNotNull(user);
+          assertNull("(Make sure to clear the database)", model.getHousehold());
+          assertNull(model.getUsers());
+          assertNull(model.getTasks());
+        });
+    counter.block();
 
-     // Make new household
-     counter.increment();
-     model.createHousehold(new HouseholdModel("ignore"), household ->{
-       counter.decrement();
-       assertNotNull(household);
-       assertNotEquals("ignore", household.getHouseholdId());
-       assertEquals(1, model.getUsers().size());
-       assertEquals(0, model.getTasks().size());
-     });
-     counter.block();
-   }
- }
+    // Make new household
+    counter.increment();
+    model.createHousehold(
+        new HouseholdModel("ignore"),
+        household -> {
+          counter.decrement();
+          assertNotNull(household);
+          assertNotEquals("ignore", household.getHouseholdId());
+          assertEquals(1, model.getUsers().size());
+          assertEquals(0, model.getTasks().size());
+        });
+    counter.block();
+  }
+}
 
- // Simple class to keep track of callbacks and block until they finish
- class CallbackCounter {
-   private int count;
+// Simple class to keep track of callbacks and block until they finish
+class CallbackCounter {
+  private int count;
 
   public boolean isPending() {
     return count > 0;

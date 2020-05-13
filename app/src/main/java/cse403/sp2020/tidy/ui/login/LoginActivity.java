@@ -28,7 +28,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-
 import cse403.sp2020.tidy.R;
 import cse403.sp2020.tidy.data.ModelInterface;
 import cse403.sp2020.tidy.ui.MainActivity;
