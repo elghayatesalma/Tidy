@@ -2,7 +2,6 @@ package cse403.sp2020.tidy.ui.main;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,17 +14,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import cse403.sp2020.tidy.R;
 import cse403.sp2020.tidy.data.ModelInterface;
-import cse403.sp2020.tidy.data.callbacks.HouseholdCallbackInterface;
-import cse403.sp2020.tidy.data.callbacks.TaskCallbackInterface;
-import cse403.sp2020.tidy.data.callbacks.UserCallbackInterface;
-import cse403.sp2020.tidy.data.model.HouseholdModel;
 import cse403.sp2020.tidy.data.model.TaskModel;
-import cse403.sp2020.tidy.data.model.UserModel;
 import cse403.sp2020.tidy.ui.MainActivity;
 
 public class MyChoresFragment extends Fragment {
@@ -87,7 +80,8 @@ public class MyChoresFragment extends Fragment {
                           valid = false;
                         }
                         if (valid) {
-//                          model.addTaskToHousehold(new TaskModel(name, description, priority));
+                          //                          model.addTaskToHousehold(new TaskModel(name,
+                          // description, priority));
                           dialog.dismiss();
                         } else {
                           Toast.makeText(
@@ -117,48 +111,50 @@ public class MyChoresFragment extends Fragment {
   }
 
   private void setModelCallBacks() {
-//    model.registerTaskCallback(
-//        new TaskCallbackInterface() {
-//          @Override
-//          public void taskCallback(List<TaskModel> users) {
-//            Log.d("test", "My Chore task callback success tasks == null = " + (users == null));
-//            choreList.clear();
-//            if (users != null) choreList.addAll(users);
-//            choreListAdapter.notifyDataSetChanged();
-//          }
-//
-//          @Override
-//          public void taskCallbackFail(String message) {
-//            Log.d("test", "task callback fail message = " + message);
-//          }
-//        });
-//
-//    model.registerHouseholdCallback(
-//        new HouseholdCallbackInterface() {
-//          @Override
-//          public void householdCallback(HouseholdModel household) {
-//            Log.d(
-//                "test",
-//                "My Chore house callback success household == null = " + (household == null));
-//          }
-//
-//          @Override
-//          public void householdCallbackFailed(String message) {
-//            Log.d("test", "house callback fail message = " + message);
-//          }
-//        });
-//
-//    model.registerUserCallback(
-//        new UserCallbackInterface() {
-//          @Override
-//          public void userCallback(List<UserModel> users) {
-//            Log.d("test", "My Chore user callback success users == null = " + (users == null));
-//          }
-//
-//          @Override
-//          public void userCallbackFailed(String message) {
-//            Log.d("test", "user callback fail message = " + message);
-//          }
-//        });
+    //    model.registerTaskCallback(
+    //        new TaskCallbackInterface() {
+    //          @Override
+    //          public void taskCallback(List<TaskModel> users) {
+    //            Log.d("test", "My Chore task callback success tasks == null = " + (users ==
+    // null));
+    //            choreList.clear();
+    //            if (users != null) choreList.addAll(users);
+    //            choreListAdapter.notifyDataSetChanged();
+    //          }
+    //
+    //          @Override
+    //          public void taskCallbackFail(String message) {
+    //            Log.d("test", "task callback fail message = " + message);
+    //          }
+    //        });
+    //
+    //    model.registerHouseholdCallback(
+    //        new HouseholdCallbackInterface() {
+    //          @Override
+    //          public void householdCallback(HouseholdModel household) {
+    //            Log.d(
+    //                "test",
+    //                "My Chore house callback success household == null = " + (household == null));
+    //          }
+    //
+    //          @Override
+    //          public void householdCallbackFailed(String message) {
+    //            Log.d("test", "house callback fail message = " + message);
+    //          }
+    //        });
+    //
+    //    model.registerUserCallback(
+    //        new UserCallbackInterface() {
+    //          @Override
+    //          public void userCallback(List<UserModel> users) {
+    //            Log.d("test", "My Chore user callback success users == null = " + (users ==
+    // null));
+    //          }
+    //
+    //          @Override
+    //          public void userCallbackFailed(String message) {
+    //            Log.d("test", "user callback fail message = " + message);
+    //          }
+    //        });
   }
 }
