@@ -3,13 +3,8 @@ package cse403.sp2020.tidy.data;
 import java.util.List;
 import java.util.ArrayList;
 
-import androidx.annotation.NonNull;
-
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.*;
 
 import cse403.sp2020.tidy.data.callbacks.HouseholdCallbackInterface;
@@ -67,6 +62,7 @@ import cse403.sp2020.tidy.data.model.UserModel;
  *
  *  cleanUp()
  *   - removes all local data (not firestore cache) and disables listeners
+ *   - removes callbacks as well
  *
  *  getCurrentUser()
  *   - Returns a UserModel object that represents the current user, or null if no user
@@ -187,8 +183,9 @@ public class ModelInterface {
   }
 
   // Use to clear all data and stop listeners
+  // Also removes callbacks
   public void cleanUp() {
-    clearData();
+    clearData(true);
   }
 
   /* Interface Methods */
@@ -234,22 +231,19 @@ public class ModelInterface {
     userDoc
         .set(updateData)
         .addOnCompleteListener(
-            new OnCompleteListener<Void>() {
-              @Override
-              public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                  Log.d(TAG, "User updated");
-                  mFirebaseUser = dataCopy;
-                  if (isUnassigned) {
-                    // manually trigger a callback, since unassigned does not have a listener
-                    callbackUsers(false);
+                task -> {
+                  if (task.isSuccessful()) {
+                    Log.d(TAG, "User updated");
+                    mFirebaseUser = dataCopy;
+                    if (isUnassigned) {
+                      // manually trigger a callback, since unassigned does not have a listener
+                      callbackUsers(false);
+                    }
+                  } else {
+                    Log.w(TAG, "Failed to update user: " + task.getException());
+                    callbackUsers(true);
                   }
-                } else {
-                  Log.w(TAG, "Failed to update user: " + task.getException());
-                  callbackUsers(true);
-                }
-              }
-            });
+                });
   }
 
   // Takes in the new user to set, ignores if it is the same user
@@ -295,19 +289,16 @@ public class ModelInterface {
     householdDoc
         .set(household)
         .addOnCompleteListener(
-            new OnCompleteListener<Void>() {
-              @Override
-              public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                  Log.d(TAG, "Household has been created");
-                  // Household created, assign user to it
-                  setHousehold(household);
-                } else {
-                  Log.w(TAG, "Failed to create a new household: " + task.getException());
-                  callbackHousehold(true);
-                }
-              }
-            });
+                task -> {
+                  if (task.isSuccessful()) {
+                    Log.d(TAG, "Household has been created");
+                    // Household created, assign user to it
+                    setHousehold(household);
+                  } else {
+                    Log.w(TAG, "Failed to create a new household: " + task.getException());
+                    callbackHousehold(true);
+                  }
+                });
   }
 
   // Takes in a household object to put the user in
@@ -495,17 +486,14 @@ public class ModelInterface {
                     taskDoc
                         .set(taskAdd)
                         .addOnCompleteListener(
-                            new OnCompleteListener<Void>() {
-                              @Override
-                              public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                  Log.w(TAG, "Task updated successfully");
-                                } else {
-                                  Log.w(TAG, "Failed to update task: " + task.getException());
-                                  callbackTasks(true);
-                                }
-                              }
-                            });
+                                task1 -> {
+                                  if (task1.isSuccessful()) {
+                                    Log.w(TAG, "Task updated successfully");
+                                  } else {
+                                    Log.w(TAG, "Failed to update task: " + task1.getException());
+                                    callbackTasks(true);
+                                  }
+                                });
                   }
                 } else {
                   Log.w(TAG, "Task lookup failed: " + task.getException());
@@ -544,17 +532,14 @@ public class ModelInterface {
                   taskDoc
                       .set(taskUpdate)
                       .addOnCompleteListener(
-                          new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                              if (task.isSuccessful()) {
-                                Log.w(TAG, "Task updated successfully");
-                              } else {
-                                Log.w(TAG, "Failed to update task: " + task.getException());
-                                callbackTasks(true);
-                              }
-                            }
-                          });
+                              task1 -> {
+                                if (task1.isSuccessful()) {
+                                  Log.w(TAG, "Task updated successfully");
+                                } else {
+                                  Log.w(TAG, "Failed to update task: " + task1.getException());
+                                  callbackTasks(true);
+                                }
+                              });
                 } else {
                   Log.w(TAG, "Failed to find task: " + task.getException());
                   callbackTasks(true);
@@ -592,19 +577,16 @@ public class ModelInterface {
                   taskDoc
                       .delete()
                       .addOnCompleteListener(
-                          new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                              if (task.isSuccessful()) {
-                                // Note: Deleting non-existing documents DOES NOT fail, no way to
-                                // tell either
-                                Log.d(TAG, "Task removed successfully");
-                              } else {
-                                Log.w(TAG, "Failed to remove task: " + task.getException());
-                                callbackTasks(true);
-                              }
-                            }
-                          });
+                              task1 -> {
+                                if (task1.isSuccessful()) {
+                                  // Note: Deleting non-existing documents DOES NOT fail, no way to
+                                  // tell either
+                                  Log.d(TAG, "Task removed successfully");
+                                } else {
+                                  Log.w(TAG, "Failed to remove task: " + task1.getException());
+                                  callbackTasks(true);
+                                }
+                              });
                 } else {
                   Log.w(TAG, "Failed to find task: " + task.getException());
                   callbackTasks(true);
@@ -721,7 +703,7 @@ public class ModelInterface {
 
                 } else {
                   Log.d(
-                      TAG, "Found " + snapshot.getDocuments().size() + " households with user ID");
+                      TAG, "Found " + snapshot.getDocuments().size() + " user with that ID");
                   if (snapshot.getDocuments().size() > 1) {
                     Log.w(TAG, "Multiple entries of user found, logging them");
                     for (DocumentSnapshot d : snapshot.getDocuments()) {
@@ -731,7 +713,9 @@ public class ModelInterface {
 
                   // Get the (first) user entry, and create a user model from it
                   mFirebaseUser = buildUser(snapshot.getDocuments().get(0));
-                  callbackUsers(true);
+                  // callbackUsers(true);
+                  // TODO: Is this needed? may leave a gap in user callbacks
+                  //  Maybe as status? new user set?
 
                   // User found within a household, so get household data
                   queryHouseholdIdByUser();
@@ -882,19 +866,6 @@ public class ModelInterface {
                   Log.d(TAG, "Household found with id " + householdID);
 
                   mHousehold = buildHousehold(snapshot);
-
-                  // Set the user this household
-                  if (mFirebaseUser != null) {
-                    Log.d(TAG, "Setting user to new household");
-                    mFirestore
-                        .collection(HOUSEHOLD_COLLECTION_NAME)
-                        .document(householdID)
-                        .collection(USERS_COLLECTION_NAME)
-                        .document(mFirebaseUser.getFirebaseId())
-                        .set(mFirebaseUser);
-                  } else {
-                    Log.w(TAG, "User is null, unable to assign to household");
-                  }
 
                   // Household has been found and set, so get the Users and Tasks
                   queryTasks();
@@ -1054,8 +1025,12 @@ public class ModelInterface {
     return null;
   }
 
-  // Removes all local data and references for the current household
   private void clearData() {
+    clearData(false);
+  }
+
+  // Removes all local data and references for the current household
+  private void clearData(boolean removeCallbacks) {
     Log.d(TAG, "Clearing all data");
 
     // Remove listeners if they exist
@@ -1070,6 +1045,13 @@ public class ModelInterface {
     if (mUsersListener != null) {
       mUsersListener.remove();
       mUsersListener = null;
+    }
+
+    // Remove the callbacks
+    if (removeCallbacks) {
+      mUserCallback = null;
+      mTaskCallback = null;
+      mHouseholdCallback = null;
     }
 
     // Clear local data
