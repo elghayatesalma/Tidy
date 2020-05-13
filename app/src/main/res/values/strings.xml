@@ -12,5 +12,13 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
+    <string name="signed_out">Signed Out</string>
+    <string name="login_title_text">Log in using Google Account</string>
+    <string name="desc_google_icon">Google</string>
+    <string name="sign_out">Firebase and Google Sign-Out</string>
+    <string name="disconnect">Disconnect Google</string>
+    <string name="firebase_disconnected">Firebase Disconnected</string>
+    <string name="firebase_status_fmt">Firebase User Account Info:\n Display Name: %1$s\n Email: %2$s\n PhotoURL: %3$s\n FirebaseUID: %4$s</string>
+    <string name="signed_in_fmt">Google User Account Info:\n Display Name: %1$s\n Email: %2$s\n GivenName: %3$s\n FamilyName: %4$s</string>
     <string name="profile">profile</string>
 </resources>
