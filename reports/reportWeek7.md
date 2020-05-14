@@ -3,7 +3,7 @@
 - Implement navigation between all currently developed screens
 ## Short term:
 **All**
-- Work on documentation assignement
+- Work on documentation assignment
 - Meet over the course of the week to discuss progress
 
 **Frontend**
