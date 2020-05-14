@@ -1,27 +1,27 @@
 ## Goals from a week ago:
-- Complete CI setup
-- Learn firebase and how to set it up for the main project
-- Setup Android Studio project with some basic template screens
+- Complete Beta release
+- Implement navigation between all currently developed screens
 ## Short term:
 **All**
-- Finished Testing and CI Assignment (5/5)
+- Work on documentation assignement
 - Meet over the course of the week to discuss progress
 
 **Frontend**
 - Implement navigation between all currently developed screens sometime before the end of this week
-- Work on assigned parts over the course of the week according to the schedule.
+- Work on the rest of the assigned parts over the course of the week according to the schedule.
 
 **Backend**
-- We plan on meeting and creating the foundation for the backend later this week, then splitting off
+- We plan on meeting and working on the remaining parts of the backend later this week, then splitting off
 and working on independent portions through next week
 
 ## Long term:
 **All**
-- Start connecting the frontend and backend sometime soon
-- Beta release
+- Connecting the frontend and backend 
+- Final release
 
 **Frontend**
-- Add some content to our All Chores and My Chores screens by 5/12
+- Add setup screen.
+- polish user and login/sign-up screen
 
 **Backend**
 - Have a functioning datapath from the database to the front end
@@ -39,10 +39,10 @@ connecting the front-end and back-end so we need to prepare for when that time c
 The Beta release assignment is coming up soon, so we just need to continue progressing
 and getting ready for that.
 
-**Backend:** We plan on creating a functioning backend soon. For now, we will focus on creating
-valid queries and transactions. After that is functioning, we will progress into making a
-checker module that will perform any validations on the data (i.e. when chores need to be assigned),
-and create any transactions as necessary before passing the data to the Model / Frontend.
+**Backend:** We plan on creating on creating valid queries and transactions. After that is functioning, 
+we will progress into making a checker module that will perform any validations on the data 
+(i.e. when chores need to be assigned), and create any transactions as necessary before passing the 
+data to the Model / Frontend.
 
 ## Contributions of individual team members
 **Kcee Landon:** Implemented Main Screen skeleton with All Chores and My Chores fragment tabs.
@@ -50,7 +50,7 @@ Went through a few basic Android tutorials.
 
 **Jacob Miller:** Implemented login skeleton.
 
-**Salma El Ghayate:** Worked on setup module
+**Salma El Ghayate:** Working on setup module and going through Android tutorials.
 
 **Nick Durand:** Did further work on reviewing example Firebase/Firestore apps. Added several
 diagrams detailing possible layouts for the backend, including possible modules
