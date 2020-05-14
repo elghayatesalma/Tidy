@@ -1,7 +1,5 @@
 package cse403.sp2020.tidy.data;
 
-import android.util.Log;
-import android.view.Display;
 
 import org.junit.After;
 import org.junit.Before;
@@ -11,9 +9,7 @@ import static org.junit.Assert.*;
 
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.gson.internal.$Gson$Preconditions;
 
-import java.util.Random;
 
 import cse403.sp2020.tidy.data.model.HouseholdModel;
 import cse403.sp2020.tidy.data.model.TaskModel;
@@ -51,7 +47,7 @@ public class ModelInterfaceTest {
 
   @Test
   // Tests basic task operations
-  public void taskTests() throws InterruptedException{
+  public void taskTests() throws InterruptedException {
     ModelInterface model = new ModelInterface(mFirestore);
     final String userId = "taskTest_userId";
     final CallbackCounter counter = new CallbackCounter();
@@ -61,25 +57,28 @@ public class ModelInterfaceTest {
     basicSetup(model, counter, userId);
 
     // Set up a task listener
-    model.setTasksListener(tasks -> {
-      counter.decrement();
-      // Check that tasks exist and are of proper size
-      assertNotNull(tasks);
-      assertEquals(listenerCounter.getCount(), tasks.size());
-    });
+    model.setTasksListener(
+        tasks -> {
+          counter.decrement();
+          // Check that tasks exist and are of proper size
+          assertNotNull(tasks);
+          assertEquals(listenerCounter.getCount(), tasks.size());
+        });
 
     // Add a task
     TaskModel newTask = new TaskModel("Name", "Description", 1);
-    counter.increment(2);  // two callbacks to wait for
+    counter.increment(2); // two callbacks to wait for
     listenerCounter.increment();
-    model.addTask(newTask, task -> {
-      counter.decrement();
-      assertNotNull(task);
-      assertEquals(newTask.getTaskId(), task.getTaskId());
-      assertEquals("Name", task.getName());
-      assertEquals("Description", task.getDescription());
-      assertEquals(1, task.getPriority());
-    });
+    model.addTask(
+        newTask,
+        task -> {
+          counter.decrement();
+          assertNotNull(task);
+          assertEquals(newTask.getTaskId(), task.getTaskId());
+          assertEquals("Name", task.getName());
+          assertEquals("Description", task.getDescription());
+          assertEquals(1, task.getPriority());
+        });
     counter.block();
     assertEquals(1, model.getTasks().size());
 
@@ -87,14 +86,16 @@ public class ModelInterfaceTest {
     TaskModel updateTask = new TaskModel("Name2", "Description2", 2);
     updateTask.setTaskId(newTask.getTaskId());
     counter.increment(2);
-    model.updateTask(updateTask, task -> {
-      counter.decrement();
-      assertNotNull(task);
-      assertEquals(newTask.getTaskId(), task.getTaskId());
-      assertEquals("Name2", task.getName());
-      assertEquals("Description2", task.getDescription());
-      assertEquals(2, task.getPriority());
-    });
+    model.updateTask(
+        updateTask,
+        task -> {
+          counter.decrement();
+          assertNotNull(task);
+          assertEquals(newTask.getTaskId(), task.getTaskId());
+          assertEquals("Name2", task.getName());
+          assertEquals("Description2", task.getDescription());
+          assertEquals(2, task.getPriority());
+        });
     counter.block();
     assertEquals(1, model.getTasks().size());
 
@@ -103,23 +104,26 @@ public class ModelInterfaceTest {
     updateTask.setTaskId(newTask.getTaskId());
     counter.increment(2);
     listenerCounter.decrement();
-    model.removeTask(updateTask, task -> {
-      counter.decrement();
-      assertNotNull(task);
-      // Should be same values as the update, not the delete task
-      assertEquals(newTask.getTaskId(), task.getTaskId());
-      assertEquals("Name2", task.getName());
-      assertEquals("Description2", task.getDescription());
-      assertEquals(2, task.getPriority());
-    });
+    model.removeTask(
+        updateTask,
+        task -> {
+          counter.decrement();
+          assertNotNull(task);
+          // Should be same values as the update, not the delete task
+          assertEquals(newTask.getTaskId(), task.getTaskId());
+          assertEquals("Name2", task.getName());
+          assertEquals("Description2", task.getDescription());
+          assertEquals(2, task.getPriority());
+        });
     counter.block();
     assertEquals(0, model.getTasks().size());
 
     // Update listener
-    model.setTasksListener(tasks -> {
-      counter.decrement();
-      assertNotNull(tasks);
-    });
+    model.setTasksListener(
+        tasks -> {
+          counter.decrement();
+          assertNotNull(tasks);
+        });
 
     // Do a bunch of inserts without stopping
     int numOperations = 30;
@@ -127,13 +131,15 @@ public class ModelInterfaceTest {
     for (int i = 0; i < numOperations; i++) {
       final int currentInt = i;
       final TaskModel repeatTask = new TaskModel("Rname" + i, "Rdesc" + i, i);
-      model.addTask(repeatTask, task -> {
-        counter.decrement();
-        assertNotNull(task);
-        assertEquals("Rname" + currentInt, task.getName());
-        assertEquals("Rdesc" + currentInt, task.getDescription());
-        assertEquals(currentInt, task.getPriority());
-      });
+      model.addTask(
+          repeatTask,
+          task -> {
+            counter.decrement();
+            assertNotNull(task);
+            assertEquals("Rname" + currentInt, task.getName());
+            assertEquals("Rdesc" + currentInt, task.getDescription());
+            assertEquals(currentInt, task.getPriority());
+          });
     }
     counter.block();
     assertEquals(numOperations, model.getTasks().size());
@@ -145,13 +151,15 @@ public class ModelInterfaceTest {
       final int currentInt = i;
       final TaskModel repeatTaskUpdate = new TaskModel("RnameU" + i, "RdescU" + i, i);
       repeatTaskUpdate.setTaskId(repeatTask.getTaskId());
-      model.updateTask(repeatTaskUpdate, task -> {
-        counter.decrement();
-        assertNotNull(task);
-        assertEquals("RnameU" + currentInt, task.getName());
-        assertEquals("RdescU" + currentInt, task.getDescription());
-        assertEquals(currentInt, task.getPriority());
-      });
+      model.updateTask(
+          repeatTaskUpdate,
+          task -> {
+            counter.decrement();
+            assertNotNull(task);
+            assertEquals("RnameU" + currentInt, task.getName());
+            assertEquals("RdescU" + currentInt, task.getDescription());
+            assertEquals(currentInt, task.getPriority());
+          });
       i++;
     }
     counter.block();
@@ -170,14 +178,16 @@ public class ModelInterfaceTest {
       final int currentInt = i;
       final TaskModel repeatTaskUpdate = new TaskModel("RnameUD" + i, "RdescUD" + i, i);
       repeatTaskUpdate.setTaskId(repeatTask.getTaskId());
-      model.removeTask(repeatTaskUpdate, task -> {
-        counter.decrement();
-        assertNotNull(task);
-        // The passed in object is simply passed back
-        assertEquals("RnameUD" + currentInt, task.getName());
-        assertEquals("RdescUD" + currentInt, task.getDescription());
-        assertEquals(currentInt, task.getPriority());
-      });
+      model.removeTask(
+          repeatTaskUpdate,
+          task -> {
+            counter.decrement();
+            assertNotNull(task);
+            // The passed in object is simply passed back
+            assertEquals("RnameUD" + currentInt, task.getName());
+            assertEquals("RdescUD" + currentInt, task.getDescription());
+            assertEquals(currentInt, task.getPriority());
+          });
       i++;
     }
     counter.block();
@@ -187,33 +197,41 @@ public class ModelInterfaceTest {
     final TaskModel nonexistentTask = new TaskModel("NOT", "THERE", 1);
     nonexistentTask.setTaskId("BAD_ID");
     counter.increment();
-    model.updateTask(nonexistentTask, task -> {
-      counter.decrement();
-      assertNull(task);
-    });
+    model.updateTask(
+        nonexistentTask,
+        task -> {
+          counter.decrement();
+          assertNull(task);
+        });
     counter.block();
     assertEquals(0, model.getTasks().size());
     counter.increment();
-    model.removeTask(nonexistentTask, task -> {
-      counter.decrement();
-      assertNull(task);
-    });
+    model.removeTask(
+        nonexistentTask,
+        task -> {
+          counter.decrement();
+          assertNull(task);
+        });
     counter.block();
     nonexistentTask.setTaskId(null);
     assertEquals(0, model.getTasks().size());
     counter.increment();
-    model.updateTask(nonexistentTask, task -> {
-      counter.decrement();
-      assertNull(task);
-    });
+    model.updateTask(
+        nonexistentTask,
+        task -> {
+          counter.decrement();
+          assertNull(task);
+        });
     counter.block();
     assertEquals(0, model.getTasks().size());
     assertEquals(0, model.getTasks().size());
     counter.increment();
-    model.removeTask(nonexistentTask, task -> {
-      counter.decrement();
-      assertNull(task);
-    });
+    model.removeTask(
+        nonexistentTask,
+        task -> {
+          counter.decrement();
+          assertNull(task);
+        });
     counter.block();
 
     model.cleanUp();
@@ -237,65 +255,74 @@ public class ModelInterfaceTest {
 
     // Get the first user back
     counter.increment();
-    model.setCurrentUser(userId, user -> {
-      assertNotNull(user);
-      assertNotNull(model.getHousehold());
-      assertNotNull(model.getCurrentUser());
-      assertEquals(model.getCurrentUser().getFirebaseId(), user.getFirebaseId());
-      assertNotEquals(user2.getFirebaseId(), user.getFirebaseId());
-      counter.decrement();
-    });
+    model.setCurrentUser(
+        userId,
+        user -> {
+          assertNotNull(user);
+          assertNotNull(model.getHousehold());
+          assertNotNull(model.getCurrentUser());
+          assertEquals(model.getCurrentUser().getFirebaseId(), user.getFirebaseId());
+          assertNotEquals(user2.getFirebaseId(), user.getFirebaseId());
+          counter.decrement();
+        });
     counter.block();
 
     // Set up listener
     counter.increment();
-    model.setUsersListener(users -> {
-      assertNotNull(users);
-      counter.decrement();
-    });
+    model.setUsersListener(
+        users -> {
+          assertNotNull(users);
+          counter.decrement();
+        });
     counter.block();
 
     assertEquals(1, model.getUsers().size());
 
     // Get the second user
     counter.increment();
-    model.setCurrentUser(user2.getFirebaseId(), user -> {
-      assertNotNull(user);
-      assertNotNull(model.getHousehold());
-      assertNotNull(model.getCurrentUser());
-      assertEquals(model.getCurrentUser().getFirebaseId(), user.getFirebaseId());
-      assertNotEquals(user1.getFirebaseId(), user.getFirebaseId());
-      counter.decrement();
-    });
+    model.setCurrentUser(
+        user2.getFirebaseId(),
+        user -> {
+          assertNotNull(user);
+          assertNotNull(model.getHousehold());
+          assertNotNull(model.getCurrentUser());
+          assertEquals(model.getCurrentUser().getFirebaseId(), user.getFirebaseId());
+          assertNotEquals(user1.getFirebaseId(), user.getFirebaseId());
+          counter.decrement();
+        });
     counter.block();
 
     // Leave the current household
     counter.increment();
-    model.removeUserFromHousehold(user -> {
-      assertNotNull(user);
-      assertEquals(user2.getFirebaseId(), user.getFirebaseId());
-      assertNull(model.getHousehold());
-      counter.decrement();
-    });
+    model.removeUserFromHousehold(
+        user -> {
+          assertNotNull(user);
+          assertEquals(user2.getFirebaseId(), user.getFirebaseId());
+          assertNull(model.getHousehold());
+          counter.decrement();
+        });
     counter.block();
 
     // Join the other household
     counter.increment(1);
-    model.setCurrentHousehold(house1.getHouseholdId(), house -> {
-      assertNotNull(house);
-      assertEquals(model.getHousehold().getHouseholdId(), house.getHouseholdId());
-      assertEquals(house1.getHouseholdId(), house.getHouseholdId());
-      assertEquals(model.getCurrentUser().getFirebaseId(), user2.getFirebaseId());
-      counter.decrement();
-    });
+    model.setCurrentHousehold(
+        house1.getHouseholdId(),
+        house -> {
+          assertNotNull(house);
+          assertEquals(model.getHousehold().getHouseholdId(), house.getHouseholdId());
+          assertEquals(house1.getHouseholdId(), house.getHouseholdId());
+          assertEquals(model.getCurrentUser().getFirebaseId(), user2.getFirebaseId());
+          counter.decrement();
+        });
     counter.block();
 
     // Set up listener
     counter.increment();
-    model.setUsersListener(users -> {
-      assertNotNull(users);
-      counter.decrement();
-    });
+    model.setUsersListener(
+        users -> {
+          assertNotNull(users);
+          counter.decrement();
+        });
     counter.block();
 
     // Should be two users in the first household now
@@ -476,4 +503,3 @@ class CallbackCounter {
     }
   }
 }
-
