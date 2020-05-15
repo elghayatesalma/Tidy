@@ -12,14 +12,21 @@ import cse403.sp2020.tidy.data.model.UserModel;
 
 /**
  * ModelInterface provides controlled access to the Firestore database.
+ *
  * <p>Functional Details:
+ *
  * <p>- It is user-centric, meaning no operations will work before setting a user.
+ *
  * <p>- The majority of operations also require the user to be in a household.
+ *
  * <p>- Aside from get*, all methods will use a callback interface to return the result.
  *
  * <p>Database Details:
+ *
  * <p>- Callbacks leverage Firestore's real-time capabilities, which allows for live updates.
+ *
  * <p>- Callbacks are asynchronous, but will usually happen very quickly due to caching.
+ *
  * <p>- Caching also significantly reduces network usage, even when there are a lot of changes.
  */
 public class ModelInterface {

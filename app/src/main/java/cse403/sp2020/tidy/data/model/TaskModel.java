@@ -1,9 +1,8 @@
 package cse403.sp2020.tidy.data.model;
 
 /**
- * Data model class that represents a Task
- * Contains an Id field that is used for identification
- * All other fields are effectively arbitrary for backend
+ * Data model class that represents a Task Contains an Id field that is used for identification All
+ * other fields are effectively arbitrary for backend
  */
 public class TaskModel {
   private String taskId;
