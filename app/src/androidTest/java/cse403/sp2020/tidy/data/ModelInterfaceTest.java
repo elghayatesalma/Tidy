@@ -1,6 +1,5 @@
 package cse403.sp2020.tidy.data;
 
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,7 +8,6 @@ import static org.junit.Assert.*;
 
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 
 import cse403.sp2020.tidy.data.model.HouseholdModel;
 import cse403.sp2020.tidy.data.model.TaskModel;
