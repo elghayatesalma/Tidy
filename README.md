@@ -1,17 +1,19 @@
 # Tidy
 
-**Setup**
+Setup
+-----
 You will need the get the google-services.json file from the Firebase console, then add your SHA1 (You will need to be authorized to access the console):
 - Go to https://console.firebase.google.com/u/0/project/tidy-71f32/settings/general/android:cse403.sp2020.tidy and click the download button for google-services.json. Put this file under the 'app/' directory.
 - Click 'Add fingerprint', then add you SHA1 key (you can run './gradlew signingReport' to get it, or go through the Android Studio gradle window)
 
 
-**Building**
-Generate installable APK:
+Building
+--------
+Generate installable APK:  
 - ./gradlew assembleDebug
 
 
-Build From Android Studio:
+Build From Android Studio:  
 - Import the project into Android Studio through VCS
 - Build -> make project
 
@@ -21,7 +23,8 @@ Then, in Android Studio:
 - Run -> app
 
 
-**Testing**
+Testing
+-----------
 Firebase CLI should be running first for backend test cases (see below)
 
 To run the test cases from the CLI:
