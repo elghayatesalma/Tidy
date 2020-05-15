@@ -183,9 +183,9 @@ public class ModelInterfaceTest {
           task -> {
             counter.decrement();
             assertNotNull(task);
-            // The passed in object is simply passed back
-            assertEquals("RnameUD" + currentInt, task.getName());
-            assertEquals("RdescUD" + currentInt, task.getDescription());
+            // The passed in object is only used for id
+            assertEquals("RnameU" + currentInt, task.getName());
+            assertEquals("RdescU" + currentInt, task.getDescription());
             assertEquals(currentInt, task.getPriority());
           });
       i++;

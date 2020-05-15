@@ -10,23 +10,19 @@ import cse403.sp2020.tidy.data.model.HouseholdModel;
 import cse403.sp2020.tidy.data.model.TaskModel;
 import cse403.sp2020.tidy.data.model.UserModel;
 
-/*
- * IMPORTANT NOTE: ID fields are the only required fields for data models
- * All other fields are arbitrary, and can be added or removed as needed
- *
- * Firestore Notes:
- *  - Firestore uses a local cache, so not every query goes to Cloud Firestore DB
- *  - ALL db changes should be done directly on the db (will affect local cache and remote)
- *  - Operation speed for any lookup/change will likely be very quick, especially if data is cached
- *  - Add event listeners for realtime updates, use get with success/fail/complete for one-time
- *  - Documents can be create by / used to create objects (See helper methods and add methods)
- *
- * TODO list:
- *  - Invalidate listeners?
- *  - Without using listeners, data will not be up to date (MUST SET UP LISTENERS)
- *
- */
 
+/**
+ * ModelInterface provides controlled access to the Firestore database.
+ * Functional Details:
+ * - It is user-centric, meaning no operations will work before setting a user.
+ * - The majority of operations also require the user to be in a household.
+ * - Aside from get*, all methods will use a callback interface to return the result.
+ *
+ * Database Details:
+ * - Callbacks leverage Firestore's real-time capabilities, which allows for live updates.
+ * - Callbacks are asynchronous, but will usually happen very quickly due caching.
+ * - Caching also significantly reduces network usage, even when there are a lot of changes.
+ */
 public class ModelInterface {
   // Log info
   private static final String TAG = "ModelInterface";
@@ -74,18 +70,26 @@ public class ModelInterface {
     mFirebaseUser = null;
   }
 
-  // Use to clear all data and stop listeners
-  // Also removes callbacks
+  /* Utility methods */
+
+  /**
+   * Removes all listeners
+   * Clears all local data in the interface
+   */
   public void cleanUp() {
     clearData();
   }
 
-  /* Single Operation Methods */
+  /* Single callback Methods */
 
-  // Attempts to find the user by id, creates the user if not found
-  // If the user is part of a household, will set this as well
-  // Clears all current data
-  // Returns the new user object via callback
+  /**
+   * Attempts to find the user by id, creates the user if not found.
+   * If the user is part of a household, will set this as well.
+   * Clears all current data and replaces with new user.
+   * Returns the newly set user model via callback, or null on failure.
+   * @param firebaseId Firebase Id string of the currently authenticated user.
+   * @param callback   Interface that accepts a {@link UserModel}.
+   */
   public void setCurrentUser(final String firebaseId, final CallbackInterface<UserModel> callback) {
     if (callback == null) {
       Log.w(TAG, "Callback is null -- setCurrentUser");
@@ -100,9 +104,13 @@ public class ModelInterface {
     opFindOrCreateUser(firebaseId, callback);
   }
 
-  // Attempts to set the household of the current user
-  // Requires that user is already set
-  // Returns the new household via callback
+  /**
+   * Attempts to set the household of the current user.
+   * Requires that current user is set.
+   * Returns the new household via callback, or null on failure.
+   * @param householdId Id string of the intended household to join.
+   * @param callback    Interface that accepts a {@link HouseholdModel}.
+   */
   public void setCurrentHousehold(
       String householdId, final CallbackInterface<HouseholdModel> callback) {
     if (callback == null) {
@@ -123,9 +131,14 @@ public class ModelInterface {
     opFindAndSetHousehold(householdId, callback);
   }
 
-  // Attempts to create a household, ignores the Id field in the household object
-  // Requires that the user is set AND that there is no household
-  // Returns the new household object via callback
+  /**
+   * Attempts to create a household with the provided metadata.
+   * Requires that the current user is set AND not in a household.
+   * Returns the new household object via callback, or null on failure.
+   * @param household Object containing metadata for a new household.
+   *                  Id field is ignored, an new one is auto-generated.
+   * @param callback  Interface that accepts a {@link HouseholdModel}.
+   */
   public void createHousehold(
       final HouseholdModel household, final CallbackInterface<HouseholdModel> callback) {
     if (callback == null) {
@@ -155,9 +168,14 @@ public class ModelInterface {
     opCreateHousehold(newHousehold, callback);
   }
 
-  // Attempts to update the household of the current user
-  // Requires that the user is set AND is in a household
-  // Returns the updated household via callback
+  /**
+   * Attempts to update the household of the current user with the provided metadata
+   * Requires that the current user is set AND is in a household
+   * Returns the updated household via callback, or null on failure
+   * @param household Object containing metadata to update current household with.
+   *                  Id field is ignored, the current household's Id will be used.
+   * @param callback  Interface that accepts a {@link HouseholdModel}
+   */
   public void updateHousehold(
       final HouseholdModel household, final CallbackInterface<HouseholdModel> callback) {
     if (callback == null) {
@@ -183,6 +201,15 @@ public class ModelInterface {
     opUpdateHousehold(household, callback);
   }
 
+
+  /**
+   * Attempts to update the current user with the provided metadata.
+   * Requires that the current user is set.
+   * Returns the updated user via callback, or null on failure.
+   * @param user     Object containing metadata to update current user with.
+   *                 Id field is ignored, the current users's Id will be used.
+   * @param callback Interface that accepts a {@link UserModel}.
+   */
   public void updateCurrentUser(final UserModel user, final CallbackInterface<UserModel> callback) {
     if (callback == null) {
       Log.w(TAG, "Callback is null -- updateCurrentUser");
@@ -205,9 +232,12 @@ public class ModelInterface {
     opUpdateUser(user, callback);
   }
 
-  // Attempts to remove the user from the current household
-  // Requires that the user is set AND is in a household
-  // Returns the current user via callback
+  /**
+   * Attempts to remove the user from the current household.
+   * Requires that the current user is set AND is in a household.
+   * Returns the current user via callback, or null on failure.
+   * @param callback Interface that accepts a {@link UserModel}.
+   */
   public void removeUserFromHousehold(final CallbackInterface<UserModel> callback) {
     if (callback == null) {
       Log.w(TAG, "Callback is null -- removeUserFromHousehold");
@@ -232,10 +262,15 @@ public class ModelInterface {
     opRemoveUserFromHousehold(callback);
   }
 
-  // Attempts to add the task to the household
-  // Auto-generates task id, ignores the id in the provided object
-  // Requires that the user is set AND is in a household
-  // Returns the task object via callback
+  /**
+   * Attempts to add the provided task to the household.
+   * Ignores the id in the provided object and auto-generates a new one.
+   * Requires that the current user is set AND is in a household.
+   * Returns the task object via callback, or null on failure.
+   * @param task     Task object with metadata to create task with.
+   *                 Id field is ignored, a new one is auto-generated.
+   * @param callback Interface that accepts a {@link TaskModel}.
+   */
   public void addTask(final TaskModel task, final CallbackInterface<TaskModel> callback) {
     if (callback == null) {
       Log.w(TAG, "Callback is null -- addTask");
@@ -264,9 +299,14 @@ public class ModelInterface {
     opAddTask(task, callback);
   }
 
-  // Attempts to update the task in the current household
-  // Requires that the user is set AND is in a household
-  // Returns the task object via callback
+  /**
+   * Attempts to update the task in the current household.
+   * Requires that the current user is set AND is in a household.
+   * Returns the task object via callback, or null on failure.
+   * @param task     Task object with metadata to update task with.
+   *                 Uses Id field to find task.
+   * @param callback Interface that accepts a {@link TaskModel}.
+   */
   public void updateTask(final TaskModel task, final CallbackInterface<TaskModel> callback) {
     if (callback == null) {
       Log.w(TAG, "Callback is null -- updateTask");
@@ -295,9 +335,14 @@ public class ModelInterface {
     opUpdateTask(task, callback);
   }
 
-  // Attempts to remove the task from the household
-  // Requires that the user is set AND is in a household
-  // Returns the task object via callback
+  /**
+   * Attempts to remove the task from the current household.
+   * Requires that the current user is set AND is in a household.
+   * Returns the deleted task object via callback, or null on failure.
+   * @param task     Task object to delete, ignores metadata fields.
+   *                 Uses Id field to find task.
+   * @param callback Interface that accepts a {@link TaskModel}.
+   */
   public void removeTask(final TaskModel task, final CallbackInterface<TaskModel> callback) {
     if (callback == null) {
       Log.w(TAG, "Callback is null -- addTask");
@@ -326,40 +371,63 @@ public class ModelInterface {
     opRemoveTask(task, callback);
   }
 
-  /* Get Methods */
+  /* Get (No Callback) Methods */
 
-  // Returns the current user if it exists
+  /**
+   * If the user is not set, all other operations will not work
+   * @return returns the current user, or null if there isn't one.
+   */
   public UserModel getCurrentUser() {
     if (mFirebaseUser != null) return new UserModel(mFirebaseUser);
     return null;
   }
 
-  // Returns the current household (or null if there isn't one)
+  /**
+   * The current household represents if the user is part of a household.
+   * If it is null, the user has no household (or isn't set).
+   * If there isn't an a active listener for this type, data may be inaccurate.
+   * @return returns the current household, or null if there isn't one.
+   */
   public HouseholdModel getHousehold() {
     if (mHousehold != null) return new HouseholdModel(mHousehold);
     return null;
   }
 
-  // Returns a (potentially empty) list of users if household exists
-  // Returns null if household doesn't exist
+  /**
+   * The current list is dependent on an active listener for users.
+   * If there isn't an a active listener for this type, data may be inaccurate.
+   * Recommendation is to simply use the listener callback.
+   * @return returns a potentially empty {@link List} of {@link UserModel}s.
+   *         returns null if there isn't a household set.
+   */
   public List<UserModel> getUsers() {
     if (mHousehold != null) return new ArrayList<>(mUsers);
     return null;
   }
 
-  // Returns a (potentially empty) list of tasks if household exists
-  // Returns null if household doesn't exist
+  /**
+   * The current list is dependent on an active listener for tasks.
+   * If there isn't an a active listener for this type, data may be inaccurate.
+   * Recommendation is to simply use the listener callback.
+   * @return returns a potentially empty {@link List} of {@link TaskModel}s.
+   *         returns null if there isn't a household set.
+   */
   public List<TaskModel> getTasks() {
     if (mHousehold != null) return new ArrayList<>(mTasks);
     return null;
   }
 
-  /* Event Listener Setup Methods */
+  /* Event Listener (Repeat Callback) Methods */
 
-  // Sets an event listener on the household
-  // Removes any previous listener
-  // Requires the user to exist AND be in household
-  // Any updates to the household will be returned via the callback
+  /**
+   * Sets an event listener on the household document in the database.
+   * Removes any previous listener for the household.
+   * Sets any updates to local household object.
+   * Requires the current user to exist AND be in household.
+   * @param callback Interface that accepts a {@link HouseholdModel}.
+   *                 Will be called initially with current data.
+   *                 Will be called repeatedly with updates.
+   */
   public void setHouseholdListener(final CallbackInterface<HouseholdModel> callback) {
     if (callback == null) {
       Log.w(TAG, "Callback is null -- setHouseholdListener");
@@ -379,10 +447,15 @@ public class ModelInterface {
     opSetHouseholdListener(callback);
   }
 
-  // Sets an event listener on the users in the current household
-  // Removes any previous listener
-  // Requires the user to exist AND be in household
-  // Any updates to the users will be returned via the callback
+  /**
+   * Sets an event listener on the Users collection of the current household.
+   * Removes any previous listener for the Users collection.
+   * Sets and updates the local list of users.
+   * Requires the current user to exist AND be in household.
+   * @param callback Interface that accepts a {@link List} of {@link UserModel}s.
+   *                 Will be called initially with current data.
+   *                 Will be called repeatedly with updates.
+   */
   public void setUsersListener(final CallbackInterface<List<UserModel>> callback) {
     if (callback == null) {
       Log.w(TAG, "Callback is null -- setUsersListener");
@@ -406,10 +479,15 @@ public class ModelInterface {
     opSetUsersListener(callback);
   }
 
-  // Sets an event listener on the tasks in the current household
-  // Removes any previous listener
-  // Requires the user to exist AND be in household
-  // Any updates to the tasks will be returned via the callback
+  /**
+   * Sets an event listener on the Tasks collection of the current household.
+   * Removes any previous listener for the Tasks collection.
+   * Sets and updates the local list of tasks.
+   * Requires the current user to exist AND be in household.
+   * @param callback Interface that accepts a {@link List} of {@link TaskModel}s.
+   *                 Will be called initially with current data.
+   *                 Will be called repeatedly with updates.
+   */
   public void setTasksListener(final CallbackInterface<List<TaskModel>> callback) {
     if (callback == null) {
       Log.w(TAG, "Callback is null -- setUsersListener");
@@ -830,13 +908,14 @@ public class ModelInterface {
             task -> {
               if (task.isSuccessful()) {
                 if (task.getResult().exists()) {
+                  final TaskModel deletedTask = buildTask(task.getResult());
                   taskDoc
                       .delete()
                       .addOnCompleteListener(
                           task1 -> {
                             if (task1.isSuccessful()) {
                               Log.w(TAG, "Task deleted successfully");
-                              callback.callback(taskData);
+                              callback.callback(deletedTask);
                             } else {
                               Log.w(TAG, "Failed to add task: " + task1.getException());
                               callback.callback(null);
