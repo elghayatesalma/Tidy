@@ -1,5 +1,11 @@
 package cse403.sp2020.tidy.data.model;
 
+
+/**
+ * Data model class that represents a household
+ * Contains an Id field that is used for identification
+ * All other fields are effectively arbitrary for backend
+ */
 public class HouseholdModel {
   private String householdId;
 
