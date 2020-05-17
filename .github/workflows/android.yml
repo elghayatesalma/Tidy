@@ -31,6 +31,4 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v1
         with:
           api-level: 29
-          script: |
-            sudo npm install -g firebase-tools
-            firebase emulators:exec './gradlew connectedCheck' --only firestore
+          script: npm install -g firebase-tools && firebase emulators:exec './gradlew connectedCheck' --only firestore
