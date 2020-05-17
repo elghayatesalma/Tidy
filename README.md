@@ -1,4 +1,28 @@
-# Tidy
+# Tidy Documentation
+
+## User documentation
+What does the system do and why would a user want to use it.
+### Installation
+These are the tools that you will need, click the links to download and install.
+- For Java development:[Java 7 JDK or better](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+- For Android development: [Android Studio](https://developer.android.com/sdk/index.html)
+### Steps 
+Clone this repository to a location where you'd like the code to live:
+`git clone https://github.com/elghayatesalma/Tidy`
+Import the Android project to Android Studio
+
+### Bug report
+
+## Developer documentation
+
+### Directory Structure
+
+### How to Test the Software
+
+### How to build a release of the software
+
+
+
 
 Setup
 -----
