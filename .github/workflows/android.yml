@@ -26,9 +26,12 @@ jobs:
 
       - name: Gradle Unit Tests
         run: ./gradlew check
+      
+      - name: Firebase Install
+        run: npm install -g firebase-tools
 
       - name: Gradle Integration Tests
         uses: reactivecircus/android-emulator-runner@v1
         with:
           api-level: 29
-          script: npm install -g firebase-tools && firebase --only firestore emulators:exec './gradlew connectedCheck'
+          script: firebase --only firestore emulators:exec './gradlew connectedCheck'
