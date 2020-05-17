@@ -8,7 +8,7 @@ These are the tools that you will need, click the links to download and install.
 - For Android development: [Android Studio](https://developer.android.com/sdk/index.html)
 ### Steps 
 Clone this repository to a location where you'd like the code to live:
-`git clone https://github.com/elghayatesalma/Tidy`
+`git clone https://github.com/elghayatesalma/Tidy`  
 Import the Android project to Android Studio
 
 ### Bug report
