@@ -124,8 +124,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     updateFireBaseSignInUI(currentUser);
 
     FirebaseDynamicLinks.getInstance()
-            .getDynamicLink(getIntent())
-            .addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
+        .getDynamicLink(getIntent())
+        .addOnSuccessListener(
+            this,
+            new OnSuccessListener<PendingDynamicLinkData>() {
               @Override
               public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
                 // Get deep link from result (may be null if no link is found)
@@ -137,11 +139,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (deepLink != null) {
                   Log.d("DYNAMIC_LINK", "path: " + deepLink.toString());
                   mSharedHouseHold = deepLink.getLastPathSegment();
-                  mHouseholdShareTextView.setText("Firebase Dynamic Link Household ID: " + mSharedHouseHold);
+                  mHouseholdShareTextView.setText(
+                      "Firebase Dynamic Link Household ID: " + mSharedHouseHold);
                 }
               }
             })
-            .addOnFailureListener(this, new OnFailureListener() {
+        .addOnFailureListener(
+            this,
+            new OnFailureListener() {
               @Override
               public void onFailure(@NonNull Exception e) {
                 Log.w(TAG, "getDynamicLink:onFailure", e);
@@ -330,13 +335,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             new UserCallbackInterface() {
               @Override
               public void userCallback(List<UserModel> users) {
-                  if (mSharedHouseHold != null) {
-                    Log.d("DYNAMIC_LINK", "using shared dynamic link household: " + mSharedHouseHold);
-                    model.makeHousehold(new HouseholdModel(mSharedHouseHold));
-                  } else {
-                    Log.d("DYNAMIC_LINK", "not using shared dynamic link household");
-                    model.makeHousehold(new HouseholdModel(mAuth.getUid() + "_house"));
-                  }
+                if (mSharedHouseHold != null) {
+                  Log.d("DYNAMIC_LINK", "using shared dynamic link household: " + mSharedHouseHold);
+                  model.makeHousehold(new HouseholdModel(mSharedHouseHold));
+                } else {
+                  Log.d("DYNAMIC_LINK", "not using shared dynamic link household");
+                  model.makeHousehold(new HouseholdModel(mAuth.getUid() + "_house"));
+                }
               }
 
               @Override

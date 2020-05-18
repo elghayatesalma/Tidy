@@ -252,7 +252,9 @@ public class ModelInterface {
   public Uri getSharingLink() {
     String houseHoldLink = "https://tidy.household/" + this.mHousehold.getHouseholdId();
     Log.d("DYNAMIC_LINK", "Creating dynamic link with this household link: " + houseHoldLink);
-    DynamicLink dynamicLink = FirebaseDynamicLinks.getInstance().createDynamicLink()
+    DynamicLink dynamicLink =
+        FirebaseDynamicLinks.getInstance()
+            .createDynamicLink()
             .setLink(Uri.parse(houseHoldLink))
             .setDomainUriPrefix("https://tidy403.page.link")
             // Open links with this app on Android
