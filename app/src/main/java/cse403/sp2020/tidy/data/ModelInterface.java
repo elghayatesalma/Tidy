@@ -3,8 +3,11 @@ package cse403.sp2020.tidy.data;
 import java.util.List;
 import java.util.ArrayList;
 
+import android.net.Uri;
 import android.util.Log;
 
+import com.google.firebase.dynamiclinks.DynamicLink;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.firestore.*;
 
 import cse403.sp2020.tidy.data.callbacks.HouseholdCallbackInterface;
@@ -244,6 +247,21 @@ public class ModelInterface {
                 callbackUsers(true);
               }
             });
+  }
+
+  public Uri getSharingLink() {
+    String houseHoldLink = "https://tidy.household/" + this.mHousehold.getHouseholdId();
+    Log.d("DYNAMIC_LINK", "Creating dynamic link with this household link: " + houseHoldLink);
+    DynamicLink dynamicLink = FirebaseDynamicLinks.getInstance().createDynamicLink()
+            .setLink(Uri.parse(houseHoldLink))
+            .setDomainUriPrefix("https://tidy403.page.link")
+            // Open links with this app on Android
+            .setAndroidParameters(new DynamicLink.AndroidParameters.Builder().build())
+            .buildDynamicLink();
+
+    Uri dynamicUri = dynamicLink.getUri();
+    Log.d("DYNAMIC_LINK", "Got this dynamic uri: " + dynamicUri.toString());
+    return dynamicUri;
   }
 
   // Takes in the new user to set, ignores if it is the same user
