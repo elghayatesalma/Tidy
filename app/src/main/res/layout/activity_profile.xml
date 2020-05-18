@@ -26,6 +26,14 @@
 
         </ImageButton>
 
+        <Button
+            android:id="@+id/share_household_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="75dp"
+            android:text="Share Household" />
+
         <ImageButton
             android:id="@+id/settings_button"
             android:layout_width="wrap_content"
