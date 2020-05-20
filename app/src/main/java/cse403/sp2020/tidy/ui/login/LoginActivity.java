@@ -2,6 +2,7 @@ package cse403.sp2020.tidy.ui.login;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,12 +21,16 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
@@ -49,9 +54,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
   private GoogleSignInClient mGoogleSignInClient;
   private TextView mStatusTextView;
+  private TextView mHouseholdShareTextView;
   private TextView mFirebaseStatusTextView;
   private ImageView mProfileImageView;
   private FirebaseAuth mAuth;
+  private String mSharedHouseHold;
 
   /**
    * Called at the start of the activity's lifecycle. Loads the ui layout, initializes the buttons,
@@ -65,6 +72,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     setContentView(R.layout.activity_login);
 
     // Views
+    mHouseholdShareTextView = findViewById(R.id.sharedHouseholdID);
     mStatusTextView = findViewById(R.id.status);
     mFirebaseStatusTextView = findViewById(R.id.firebaseStatus);
     mProfileImageView = findViewById(R.id.userProfileImage);
@@ -124,6 +132,36 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
       updateGoogleSignInUI(null);
     }
     updateFireBaseSignInUI(currentUser);
+
+    FirebaseDynamicLinks.getInstance()
+        .getDynamicLink(getIntent())
+        .addOnSuccessListener(
+            this,
+            new OnSuccessListener<PendingDynamicLinkData>() {
+              @Override
+              public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
+                // Get deep link from result (may be null if no link is found)
+                Uri deepLink = null;
+                if (pendingDynamicLinkData != null) {
+                  deepLink = pendingDynamicLinkData.getLink();
+                }
+
+                if (deepLink != null) {
+                  Log.d("DYNAMIC_LINK", "path: " + deepLink.toString());
+                  mSharedHouseHold = deepLink.getLastPathSegment();
+                  mHouseholdShareTextView.setText(
+                      "Firebase Dynamic Link Household ID: " + mSharedHouseHold);
+                }
+              }
+            })
+        .addOnFailureListener(
+            this,
+            new OnFailureListener() {
+              @Override
+              public void onFailure(@NonNull Exception e) {
+                Log.w(TAG, "getDynamicLink:onFailure", e);
+              }
+            });
     // [END on_start_sign_in]
   }
 
@@ -351,7 +389,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             new UserCallbackInterface() {
               @Override
               public void userCallback(List<UserModel> users) {
-                model.makeHousehold(new HouseholdModel(mAuth.getUid() + "_house"));
+                if (mSharedHouseHold != null) {
+                  Log.d("DYNAMIC_LINK", "using shared dynamic link household: " + mSharedHouseHold);
+                  model.makeHousehold(new HouseholdModel(mSharedHouseHold));
+                } else {
+                  Log.d("DYNAMIC_LINK", "not using shared dynamic link household");
+                  model.makeHousehold(new HouseholdModel(mAuth.getUid() + "_house"));
+                }
               }
 
               @Override
