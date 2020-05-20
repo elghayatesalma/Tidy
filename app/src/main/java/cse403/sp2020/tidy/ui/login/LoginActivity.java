@@ -168,6 +168,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
   /**
    * Handles the return from started activities. When requestCode = RC_SING_IN retrieves the signed
    * google account.
+   *
    * @param requestCode the code that started the new activity
    * @param resultCode a code returned from the activity when it finished
    * @param data the data returned from the activity
@@ -202,6 +203,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
   /**
    * Collects the signed in google account or logs an error. Then updates the UI.
+   *
    * @param completedTask Finished sign in task
    */
   // [START handleSignInResult]
@@ -220,9 +222,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
   }
   // [END handleSignInResult]
 
-  /**
-   * Sets google sign in intent and starts the activity for a result.
-   */
+  /** Sets google sign in intent and starts the activity for a result. */
   // [START signInGoogle]
   private void signInGoogle() {
     Intent signInIntent = mGoogleSignInClient.getSignInIntent();
@@ -231,8 +231,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
   // [END signInGoogle]
 
   /**
-   * Initiates google sign out operation and registers a callback to update the UI when sign out
-   * is complete.
+   * Initiates google sign out operation and registers a callback to update the UI when sign out is
+   * complete.
    */
   // [START signOutGoogle]
   private void signOutGoogle() {
@@ -273,8 +273,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
   // [END revokeAccessGoogle]
 
   /**
-   * Changes the UI to display the profile image, hide the sign in button and show the sign
-   * out button when account is not null.
+   * Changes the UI to display the profile image, hide the sign in button and show the sign out
+   * button when account is not null.
+   *
    * @param account the google account that is signed in or null
    */
   private void updateGoogleSignInUI(@Nullable GoogleSignInAccount account) {
@@ -302,7 +303,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
   /**
    * Changes the UI to display the account information when user is not null.
-   * @param  user the firebase account to display
+   *
+   * @param user the firebase account to display
    */
   private void updateFireBaseSignInUI(@Nullable FirebaseUser user) {
     if (user != null) {
@@ -330,6 +332,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
   /**
    * Creates a toast and displays it.
+   *
    * @param text the message to display
    */
   private void toast(CharSequence text) {
@@ -342,6 +345,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
   /**
    * Authenticates firebase using google credentials and sets a callback that sets the firebase user
    * when complete and successful or displays and logs an error message.
+   *
    * @param idToken the id for google authentication
    */
   private void firebaseAuthWithGoogle(String idToken) {
@@ -373,6 +377,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
   /**
    * Handles the click UI action for all the buttons.
+   *
    * @param v The view that is clicked
    */
   @Override

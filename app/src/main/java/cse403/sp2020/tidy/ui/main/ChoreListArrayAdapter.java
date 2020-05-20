@@ -16,6 +16,7 @@ import cse403.sp2020.tidy.data.model.TaskModel;
 
 /**
  * Array Adapter for a chore list
+ *
  * @param <E> generic type
  */
 public class ChoreListArrayAdapter<E> extends ArrayAdapter {
@@ -24,6 +25,7 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
 
   /**
    * Constructor that sets a layout inflater
+   *
    * @param context the active context of the app
    * @param objects the objects representing the elements of the array
    */
@@ -34,6 +36,7 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
 
   /**
    * Get the number of distinct views that appear in the list
+   *
    * @return the number of distinct views to be displayed
    */
   @Override
@@ -43,6 +46,7 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
 
   /**
    * Generates the view that corresponds with the appropriate element in the list.
+   *
    * @param position index in the list
    * @param convertView view from the pool that will be loaded next in the list
    * @param parent the viewgroup that contains the view to be returned

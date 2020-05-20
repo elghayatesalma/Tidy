@@ -8,6 +8,7 @@ public class LoggedInUser {
 
   /**
    * Constructor with given id and name
+   *
    * @param userId loggedInUser Id
    * @param displayName name of the user
    */
@@ -18,6 +19,7 @@ public class LoggedInUser {
 
   /**
    * Returns the user's id
+   *
    * @return user's id
    */
   public String getUserId() {
@@ -25,6 +27,7 @@ public class LoggedInUser {
   }
   /**
    * Returns the user's name
+   *
    * @return user's name
    */
   public String getDisplayName() {

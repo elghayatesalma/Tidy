@@ -28,9 +28,7 @@ import cse403.sp2020.tidy.data.model.TaskModel;
 import cse403.sp2020.tidy.data.model.UserModel;
 import cse403.sp2020.tidy.ui.MainActivity;
 
-/**
- * Creates a list of all the chores for a given household. One of the tabs in MainActivity.
- */
+/** Creates a list of all the chores for a given household. One of the tabs in MainActivity. */
 public class AllChoresFragment extends Fragment {
   private static final String TAG = "ALL_CHORES";
   private ModelInterface model;
@@ -38,10 +36,11 @@ public class AllChoresFragment extends Fragment {
   private ArrayList<TaskModel> choreList;
   private ChoreListArrayAdapter<TaskModel> choreListAdapter;
 
-    /**
-     * On fragment creation gets the firebase model interface and arguments from MainActivity
-     * @param savedInstanceState saved bundle that is passed by the system
-     */
+  /**
+   * On fragment creation gets the firebase model interface and arguments from MainActivity
+   *
+   * @param savedInstanceState saved bundle that is passed by the system
+   */
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -51,13 +50,14 @@ public class AllChoresFragment extends Fragment {
     userId = b.getString("tidy_user_id", "test");
   }
 
-    /**
-     * Inflates the AllChores UI, initializes onclick actions and sets the listview's array adapter.
-     * @param inflater creates the view from a layout resource
-     * @param container viewgroup in which to place the new view
-     * @param savedInstanceState saved bundle that is passed by the system
-     * @return Inflated allchores fragment with all interactions initialized
-     */
+  /**
+   * Inflates the AllChores UI, initializes onclick actions and sets the listview's array adapter.
+   *
+   * @param inflater creates the view from a layout resource
+   * @param container viewgroup in which to place the new view
+   * @param savedInstanceState saved bundle that is passed by the system
+   * @return Inflated allchores fragment with all interactions initialized
+   */
   @Nullable
   @Override
   public View onCreateView(
@@ -119,27 +119,21 @@ public class AllChoresFragment extends Fragment {
     return frag;
   }
 
-    /**
-     * Cleans up the model when the fragment is paused.
-     */
+  /** Cleans up the model when the fragment is paused. */
   @Override
   public void onPause() {
     super.onPause();
     model.cleanUp();
   }
 
-    /**
-     * Cleans up the model when the fragment is destroyed.
-     */
+  /** Cleans up the model when the fragment is destroyed. */
   @Override
   public void onDestroy() {
     super.onDestroy();
     model.cleanUp();
   }
 
-    /**
-     * Registers all the callback methods for the model.
-     */
+  /** Registers all the callback methods for the model. */
   private void setModelCallBacks() {
     model.registerTaskCallback(
         new TaskCallbackInterface() {

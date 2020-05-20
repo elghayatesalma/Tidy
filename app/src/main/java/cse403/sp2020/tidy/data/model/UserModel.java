@@ -1,20 +1,17 @@
 package cse403.sp2020.tidy.data.model;
 
-/**
- * Data structure representing a user
- */
+/** Data structure representing a user */
 public class UserModel {
   private String firebaseId;
   private String firstName;
   private String lastName;
 
-  /**
-   * Empty constructor for firestore
-   */
+  /** Empty constructor for firestore */
   public UserModel() {}
 
   /**
    * Constructs a user with given id and first and last names
+   *
    * @param firebaseId if of the user
    * @param firstName first name of the user
    * @param lastName last name of the user
@@ -26,6 +23,7 @@ public class UserModel {
   }
   /**
    * Constructs a User with the same id, first and last name as the given user
+   *
    * @param other another user to copy
    */
   public UserModel(UserModel other) {
@@ -37,6 +35,7 @@ public class UserModel {
   }
   /**
    * Returns the last name of the user
+   *
    * @return the user's last name
    */
   public String getLastName() {
@@ -44,6 +43,7 @@ public class UserModel {
   }
   /**
    * Returns the first name of the user
+   *
    * @return the user's first name
    */
   public String getFirstName() {
@@ -51,6 +51,7 @@ public class UserModel {
   }
   /**
    * Returns the id of the user
+   *
    * @return the user's id
    */
   public String getFirebaseId() {
@@ -59,6 +60,7 @@ public class UserModel {
 
   /**
    * Sets the id of this user to the given id
+   *
    * @param newId the id to change to
    */
   public void setFirebaseId(String newId) {
@@ -66,6 +68,7 @@ public class UserModel {
   }
   /**
    * Sets the first name of this user to the given name
+   *
    * @param newName the name to change to
    */
   public void setFirstName(String newName) {
@@ -73,6 +76,7 @@ public class UserModel {
   }
   /**
    * Determines if two users are equal
+   *
    * @param other the other user to compare with
    * @return Returns true if this user is equal to other false otherwise
    */

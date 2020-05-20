@@ -26,6 +26,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
   /**
    * Returns the fragment at the given position
+   *
    * @param position index of the fragment
    * @return the fragment at position
    */
@@ -36,6 +37,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
   /**
    * Returns the title at the given position.
+   *
    * @param position index of the title
    * @return the title at position
    */
@@ -47,6 +49,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
   /**
    * Returns the number of fragments
+   *
    * @return the number of fragments
    */
   @Override
