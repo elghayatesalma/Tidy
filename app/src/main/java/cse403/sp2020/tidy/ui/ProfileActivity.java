@@ -186,19 +186,6 @@ public class ProfileActivity extends AppCompatActivity {
             Log.d("test", "house callback fail message = " + message);
           }
         });
-
-    modelInterface.registerUserCallback(
-        new UserCallbackInterface() {
-          @Override
-          public void userCallback(List<UserModel> users) {
-            Log.d("test", "Profile user callback success users == null = " + (users == null));
-          }
-
-          @Override
-          public void userCallbackFailed(String message) {
-            Log.d("test", "user callback fail message = " + message);
-          }
-        });
   }
 
   /*
