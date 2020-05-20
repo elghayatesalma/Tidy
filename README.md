@@ -67,13 +67,13 @@ Clone this repository to a location where you'd like the code to live:
 - Import the Android project to Android Studio (to make sure the project is imported, check the source files in the project explorer).
 
 ### Directory Structure
-- Tidy/app: Folder for the actual app.
-	-Tidy/app/src/main: Folder for the main source
-		-Tidy/app/src/main/AndroidManifest.xml: Manifest file
-		-Tidy/app/src/main/java/cse403/sp2020/tidy/: Folder for main java files
--- README.md -File containing useful instructions for how to get started on the project.
--- gradlew - gradle wrapper script for Linux and macOS systems
--- gradlew.bat - gradle wrapper for Windows systems
+- Tidy/app: Folder for the actual app.  
+	-Tidy/app/src/main: Folder for the main source  
+		-Tidy/app/src/main/AndroidManifest.xml: Manifest file  
+		-Tidy/app/src/main/java/cse403/sp2020/tidy/: Folder for main java files  
+- README.md -File containing useful instructions for how to get started on the project.  
+- gradlew - gradle wrapper script for Linux and macOS systems  
+- gradlew.bat - gradle wrapper for Windows systems  
 
 ### Configuring Firebase
 You will need to configure the project in order for your builds to communicate with Firebase servers. You will need the google-services.json file from your Firebase project - this contains the private keys used to communicate with Firebase servers. You will also need to add the signing certificate’s SHA1 that you use for building the app to the Firebase project. This is used to verify that the app was built by authorized developers. 
