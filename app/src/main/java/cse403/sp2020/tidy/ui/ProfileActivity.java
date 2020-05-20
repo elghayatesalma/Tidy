@@ -35,6 +35,9 @@ import cse403.sp2020.tidy.data.model.TaskModel;
 import cse403.sp2020.tidy.data.model.UserModel;
 import cse403.sp2020.tidy.ui.profile.RecyclerAdapter;
 
+/**
+ * Activity that allows users to manage their account and chore preferences
+ */
 public class ProfileActivity extends AppCompatActivity {
 
   private List<String> choreList = new ArrayList<>();
@@ -48,6 +51,11 @@ public class ProfileActivity extends AppCompatActivity {
   private String userID;
 
   // TODO: receive chores list from the model and add to display
+    /**
+     * On activity creation gets the firebase model interface, the current user, and initializes the
+     * UI including current profile image and preference list
+     * @param savedInstanceState saved bundle that is passed by the system
+     */
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -154,6 +162,9 @@ public class ProfileActivity extends AppCompatActivity {
     helper.attachToRecyclerView(recyclerView);
   }
 
+  /**
+   * Registers all the callback methods for the model.
+   */
   private void setModelCallbacks() {
     modelInterface.registerTaskCallback(
         new TaskCallbackInterface() {

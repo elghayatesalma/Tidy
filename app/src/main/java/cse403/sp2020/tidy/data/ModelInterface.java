@@ -125,6 +125,9 @@ import cse403.sp2020.tidy.data.model.UserModel;
  *   - Not needed in most cases, use the callbacks instead
  */
 
+/**
+ * Front end interface for accessing Firebase data
+ */
 public class ModelInterface {
   // Log info
   private static final String TAG = "ModelInterface";

@@ -27,13 +27,19 @@ import cse403.sp2020.tidy.data.model.HouseholdModel;
 import cse403.sp2020.tidy.data.model.TaskModel;
 import cse403.sp2020.tidy.data.model.UserModel;
 import cse403.sp2020.tidy.ui.MainActivity;
-
+/**
+ * Creates a list of all the chores for a given user. One of the tabs in MainActivity.
+ */
 public class MyChoresFragment extends Fragment {
   private ModelInterface model;
   private String userId;
   private ArrayList<TaskModel> choreList;
   private ChoreListArrayAdapter<TaskModel> choreListAdapter;
 
+    /**
+     * On fragment creation gets the firebase model interface and arguments from MainActivity
+     * @param savedInstanceState saved bundle that is passed by the system
+     */
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -42,7 +48,13 @@ public class MyChoresFragment extends Fragment {
     assert b != null;
     userId = b.getString("tidy_user_id", "test");
   }
-
+    /**
+     * Inflates the MyChores UI, initializes onclick actions and sets the listview's array adapter.
+     * @param inflater creates the view from a layout resource
+     * @param container viewgroup in which to place the new view
+     * @param savedInstanceState saved bundle that is passed by the system
+     * @return Inflated allchores fragment with all interactions initialized
+     */
   @Nullable
   @Override
   public View onCreateView(
@@ -104,18 +116,27 @@ public class MyChoresFragment extends Fragment {
     return frag;
   }
 
+    /**
+     * Cleans up the model when the fragment is paused.
+     */
   @Override
   public void onPause() {
     super.onPause();
     model.cleanUp();
   }
 
+    /**
+     * Cleans up the model when the fragment is destroyed.
+     */
   @Override
   public void onDestroy() {
     super.onDestroy();
     model.cleanUp();
   }
 
+  /**
+   * Registers all the callback methods for the model.
+   */
   private void setModelCallBacks() {
     model.registerTaskCallback(
         new TaskCallbackInterface() {
