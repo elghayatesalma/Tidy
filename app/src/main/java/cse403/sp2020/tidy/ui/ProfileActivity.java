@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,6 +36,7 @@ import cse403.sp2020.tidy.data.model.TaskModel;
 import cse403.sp2020.tidy.data.model.UserModel;
 import cse403.sp2020.tidy.ui.profile.RecyclerAdapter;
 
+/** Activity that allows users to manage their account and chore preferences */
 public class ProfileActivity extends AppCompatActivity {
 
   private List<String> choreList = new ArrayList<>();
@@ -48,6 +50,12 @@ public class ProfileActivity extends AppCompatActivity {
   private String userID;
 
   // TODO: receive chores list from the model and add to display
+  /**
+   * On activity creation gets the firebase model interface, the current user, and initializes the
+   * UI including current profile image and preference list
+   *
+   * @param savedInstanceState saved bundle that is passed by the system
+   */
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -81,6 +89,19 @@ public class ProfileActivity extends AppCompatActivity {
     modelInterface.registerUserCallback(c);
     user = modelInterface.getCurrentUser();
     household = modelInterface.getHousehold();
+
+    Button share = (Button) findViewById(R.id.share_household_button);
+    share.setOnClickListener(
+        v -> {
+          String dynamicLink = modelInterface.getSharingLink().toString();
+          Intent sendIntent = new Intent();
+          sendIntent.setAction(Intent.ACTION_SEND);
+          //  sendIntent.putExtra(Intent.EXTRA_SUBJECT, "Add users to household");
+          sendIntent.putExtra(Intent.EXTRA_TEXT, dynamicLink);
+          sendIntent.setType("text/plain");
+          Intent shareIntent = Intent.createChooser(sendIntent, "Add users to household");
+          startActivity(shareIntent);
+        });
 
     // Button for going back to main activity
     ImageButton backToMain = (ImageButton) findViewById(R.id.profile_back);
@@ -154,6 +175,7 @@ public class ProfileActivity extends AppCompatActivity {
     helper.attachToRecyclerView(recyclerView);
   }
 
+  /** Registers all the callback methods for the model. */
   private void setModelCallbacks() {
     modelInterface.registerTaskCallback(
         new TaskCallbackInterface() {

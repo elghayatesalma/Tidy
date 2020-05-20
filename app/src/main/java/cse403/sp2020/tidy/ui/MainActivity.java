@@ -16,11 +16,18 @@ import cse403.sp2020.tidy.ui.main.AllChoresFragment;
 import cse403.sp2020.tidy.ui.main.MyChoresFragment;
 import cse403.sp2020.tidy.ui.main.SectionsPagerAdapter;
 
+/** The main hub of the app. */
 public class MainActivity extends AppCompatActivity {
 
   private static final String TAG = "MainActivity";
   private ModelInterface model;
 
+  /**
+   * On activity creation gets the firebase model interface, the current user, and initializes the
+   * UI including the Embedded fragments
+   *
+   * @param savedInstanceState saved bundle that is passed by the system
+   */
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -45,11 +52,18 @@ public class MainActivity extends AppCompatActivity {
             });
   }
 
-  // Enables fragments to share ModelInterface
+  /** Enables fragments to get the ModelInterface from MainActivity */
   public ModelInterface getModelInterface() {
     return model;
   }
 
+  /**
+   * Initialize and configure the ViewPager to hold the AllChores and MyChores fragments and set the
+   * arguments for those fragments
+   *
+   * @param viewPager layout element
+   * @param userId the current user
+   */
   private void setupViewPager(ViewPager viewPager, String userId) {
     // Set arguments for the fragments
     Bundle bundle = new Bundle();

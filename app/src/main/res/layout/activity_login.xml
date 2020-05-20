@@ -65,6 +65,12 @@
             android:layout_height="wrap_content"
             android:text="@string/firebase_disconnected" />
 
+        <TextView
+            android:id="@+id/sharedHouseholdID"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No dynamic link household" />
+
         <Button
             android:id="@+id/go_to_main_button"
             android:layout_width="wrap_content"

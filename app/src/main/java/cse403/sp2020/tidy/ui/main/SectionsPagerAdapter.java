@@ -24,18 +24,34 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     fragmentTitleList.add(title);
   }
 
+  /**
+   * Returns the fragment at the given position
+   *
+   * @param position index of the fragment
+   * @return the fragment at position
+   */
   @Override
   public Fragment getItem(int position) {
     return fragmentList.get(position);
   }
 
+  /**
+   * Returns the title at the given position.
+   *
+   * @param position index of the title
+   * @return the title at position
+   */
   @Nullable
   @Override
   public CharSequence getPageTitle(int position) {
     return fragmentTitleList.get(position);
   }
 
-  /* returns the number of fragments */
+  /**
+   * Returns the number of fragments
+   *
+   * @return the number of fragments
+   */
   @Override
   public int getCount() {
     return fragmentList.size();

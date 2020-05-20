@@ -2,6 +2,7 @@ package cse403.sp2020.tidy.ui.login;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,12 +21,16 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
@@ -49,16 +54,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
   private GoogleSignInClient mGoogleSignInClient;
   private TextView mStatusTextView;
+  private TextView mHouseholdShareTextView;
   private TextView mFirebaseStatusTextView;
   private ImageView mProfileImageView;
   private FirebaseAuth mAuth;
+  private String mSharedHouseHold;
 
+  /**
+   * Called at the start of the activity's lifecycle. Loads the ui layout, initializes the buttons,
+   * and configures the google sign-in parameters.
+   *
+   * @param savedInstanceState
+   */
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_login);
 
     // Views
+    mHouseholdShareTextView = findViewById(R.id.sharedHouseholdID);
     mStatusTextView = findViewById(R.id.status);
     mFirebaseStatusTextView = findViewById(R.id.firebaseStatus);
     mProfileImageView = findViewById(R.id.userProfileImage);
@@ -98,6 +112,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     // [END customize_button]
   }
 
+  /**
+   * Called on the start portion of the activity lifecycle and refreshes the last account to be
+   * signed in.
+   */
   @Override
   public void onStart() {
     super.onStart();
@@ -114,9 +132,47 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
       updateGoogleSignInUI(null);
     }
     updateFireBaseSignInUI(currentUser);
+
+    FirebaseDynamicLinks.getInstance()
+        .getDynamicLink(getIntent())
+        .addOnSuccessListener(
+            this,
+            new OnSuccessListener<PendingDynamicLinkData>() {
+              @Override
+              public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
+                // Get deep link from result (may be null if no link is found)
+                Uri deepLink = null;
+                if (pendingDynamicLinkData != null) {
+                  deepLink = pendingDynamicLinkData.getLink();
+                }
+
+                if (deepLink != null) {
+                  Log.d("DYNAMIC_LINK", "path: " + deepLink.toString());
+                  mSharedHouseHold = deepLink.getLastPathSegment();
+                  mHouseholdShareTextView.setText(
+                      "Firebase Dynamic Link Household ID: " + mSharedHouseHold);
+                }
+              }
+            })
+        .addOnFailureListener(
+            this,
+            new OnFailureListener() {
+              @Override
+              public void onFailure(@NonNull Exception e) {
+                Log.w(TAG, "getDynamicLink:onFailure", e);
+              }
+            });
     // [END on_start_sign_in]
   }
 
+  /**
+   * Handles the return from started activities. When requestCode = RC_SING_IN retrieves the signed
+   * google account.
+   *
+   * @param requestCode the code that started the new activity
+   * @param resultCode a code returned from the activity when it finished
+   * @param data the data returned from the activity
+   */
   // [START onActivityResult]
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -145,6 +201,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
   }
   // [END onActivityResult]
 
+  /**
+   * Collects the signed in google account or logs an error. Then updates the UI.
+   *
+   * @param completedTask Finished sign in task
+   */
   // [START handleSignInResult]
   private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
     try {
@@ -161,6 +222,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
   }
   // [END handleSignInResult]
 
+  /** Sets google sign in intent and starts the activity for a result. */
   // [START signInGoogle]
   private void signInGoogle() {
     Intent signInIntent = mGoogleSignInClient.getSignInIntent();
@@ -168,6 +230,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
   }
   // [END signInGoogle]
 
+  /**
+   * Initiates google sign out operation and registers a callback to update the UI when sign out is
+   * complete.
+   */
   // [START signOutGoogle]
   private void signOutGoogle() {
     mGoogleSignInClient
@@ -185,6 +251,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
   }
   // [END signOutGoogle]
 
+  /**
+   * Initiates google revoke access operation and registers a callback to update the UI when revoke
+   * access is complete.
+   */
   // [START revokeAccessGoogle]
   private void revokeAccessGoogle() {
     mGoogleSignInClient
@@ -202,6 +272,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
   }
   // [END revokeAccessGoogle]
 
+  /**
+   * Changes the UI to display the profile image, hide the sign in button and show the sign out
+   * button when account is not null.
+   *
+   * @param account the google account that is signed in or null
+   */
   private void updateGoogleSignInUI(@Nullable GoogleSignInAccount account) {
     if (account != null) {
       mProfileImageView.setImageURI(account.getPhotoUrl());
@@ -225,6 +301,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
   }
 
+  /**
+   * Changes the UI to display the account information when user is not null.
+   *
+   * @param user the firebase account to display
+   */
   private void updateFireBaseSignInUI(@Nullable FirebaseUser user) {
     if (user != null) {
       String displayName = "no display name";
@@ -249,6 +330,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
   }
 
+  /**
+   * Creates a toast and displays it.
+   *
+   * @param text the message to display
+   */
   private void toast(CharSequence text) {
     int duration = Toast.LENGTH_LONG;
     Context context = getApplicationContext();
@@ -256,6 +342,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     toast.show();
   }
 
+  /**
+   * Authenticates firebase using google credentials and sets a callback that sets the firebase user
+   * when complete and successful or displays and logs an error message.
+   *
+   * @param idToken the id for google authentication
+   */
   private void firebaseAuthWithGoogle(String idToken) {
     AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
     mAuth
@@ -283,6 +375,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             });
   }
 
+  /**
+   * Handles the click UI action for all the buttons.
+   *
+   * @param v The view that is clicked
+   */
   @Override
   public void onClick(View v) {
     switch (v.getId()) {
@@ -297,7 +394,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             new UserCallbackInterface() {
               @Override
               public void userCallback(List<UserModel> users) {
-                model.makeHousehold(new HouseholdModel(mAuth.getUid() + "_house"));
+                if (mSharedHouseHold != null) {
+                  Log.d("DYNAMIC_LINK", "using shared dynamic link household: " + mSharedHouseHold);
+                  model.makeHousehold(new HouseholdModel(mSharedHouseHold));
+                } else {
+                  Log.d("DYNAMIC_LINK", "not using shared dynamic link household");
+                  model.makeHousehold(new HouseholdModel(mAuth.getUid() + "_house"));
+                }
               }
 
               @Override
