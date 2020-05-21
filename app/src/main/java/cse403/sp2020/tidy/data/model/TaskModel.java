@@ -24,32 +24,52 @@ public class TaskModel {
     }
   }
 
-  public String getTaskId() { return taskId; }
+  public String getTaskId() {
+    return taskId;
+  }
 
-  public String getName() { return name; }
+  public String getName() {
+    return name;
+  }
 
-  public String getDescription() { return description; }
+  public String getDescription() {
+    return description;
+  }
 
-  public int getPriority() { return priority; }
+  public int getPriority() {
+    return priority;
+  }
 
-  public String getAssignedUser() { return assignedUser; }
+  public String getAssignedUser() {
+    return assignedUser;
+  }
 
-  public void setTaskId(String taskId) { this.taskId = taskId; }
+  public void setTaskId(String taskId) {
+    this.taskId = taskId;
+  }
 
-  public void setName(String name) { this.name = name; }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-  public void setDescription(String description) { this.description = description; }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-  public void setPriority(int priority) { this.priority = priority; }
+  public void setPriority(int priority) {
+    this.priority = priority;
+  }
 
-  public void setAssignedUser(String assignedUser) { this.assignedUser = assignedUser; }
+  public void setAssignedUser(String assignedUser) {
+    this.assignedUser = assignedUser;
+  }
 
   public boolean equals(TaskModel other) {
     if (other == null) {
       return false;
     }
 
-    if ( other.getTaskId() != null) {
+    if (other.getTaskId() != null) {
       return other.getTaskId().equals(getTaskId());
     } else {
       // Both are null

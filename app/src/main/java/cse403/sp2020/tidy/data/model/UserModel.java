@@ -28,11 +28,17 @@ public class UserModel {
     }
   }
 
-  public String getFirebaseId() { return firebaseId; }
+  public String getFirebaseId() {
+    return firebaseId;
+  }
 
-  public String getFirstName() { return firstName; }
+  public String getFirstName() {
+    return firstName;
+  }
 
-  public String getLastName() { return lastName; }
+  public String getLastName() {
+    return lastName;
+  }
 
   public List<String> getChorePreference() {
     if (chorePreferences != null) {
@@ -42,11 +48,17 @@ public class UserModel {
     }
   }
 
-  public void setFirebaseId(String newId) { this.firebaseId = newId; }
+  public void setFirebaseId(String newId) {
+    this.firebaseId = newId;
+  }
 
-  public void setFirstName(String newName) { this.firstName = newName; }
+  public void setFirstName(String newName) {
+    this.firstName = newName;
+  }
 
-  public void setLastName(String lastName) { this.lastName = lastName; }
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
+  }
 
   public void setChorePreferences(List<String> chorePreferences) {
     this.chorePreferences = new ArrayList<>(chorePreferences);

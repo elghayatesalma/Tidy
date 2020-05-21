@@ -192,7 +192,7 @@ public class ModelInterfaceTest {
       final TaskModel repeatTaskDelete = new TaskModel();
       repeatTaskDelete.setName("RnameUD" + i);
       repeatTaskDelete.setDescription("RdescUD" + i);
-      repeatTaskDelete.setPriority(i*2);
+      repeatTaskDelete.setPriority(i * 2);
       repeatTaskDelete.setTaskId(repeatTask.getTaskId());
       model.removeTask(
           repeatTaskDelete,
