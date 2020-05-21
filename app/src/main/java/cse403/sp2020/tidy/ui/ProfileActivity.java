@@ -12,7 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -20,11 +23,22 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.firebase.firestore.*;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import cse403.sp2020.tidy.R;
 import cse403.sp2020.tidy.data.ModelInterface;
@@ -67,13 +81,18 @@ public class ProfileActivity extends AppCompatActivity {
 
     // initialize firestore instance
     modelInterface = new ModelInterface(FirebaseFirestore.getInstance());
+
+    GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+    username = acct.getDisplayName();
+    Uri photoURL = acct.getPhotoUrl();
+    Bitmap profilePicture = loadImageFromWebOperations(photoURL);
+
     setModelCallbacks();
     UserCallbackInterface c =
         new UserCallbackInterface() {
           @Override
           public void userCallback(List<UserModel> users) {
             user = modelInterface.getCurrentUser();
-            username = user.getFirstName() + " " + user.getLastName();
             nameView.setText(username);
           }
 
@@ -110,12 +129,12 @@ public class ProfileActivity extends AppCompatActivity {
 
           @Override
           public void onClick(View v) {
-            Intent intent = new Intent(v.getContext(), MainActivity.class);
-            v.getContext().startActivity(intent);
+            finish();
           }
         });
 
     // get username if user != null, otherwise fill in name with default
+      /*
     if (user != null) {
       username = user.getFirstName() + " " + user.getLastName();
     } else {
@@ -124,14 +143,14 @@ public class ProfileActivity extends AppCompatActivity {
 
     // set textView to username
     nameView.setText(username);
+    */
 
     // this section makes the profile picture circular
     ImageView profilePic = (ImageView) findViewById(R.id.profile_picture);
     // might be able to replace R.drawable.example_user with user's selected image later on in the
     // project
-    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.example_user);
     RoundedBitmapDrawable roundedBitmapDrawable =
-        RoundedBitmapDrawableFactory.create(getResources(), bitmap);
+        RoundedBitmapDrawableFactory.create(getResources(), profilePicture);
     roundedBitmapDrawable.setCircular(true);
     profilePic.setImageDrawable(roundedBitmapDrawable);
 
@@ -209,6 +228,16 @@ public class ProfileActivity extends AppCompatActivity {
           }
         });
   }
+
+    public Bitmap loadImageFromWebOperations(Uri imageUri) {
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
+            return bitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
   /*
   private List<String> compareList(List<String> original, List<String> updated) {
