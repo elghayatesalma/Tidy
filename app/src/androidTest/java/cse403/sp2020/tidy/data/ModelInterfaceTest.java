@@ -64,7 +64,10 @@ public class ModelInterfaceTest {
         });
 
     // Add a task
-    TaskModel newTask = new TaskModel("Name", "Description", 1);
+    TaskModel newTask = new TaskModel();
+    newTask.setName("Name");
+    newTask.setDescription("Description");
+    newTask.setPriority(1);
     counter.increment(2); // two callbacks to wait for
     listenerCounter.increment();
     model.addTask(
@@ -81,7 +84,10 @@ public class ModelInterfaceTest {
     assertEquals(1, model.getTasks().size());
 
     // Update the task
-    TaskModel updateTask = new TaskModel("Name2", "Description2", 2);
+    TaskModel updateTask = new TaskModel();
+    updateTask.setName("Name2");
+    updateTask.setDescription("Description2");
+    updateTask.setPriority(2);
     updateTask.setTaskId(newTask.getTaskId());
     counter.increment(2);
     model.updateTask(
@@ -98,12 +104,15 @@ public class ModelInterfaceTest {
     assertEquals(1, model.getTasks().size());
 
     // Delete the task
-    TaskModel deleteTask = new TaskModel("ignore", "ignore", 3);
-    updateTask.setTaskId(newTask.getTaskId());
+    TaskModel deleteTask = new TaskModel();
+    deleteTask.setName("ignore");
+    deleteTask.setDescription("ignore");
+    deleteTask.setPriority(3);
+    deleteTask.setTaskId(newTask.getTaskId());
     counter.increment(2);
     listenerCounter.decrement();
     model.removeTask(
-        updateTask,
+        deleteTask,
         task -> {
           counter.decrement();
           assertNotNull(task);
@@ -128,7 +137,10 @@ public class ModelInterfaceTest {
     counter.increment(numOperations * 2);
     for (int i = 0; i < numOperations; i++) {
       final int currentInt = i;
-      final TaskModel repeatTask = new TaskModel("Rname" + i, "Rdesc" + i, i);
+      final TaskModel repeatTask = new TaskModel();
+      repeatTask.setName("Rname" + i);
+      repeatTask.setDescription("Rdesc" + i);
+      repeatTask.setPriority(i);
       model.addTask(
           repeatTask,
           task -> {
@@ -147,7 +159,10 @@ public class ModelInterfaceTest {
     int i = numOperations;
     for (TaskModel repeatTask : model.getTasks()) {
       final int currentInt = i;
-      final TaskModel repeatTaskUpdate = new TaskModel("RnameU" + i, "RdescU" + i, i);
+      final TaskModel repeatTaskUpdate = new TaskModel();
+      repeatTaskUpdate.setName("RnameU" + i);
+      repeatTaskUpdate.setDescription("RdescU" + i);
+      repeatTaskUpdate.setPriority(i);
       repeatTaskUpdate.setTaskId(repeatTask.getTaskId());
       model.updateTask(
           repeatTaskUpdate,
@@ -174,10 +189,13 @@ public class ModelInterfaceTest {
     i = numOperations;
     for (TaskModel repeatTask : model.getTasks()) {
       final int currentInt = i;
-      final TaskModel repeatTaskUpdate = new TaskModel("RnameUD" + i, "RdescUD" + i, i);
-      repeatTaskUpdate.setTaskId(repeatTask.getTaskId());
+      final TaskModel repeatTaskDelete = new TaskModel();
+      repeatTaskDelete.setName("RnameUD" + i);
+      repeatTaskDelete.setDescription("RdescUD" + i);
+      repeatTaskDelete.setPriority(i*2);
+      repeatTaskDelete.setTaskId(repeatTask.getTaskId());
       model.removeTask(
-          repeatTaskUpdate,
+          repeatTaskDelete,
           task -> {
             counter.decrement();
             assertNotNull(task);
@@ -192,7 +210,10 @@ public class ModelInterfaceTest {
     assertEquals(0, model.getTasks().size());
 
     // Try operations on a nonexistent task (both bad and null id)
-    final TaskModel nonexistentTask = new TaskModel("NOT", "THERE", 1);
+    final TaskModel nonexistentTask = new TaskModel();
+    nonexistentTask.setName("NOT");
+    nonexistentTask.setDescription("THERE");
+    nonexistentTask.setPriority(1);
     nonexistentTask.setTaskId("BAD_ID");
     counter.increment();
     model.updateTask(
@@ -351,7 +372,10 @@ public class ModelInterfaceTest {
 
     // Update the user
     counter.increment();
-    UserModel updatedUser = new UserModel("ignore", "fname", "lname");
+    UserModel updatedUser = new UserModel();
+    updatedUser.setFirebaseId("ignore");
+    updatedUser.setFirstName("fname");
+    updatedUser.setLastName("lname");
     model.updateCurrentUser(
         updatedUser,
         user -> {
@@ -366,7 +390,7 @@ public class ModelInterfaceTest {
     // Add the user to a new household
     counter.increment();
     model.createHousehold(
-        new HouseholdModel("ignore"),
+        new HouseholdModel(),
         household -> {
           counter.decrement();
           assertNotNull(household);
@@ -452,7 +476,7 @@ public class ModelInterfaceTest {
     // Make new household
     counter.increment();
     model.createHousehold(
-        new HouseholdModel("ignore"),
+        new HouseholdModel(),
         household -> {
           counter.decrement();
           assertNotNull(household);

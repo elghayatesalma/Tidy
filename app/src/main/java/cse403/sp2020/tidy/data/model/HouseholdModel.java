@@ -10,10 +10,6 @@ public class HouseholdModel {
   // Empty constructor for firestore
   public HouseholdModel() {}
 
-  public HouseholdModel(String householdId) {
-    this.householdId = householdId;
-  }
-
   public HouseholdModel(HouseholdModel other) {
     if (other != null) {
       this.householdId = other.householdId;
@@ -29,10 +25,14 @@ public class HouseholdModel {
   }
 
   public boolean equals(HouseholdModel other) {
-    if (other != null) {
+    if (other == null) {
+      return false;
+    }
+    if (other.getHouseholdId() != null) {
       return other.getHouseholdId().equals(getHouseholdId());
     } else {
-      return false;
+      // Both are null
+      return getHouseholdId() == null;
     }
   }
 }
