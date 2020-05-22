@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -149,10 +150,14 @@ public class ProfileActivity extends AppCompatActivity {
     ImageView profilePic = (ImageView) findViewById(R.id.profile_picture);
     // might be able to replace R.drawable.example_user with user's selected image later on in the
     // project
+      /*
     RoundedBitmapDrawable roundedBitmapDrawable =
         RoundedBitmapDrawableFactory.create(getResources(), profilePicture);
     roundedBitmapDrawable.setCircular(true);
-    profilePic.setImageDrawable(roundedBitmapDrawable);
+
+       */
+      Drawable d = new BitmapDrawable(getResources(), profilePicture);
+    profilePic.setImageDrawable(d);
 
     // Set up recycler view for drag and drop chore preference list
     recyclerView = findViewById(R.id.chore_preference_list);
