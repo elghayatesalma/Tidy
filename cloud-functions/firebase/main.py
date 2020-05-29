@@ -53,7 +53,7 @@ def update_assignments(data, context):
             # get the document using the taskID
             taskDoc = taskCollection.document(task['taskId'])
             # merge in the new assigned field
-            transaction.update(taskDoc, { u'assigned': task['assigned'] }, merge=True)
+            transaction.update(taskDoc, { u'assigned': task['assigned'] })
 
         logging.info('all tasks: ' + str(tasks))
 
