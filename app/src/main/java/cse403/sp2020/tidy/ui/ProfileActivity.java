@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -40,6 +41,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
+import com.bumptech.glide.*;
 
 import cse403.sp2020.tidy.R;
 import cse403.sp2020.tidy.data.ModelInterface;
@@ -85,8 +90,14 @@ public class ProfileActivity extends AppCompatActivity {
 
     GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
     username = acct.getDisplayName();
-    Uri photoURL = acct.getPhotoUrl();
-    Bitmap profilePicture = loadImageFromWebOperations(photoURL);
+    String photoURL = acct.getPhotoUrl().toString();
+
+    RequestOptions requestOptions = new RequestOptions();
+    requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
+
+    Glide.with(getApplicationContext()).load(photoURL)
+          .thumbnail(0.5f).transition(withCrossFade()).apply(requestOptions)
+          .into((ImageView) findViewById(R.id.profile_picture));
 
     setModelCallbacks();
     UserCallbackInterface c =
@@ -133,31 +144,6 @@ public class ProfileActivity extends AppCompatActivity {
             finish();
           }
         });
-
-    // get username if user != null, otherwise fill in name with default
-      /*
-    if (user != null) {
-      username = user.getFirstName() + " " + user.getLastName();
-    } else {
-      username = "No Name";
-    }
-
-    // set textView to username
-    nameView.setText(username);
-    */
-
-    // this section makes the profile picture circular
-    ImageView profilePic = (ImageView) findViewById(R.id.profile_picture);
-    // might be able to replace R.drawable.example_user with user's selected image later on in the
-    // project
-      /*
-    RoundedBitmapDrawable roundedBitmapDrawable =
-        RoundedBitmapDrawableFactory.create(getResources(), profilePicture);
-    roundedBitmapDrawable.setCircular(true);
-
-       */
-      Drawable d = new BitmapDrawable(getResources(), profilePicture);
-    profilePic.setImageDrawable(d);
 
     // Set up recycler view for drag and drop chore preference list
     recyclerView = findViewById(R.id.chore_preference_list);
@@ -233,33 +219,4 @@ public class ProfileActivity extends AppCompatActivity {
           }
         });
   }
-
-    public Bitmap loadImageFromWebOperations(Uri imageUri) {
-        try {
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
-            return bitmap;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-  /*
-  private List<String> compareList(List<String> original, List<String> updated) {
-      List<String> returned = new ArrayList<>(original);
-      for (int i = 0; i < updated.size(); i++) { // see new additions
-          if (!original.contains(updated.get(i))) {
-              returned.add(updated.get(i));
-          }
-      }
-
-      for (int i = 0; i < original.size(); i++) { // see removals
-          if (!updated.contains(original.get(i))) {
-              returned.remove(original.get(i));
-          }
-      }
-      return returned;
-  }
-
-   */
 }
