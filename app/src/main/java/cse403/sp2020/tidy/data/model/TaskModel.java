@@ -22,6 +22,7 @@ public class TaskModel {
       this.description = other.description;
       this.priority = other.priority;
       this.assignedUser = other.assignedUser;
+      this.completed = other.completed;
     }
   }
 
