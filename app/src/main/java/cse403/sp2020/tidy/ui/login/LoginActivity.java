@@ -8,7 +8,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -234,7 +233,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
           email = user.getEmail();
         }
         mFirebaseStatusTextView.setText(
-                getString(R.string.firebase_status_fmt, displayName, email, photoURL, user.getUid()));
+            getString(R.string.firebase_status_fmt, displayName, email, photoURL, user.getUid()));
         findViewById(R.id.go_to_main_button).setVisibility(View.VISIBLE);
         findViewById(R.id.disconnect_button).setVisibility(View.VISIBLE);
         findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
@@ -285,26 +284,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
     ModelInterface model = new ModelInterface(mFirestore);
     model.setCurrentUser(
-            mAuth.getUid(),
-            user -> {
-              if (user == null) {
-                Log.e(TAG, "Error setting current user in login");
-              } else if (model.getHousehold() != null) {
-                Intent mainActivityIntent = new Intent(this, MainActivity.class);
-                mainActivityIntent.putExtra("tidy_user_id", mAuth.getUid());
-                startActivity(mainActivityIntent);
-              } else {
-                Intent setupActivityIntent = new Intent(this, UserSetup.class);
-                startActivity(setupActivityIntent);
-              }
-          });
+        mAuth.getUid(),
+        user -> {
+          if (user == null) {
+            Log.e(TAG, "Error setting current user in login");
+          } else if (model.getHousehold() != null) {
+            Intent mainActivityIntent = new Intent(this, MainActivity.class);
+            mainActivityIntent.putExtra("tidy_user_id", mAuth.getUid());
+            startActivity(mainActivityIntent);
+          } else {
+            Intent setupActivityIntent = new Intent(this, UserSetup.class);
+            startActivity(setupActivityIntent);
+          }
+        });
   }
 
   @Override
   public void onClick(View v) {
     switch (v.getId()) {
       case R.id.go_to_main_button:
-          proceedToApp();
+        proceedToApp();
         break;
       case R.id.sign_in_button:
         signInGoogle();

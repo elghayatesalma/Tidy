@@ -1,9 +1,7 @@
 package cse403.sp2020.tidy.ui;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.android.material.tabs.TabLayout;
@@ -94,14 +92,13 @@ public class MainActivity extends AppCompatActivity {
   }
 
   @Override
-  public void onBackPressed()
-  {
-      // code here to show dialog
-      Intent loginActivityIntent = new Intent(this, LoginActivity.class);
-      startActivity(loginActivityIntent);
+  public void onBackPressed() {
+    // code here to show dialog
+    Intent loginActivityIntent = new Intent(this, LoginActivity.class);
+    startActivity(loginActivityIntent);
   }
 
-    /** Always called whenever the fragment starts being used */
+  /** Always called whenever the fragment starts being used */
   @Override
   public void onResume() {
     super.onResume();
