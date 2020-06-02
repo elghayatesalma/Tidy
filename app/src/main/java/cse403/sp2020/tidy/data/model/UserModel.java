@@ -1,5 +1,6 @@
 package cse403.sp2020.tidy.data.model;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -11,7 +12,7 @@ public class UserModel {
   private String firebaseId;
   private String firstName;
   private String lastName;
-  private List<String> chorePreferences;
+  private String[] chorePreferences;
 
   // Empty constructor for firestore
   public UserModel() {}
@@ -21,10 +22,7 @@ public class UserModel {
       this.firebaseId = other.firebaseId;
       this.firstName = other.firstName;
       this.lastName = other.lastName;
-
-      if (other.chorePreferences != null) {
-        this.chorePreferences = new ArrayList<>(other.chorePreferences);
-      }
+      this.setChorePreferences(other.getChorePreference());
     }
   }
 
@@ -42,7 +40,7 @@ public class UserModel {
 
   public List<String> getChorePreference() {
     if (chorePreferences != null) {
-      return new ArrayList<>(chorePreferences);
+      return new ArrayList<>(Arrays.asList(chorePreferences));
     } else {
       return null;
     }
@@ -61,7 +59,9 @@ public class UserModel {
   }
 
   public void setChorePreferences(List<String> chorePreferences) {
-    this.chorePreferences = new ArrayList<>(chorePreferences);
+    if (chorePreferences != null) {
+      this.chorePreferences = (String[]) chorePreferences.toArray();
+    }
   }
 
   public boolean equals(UserModel other) {
