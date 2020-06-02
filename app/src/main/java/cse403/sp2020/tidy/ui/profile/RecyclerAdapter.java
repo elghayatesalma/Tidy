@@ -16,9 +16,9 @@ import cse403.sp2020.tidy.R;
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
   private static final String TAG = "RecyclerAdapter";
-  private List<String> chorePreferences;
+  private List<ChoreEntry> chorePreferences;
 
-  public RecyclerAdapter(List<String> chorePreferences) {
+  public RecyclerAdapter(List<ChoreEntry> chorePreferences) {
     this.chorePreferences = chorePreferences;
   }
 
@@ -33,7 +33,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
   @Override
   public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
     // holder.rowCountTextView.setText(String.valueOf(position));
-    holder.textViewChore.setText(chorePreferences.get(position));
+    holder.textViewChore.setText(chorePreferences.get(position).taskName);
   }
 
   @Override
@@ -51,7 +51,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     @Override
     public void onClick(View v) {
-      Toast.makeText(v.getContext(), chorePreferences.get(getAdapterPosition()), Toast.LENGTH_SHORT)
+      Toast.makeText(
+              v.getContext(),
+              chorePreferences.get(getAdapterPosition()).taskName,
+              Toast.LENGTH_SHORT)
           .show();
     }
   }

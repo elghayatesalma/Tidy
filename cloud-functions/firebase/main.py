@@ -8,14 +8,21 @@ import datetime
 # Create a firestore client instance
 client = firestore.Client()
 
+# Run on any changes to /Households/{HouseHoldID}/Users/{UserID} documents
+def user_updates(data, context):
+    update_assignments(data, context)
+
 # Run on any changes to /Households/{HouseHoldID}/Tasks/{TaskID} documents
+def task_updates(data, context):
+    update_assignments(data, context)
+
+# Compute assignment updates on changes to both users or tasks
 def update_assignments(data, context):
     logging.debug(data)
     # Break up the path to the triggered resource (task)
     path_parts = context.resource.split('/documents/')[1].split('/')
     collection_path = path_parts[0]
     household_path = path_parts[1]
-    tasks_path = path_parts[2]
 
     # Get the document and collections for this Task update trigger
     householdDoc = client.collection(collection_path).document(household_path)
@@ -60,16 +67,17 @@ def update_assignments(data, context):
                 # reassign if it's been more than a day
                 if timediff.days > 0:
                     unassigned.append(task)
-                elif 'assignedTo' in task and \
-                        ('completed' not in task \
-                            or task['completed'] is False):
+                elif 'assignedTo' in task:
                     uid = task['assignedTo']
                     # This user is not in the household anymore
                     if uid not in num_assignments:
                         unassigned.append(task)
                     else:
+                        # Count the number of existing assignments
                         num_assignments[uid] += 1
-                else:
+
+                # Count up the number of completed tasks
+                if 'completed' in task and task['completed']:
                     num_completed += 1
             else: # Never assigned before
                 unassigned.append(task)
@@ -77,7 +85,8 @@ def update_assignments(data, context):
         # reassign all tasks if all are completed
         if num_completed == len(tasks):
             unassigned = tasks
-
+            for uid in num_assignments:
+                num_assignments[uid] = 0
 
         unassigned_ids = []
         for task in unassigned:

@@ -33,7 +33,6 @@ jobs:
           echo 'npm install -g firebase-tools' >> integration_test.sh
           echo 'firebase --only firestore emulators:exec "./gradlew connectedCheck"' >> integration_test.sh
           chmod +x integration_test.sh
-
       - name: Gradle Integration Tests
         uses: reactivecircus/android-emulator-runner@v1
         with:

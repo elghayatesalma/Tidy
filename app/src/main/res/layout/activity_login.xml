@@ -36,18 +36,6 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/textView"
-            android:layout_width="229dp"
-            android:layout_height="wrap_content"
-            android:text="Google Account Profile Picture:" />
-
-        <ImageView
-            android:id="@+id/userProfileImage"
-            android:layout_width="145dp"
-            android:layout_height="wrap_content"
-            tools:srcCompat="@tools:sample/avatars"/>
-
-        <TextView
             android:id="@+id/detail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -58,18 +46,6 @@
             android:scrollbars="vertical"
             android:textColor="@android:color/white"
             android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/firebaseStatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/firebase_disconnected" />
-
-        <TextView
-            android:id="@+id/sharedHouseholdID"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="No dynamic link household" />
 
         <Button
             android:id="@+id/go_to_main_button"
@@ -108,16 +84,18 @@
             <Button
                 android:id="@+id/sign_out_button"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="@string/sign_out" />
+                android:text="@string/sign_out"
+                android:visibility="invisible" />
 
             <Button
                 android:id="@+id/disconnect_button"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="@string/disconnect" />
+                android:text="@string/disconnect"
+                android:visibility="invisible" />
         </LinearLayout>
 
     </RelativeLayout>

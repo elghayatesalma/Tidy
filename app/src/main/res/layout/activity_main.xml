@@ -9,28 +9,35 @@
     tools:context=".ui.MainActivity">
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
         <TextView
             android:id="@+id/main_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/ubuntu_bold"
             android:gravity="center"
             android:minHeight="?actionBarSize"
             android:padding="@dimen/appbar_padding"
-            android:text="Tidy"
+            android:text="tidy"
             android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title" />
+
         <Space
             android:layout_width="0px"
             android:layout_height="1px"
-            android:layout_weight="1"/>
-        <Button android:id="@+id/main_to_profile_button"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/main_to_profile_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/hind_semibold"
             android:padding="@dimen/appbar_padding"
-            android:text="User Profile"
-            android:background="@null"/>
+            android:text="profile"
+            android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title" />
     </LinearLayout>
 
     <androidx.viewpager.widget.ViewPager
@@ -42,7 +49,10 @@
             android:id="@+id/main_tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary" />
+            android:background="@android:color/transparent"
+            app:tabIndicatorColor="@color/colorPrimary"
+            app:tabIndicatorHeight="4dp"
+            app:tabTextAppearance="@style/UbuntuBoldTextAppearance"/>
     </androidx.viewpager.widget.ViewPager>
 
 </LinearLayout>
