@@ -115,22 +115,22 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
           final Dialog dialog = new Dialog(Objects.requireNonNull(getContext()));
           dialog.setContentView(R.layout.add_chore_dialog);
           dialog.show();
-          dialog
-              .findViewById(R.id.add_chore_dialog_delete)
-              .setVisibility(View.VISIBLE);
+          dialog.findViewById(R.id.add_chore_dialog_delete).setVisibility(View.VISIBLE);
           dialog
               .findViewById(R.id.add_chore_dialog_delete)
               .setOnClickListener(
                   viewDelete -> {
-                    model.removeTask(task, deletedTask -> {
-                      if (deletedTask == null) {
-                        Log.e("ChoreAdapter", "Task failed to delete");
-                      } else {
-                        Log.e("ChoreAdapter", "Task deleted successfully");
-                      }
-                    });
+                    model.removeTask(
+                        task,
+                        deletedTask -> {
+                          if (deletedTask == null) {
+                            Log.e("ChoreAdapter", "Task failed to delete");
+                          } else {
+                            Log.e("ChoreAdapter", "Task deleted successfully");
+                          }
+                        });
                     dialog.dismiss();
-          });
+                  });
           dialog
               .findViewById(R.id.add_chore_dialog_cancel)
               .setOnClickListener(view1 -> dialog.dismiss());
@@ -164,13 +164,15 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
                       task.setName(name);
                       task.setDescription(description);
                       task.setPriority(priority);
-                      model.updateTask(task, updatedTask -> {
-                        if (updatedTask == null) {
-                          Log.e("ChoreListAdapter", "Failed to update task");
-                        } else {
-                          Log.d("ChoreListAdapter", "Task updated");
-                        }
-                      });
+                      model.updateTask(
+                          task,
+                          updatedTask -> {
+                            if (updatedTask == null) {
+                              Log.e("ChoreListAdapter", "Failed to update task");
+                            } else {
+                              Log.d("ChoreListAdapter", "Task updated");
+                            }
+                          });
 
                       dialog.dismiss();
                     } else {
