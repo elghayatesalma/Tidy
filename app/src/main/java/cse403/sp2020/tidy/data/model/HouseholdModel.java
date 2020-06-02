@@ -14,6 +14,7 @@ public class HouseholdModel {
   public HouseholdModel(HouseholdModel other) {
     if (other != null) {
       this.householdId = other.householdId;
+      this.name = other.name;
     }
   }
 

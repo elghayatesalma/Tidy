@@ -50,8 +50,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:text="Leave House"
-            android:visibility="invisible" />
+            android:text="Remove User"
+            android:textAllCaps="true"
+            android:textSize="9sp"
+            android:visibility="visible" />
 
         <Space android:layout_weight="1"
             android:layout_width="0px"
