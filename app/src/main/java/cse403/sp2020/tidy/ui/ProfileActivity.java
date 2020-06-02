@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -41,7 +40,6 @@ import cse403.sp2020.tidy.data.model.HouseholdModel;
 import cse403.sp2020.tidy.data.model.TaskModel;
 import cse403.sp2020.tidy.data.model.UserModel;
 import cse403.sp2020.tidy.ui.login.LoginActivity;
-import cse403.sp2020.tidy.ui.login.UserSetup;
 import cse403.sp2020.tidy.ui.profile.ChoreEntry;
 import cse403.sp2020.tidy.ui.profile.RecyclerAdapter;
 
@@ -100,11 +98,11 @@ public class ProfileActivity extends AppCompatActivity {
             username = user.getFirstName() + " " + user.getLastName();
             nameView.setText(username);
             if (modelInterface.getHousehold().getName() != null) {
-                houseName = modelInterface.getHousehold().getName();
-                houseNameView.setText(houseName);
+              houseName = modelInterface.getHousehold().getName();
+              houseNameView.setText(houseName);
             } else {
-                houseName = "No house name found";
-                houseNameView.setText(houseName);
+              houseName = "No house name found";
+              houseNameView.setText(houseName);
             }
 
             houseNameView.setText(houseName);
@@ -174,28 +172,39 @@ public class ProfileActivity extends AppCompatActivity {
                             .setText(u.getFirstName());
                         ((EditText) dialog.findViewById(R.id.set_last_name))
                             .setText(u.getLastName());
-                        ((EditText) dialog.findViewById(R.id.set_house_name))
-                                  .setText(houseName);
+                        ((EditText) dialog.findViewById(R.id.set_house_name)).setText(houseName);
                         dialog.show();
-                        dialog.findViewById(R.id.leave_household)
-                                .setOnClickListener(v -> {
-                                            new AlertDialog.Builder(this)
-                                                    .setTitle("Leave Household")
-                                                    .setMessage("Do you really want to leave the household?")
-                                                    .setIcon(android.R.drawable.ic_dialog_alert)
-                                                    .setPositiveButton(android.R.string.yes, (d, w) -> {
-                                                        modelInterface.removeUserFromHousehold(h -> {
-                                                            if (h != null) {
-                                                                Intent loginActivityIntent = new Intent(ProfileActivity.this, LoginActivity.class);
-                                                                startActivity(loginActivityIntent);
-                                                            } else {
-                                                                Toast.makeText(ProfileActivity.this, "Failed to delete user", Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        });
-                                                    })
-                                                    .setNegativeButton(android.R.string.no, null)
-                                                    .show();
-                                        });
+                        dialog
+                            .findViewById(R.id.leave_household)
+                            .setOnClickListener(
+                                v -> {
+                                  new AlertDialog.Builder(this)
+                                      .setTitle("Leave Household")
+                                      .setMessage("Do you really want to leave the household?")
+                                      .setIcon(android.R.drawable.ic_dialog_alert)
+                                      .setPositiveButton(
+                                          android.R.string.yes,
+                                          (d, w) -> {
+                                            modelInterface.removeUserFromHousehold(
+                                                h -> {
+                                                  if (h != null) {
+                                                    Intent loginActivityIntent =
+                                                        new Intent(
+                                                            ProfileActivity.this,
+                                                            LoginActivity.class);
+                                                    startActivity(loginActivityIntent);
+                                                  } else {
+                                                    Toast.makeText(
+                                                            ProfileActivity.this,
+                                                            "Failed to delete user",
+                                                            Toast.LENGTH_SHORT)
+                                                        .show();
+                                                  }
+                                                });
+                                          })
+                                      .setNegativeButton(android.R.string.no, null)
+                                      .show();
+                                });
                         dialog
                             .findViewById(R.id.edit_user_dialog_cancel)
                             .setOnClickListener(view1 -> dialog.dismiss());
@@ -237,18 +246,20 @@ public class ProfileActivity extends AppCompatActivity {
                                         });
                                     HouseholdModel h = modelInterface.getHousehold();
                                     h.setName(house_name);
-                                    modelInterface.updateHousehold(h, nh -> {
-                                        if (nh == null) {
+                                    modelInterface.updateHousehold(
+                                        h,
+                                        nh -> {
+                                          if (nh == null) {
                                             Toast.makeText(
                                                     getBaseContext(),
                                                     "Failed to update household name",
                                                     Toast.LENGTH_SHORT)
-                                                    .show();
-                                        } else {
+                                                .show();
+                                          } else {
                                             houseNameView.setText(house_name);
                                             dialog.dismiss();
-                                        }
-                                    });
+                                          }
+                                        });
                                   } else {
                                     Toast.makeText(
                                             getBaseContext(),
