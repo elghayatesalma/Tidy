@@ -40,7 +40,7 @@ public class UserModel {
     return lastName;
   }
 
-  public List<String> getChorePreference() {
+  public List<String> getChorePreferences() {
     if (chorePreferences != null) {
       return new ArrayList<>(chorePreferences);
     } else {
@@ -61,7 +61,9 @@ public class UserModel {
   }
 
   public void setChorePreferences(List<String> chorePreferences) {
-    this.chorePreferences = new ArrayList<>(chorePreferences);
+    if (chorePreferences != null) {
+      this.chorePreferences = new ArrayList<>(chorePreferences);
+    }
   }
 
   public boolean equals(UserModel other) {

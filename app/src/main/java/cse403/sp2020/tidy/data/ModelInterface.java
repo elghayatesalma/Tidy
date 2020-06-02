@@ -573,6 +573,7 @@ public class ModelInterface {
                 // Search unassigned for the user
                 mFirestore
                     .collection(UNASSIGNED_USER_COLLECTION_NAME)
+                    .whereEqualTo(USER_ID_FIELD, firebaseId)
                     .get()
                     .addOnCompleteListener(
                         task -> {

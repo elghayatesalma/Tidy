@@ -87,7 +87,7 @@ public class ProfileActivity extends AppCompatActivity {
           } else { // user has been found/created
             Log.d(TAG, "User set");
             user = setUser;
-            choreList = setUser.getChorePreference();
+            choreList = setUser.getChorePreferences();
             Log.d(TAG, "Chore list is null: " + (choreList == null));
             modelInterface.setTasksListener(
                 tasks -> {
@@ -149,7 +149,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                               setUser.setChorePreferences(choreList);
 
-                              Log.e(TAG, setUser.getChorePreference().toString());
+                              Log.e(TAG, setUser.getChorePreferences().toString());
 
                               Log.d(TAG, "Reached update chore prefs");
 
@@ -164,10 +164,10 @@ public class ProfileActivity extends AppCompatActivity {
                                               Toast.LENGTH_SHORT)
                                           .show();
                                     } else {
-                                      if (updatedUser.getChorePreference() == null) {
+                                      if (updatedUser.getChorePreferences() == null) {
                                         Log.e(TAG, "Updated user prefs are null");
                                       } else {
-                                        Log.e(TAG, updatedUser.getChorePreference().toString());
+                                        Log.e(TAG, updatedUser.getChorePreferences().toString());
                                       }
                                     }
                                   });
