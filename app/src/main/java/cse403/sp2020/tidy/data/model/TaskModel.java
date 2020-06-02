@@ -66,7 +66,7 @@ public class TaskModel {
     this.priority = priority;
   }
 
-  public void setAssignedTo(String assignedUser) {
+  public void setAssignedTo(String assignedTo) {
     this.assignedTo = assignedTo;
   }
 
