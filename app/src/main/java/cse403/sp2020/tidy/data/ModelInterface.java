@@ -83,6 +83,11 @@ public class ModelInterface {
     clearData();
   }
 
+  /** Removes all callbacks */
+  public void removeListeners() {
+    clearListeners();
+  }
+
   /* Single callback Methods */
 
   /**

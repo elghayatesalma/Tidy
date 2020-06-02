@@ -9,7 +9,7 @@ public class TaskModel {
   private String name;
   private String description;
   private int priority;
-  private String assignedUser;
+  private String assignedTo;
   private boolean completed;
 
   // Empty constructor for firestore
@@ -21,7 +21,7 @@ public class TaskModel {
       this.name = other.name;
       this.description = other.description;
       this.priority = other.priority;
-      this.assignedUser = other.assignedUser;
+      this.assignedTo = other.assignedTo;
       this.completed = other.completed;
     }
   }
@@ -42,8 +42,8 @@ public class TaskModel {
     return priority;
   }
 
-  public String getAssignedUser() {
-    return assignedUser;
+  public String getAssignedTo() {
+    return assignedTo;
   }
 
   public boolean isCompleted() {
@@ -66,8 +66,8 @@ public class TaskModel {
     this.priority = priority;
   }
 
-  public void setAssignedUser(String assignedUser) {
-    this.assignedUser = assignedUser;
+  public void setAssignedTo(String assignedUser) {
+    this.assignedTo = assignedTo;
   }
 
   public void setCompleted(boolean completed) {
