@@ -728,8 +728,7 @@ public class ModelInterface {
 
   private void opUpdateUser(final UserModel user, final CallbackInterface<UserModel> callback) {
     Log.w(TAG, "Updating current user");
-    mFirestore
-        .collection(USERS_COLLECTION_NAME)
+    getUserCollection()
         .document(mFirebaseUser.getFirebaseId())
         .set(user)
         .addOnCompleteListener(
