@@ -6,6 +6,7 @@ package cse403.sp2020.tidy.data.model;
  */
 public class HouseholdModel {
   private String householdId;
+  private String name;
 
   // Empty constructor for firestore
   public HouseholdModel() {}
@@ -20,8 +21,16 @@ public class HouseholdModel {
     return householdId;
   }
 
+  public String getName() {
+    return name;
+  }
+
   public void setHouseholdId(String householdId) {
     this.householdId = householdId;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   public boolean equals(HouseholdModel other) {
