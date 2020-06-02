@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import java.util.List;
 
 import cse403.sp2020.tidy.R;
-import cse403.sp2020.tidy.data.CallbackInterface;
 import cse403.sp2020.tidy.data.ModelInterface;
 import cse403.sp2020.tidy.data.model.TaskModel;
 import cse403.sp2020.tidy.data.model.UserModel;
@@ -26,7 +25,8 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
   private boolean toggleable;
   private List<UserModel> users;
 
-  ChoreListArrayAdapter(Context context, List<E> objects, ModelInterface model, boolean toggleable) {
+  ChoreListArrayAdapter(
+      Context context, List<E> objects, ModelInterface model, boolean toggleable) {
     super(context, 0, objects);
     inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     this.model = model;
@@ -97,6 +97,7 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
   public void setUsers(List<UserModel> users) {
     this.users = users;
   }
+  private void onClick(View v) {}
 
   private class ChoreHolder {
     TextView chore_name;

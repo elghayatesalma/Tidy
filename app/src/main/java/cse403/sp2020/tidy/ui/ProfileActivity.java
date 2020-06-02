@@ -2,39 +2,44 @@ package cse403.sp2020.tidy.ui;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.drawable.RoundedBitmapDrawable;
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.firebase.firestore.*;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
+import com.bumptech.glide.*;
 
 import cse403.sp2020.tidy.R;
 import cse403.sp2020.tidy.data.ModelInterface;
-import cse403.sp2020.tidy.data.callbacks.UserCallbackInterface;
 import cse403.sp2020.tidy.data.model.HouseholdModel;
+import cse403.sp2020.tidy.data.model.TaskModel;
 import cse403.sp2020.tidy.data.model.UserModel;
 import cse403.sp2020.tidy.ui.profile.RecyclerAdapter;
 
 public class ProfileActivity extends AppCompatActivity {
 
-  private List<String> choreList = new ArrayList<>();
+  public List<String> choreList;
   private RecyclerView recyclerView;
   private RecyclerAdapter recyclerAdapter;
   private LinearLayoutManager mLayoutManager;
@@ -42,9 +47,11 @@ public class ProfileActivity extends AppCompatActivity {
   private UserModel user;
   private HouseholdModel household;
   private String username;
-  private String userID;
+  private String mAuth;
+  private List<TaskModel> taskList;
 
-  // TODO: receive chores list from the model and add to display
+  private static final String TAG = "ProfileActivity";
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -52,168 +59,132 @@ public class ProfileActivity extends AppCompatActivity {
 
     Intent data = getIntent();
     final TextView nameView = (TextView) findViewById(R.id.profile_username);
-    userID = data.getStringExtra("tidy_user_id");
+    mAuth = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     // initialize firestore instance
     modelInterface = new ModelInterface(FirebaseFirestore.getInstance());
-    setModelCallbacks();
-    UserCallbackInterface c =
-        new UserCallbackInterface() {
-          @Override
-          public void userCallback(List<UserModel> users) {
-            user = modelInterface.getCurrentUser();
-            username = user.getFirstName() + " " + user.getLastName();
-            nameView.setText(username);
-          }
 
-          @Override
-          public void userCallbackFailed(String message) {
-            username = "No Name";
-            nameView.setText(username);
-          }
-        };
-    Log.w("PROFILE", userID);
-    //    modelInterface.setUser(userID);
-    //
-    //    modelInterface.registerUserCallback(c);
-    user = modelInterface.getCurrentUser();
-    household = modelInterface.getHousehold();
+    GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+    username = acct.getDisplayName();
+    nameView.setText(username);
+    String photoURL = acct.getPhotoUrl().toString();
 
-    // Button for going back to main activity
-    ImageButton backToMain = (ImageButton) findViewById(R.id.profile_back);
-    backToMain.setOnClickListener(
-        new View.OnClickListener() {
+    RequestOptions requestOptions = new RequestOptions();
+    requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
 
-          @Override
-          public void onClick(View v) {
-            Intent intent = new Intent(v.getContext(), MainActivity.class);
-            v.getContext().startActivity(intent);
+    Glide.with(getApplicationContext())
+        .load(photoURL)
+        .thumbnail(0.5f)
+        .transition(withCrossFade())
+        .apply(requestOptions)
+        .into((ImageView) findViewById(R.id.profile_picture));
+
+    modelInterface.setCurrentUser(
+        mAuth,
+        setUser -> {
+          if (setUser == null) {
+            Toast.makeText(this, "An error has occurred", Toast.LENGTH_LONG).show();
+          } else { // user has been found/created
+            Log.d(TAG, "User set");
+            user = setUser;
+            choreList = setUser.getChorePreference();
+            Log.d(TAG, "Chore list is null: " + (choreList == null));
+            modelInterface.setTasksListener(
+                tasks -> {
+                  if (tasks == null) {
+                    taskList = new ArrayList<>();
+                    Log.d(TAG, "Tasks is null");
+                  } else {
+                    taskList = new ArrayList<>(tasks);
+                    Log.d(TAG, "Reached here");
+                  }
+                  if (choreList
+                      == null) { // don't set chore preferences in db until changed in recycler
+                    // adapter
+                    Log.d(TAG, "chore list is null");
+                    choreList = new ArrayList<>();
+                    for (TaskModel t : taskList) {
+                      choreList.add(t.getName());
+                      Log.d(TAG, t.getName());
+                    }
+                  } else if (taskList.size()
+                      != choreList.size()) { // if there is an update to task list, update chorelist
+                    // remove any deleted tasks and append any new tasks
+                  }
+                  // Button for going back to main activity
+                  ImageButton backToMain = (ImageButton) findViewById(R.id.profile_back);
+                  backToMain.setOnClickListener(
+                      new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                          finish();
+                        }
+                      });
+
+                  // Set up recycler view for drag and drop chore preference list
+                  recyclerView = findViewById(R.id.chore_preference_list);
+                  mLayoutManager = new LinearLayoutManager(this);
+                  recyclerAdapter = new RecyclerAdapter(choreList);
+                  recyclerView.setLayoutManager(mLayoutManager);
+                  recyclerView.setAdapter(recyclerAdapter);
+
+                  RecyclerView.ItemDecoration divider =
+                      new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+                  recyclerView.addItemDecoration(divider);
+
+                  ItemTouchHelper helper =
+                      new ItemTouchHelper(
+                          new ItemTouchHelper.SimpleCallback(
+                              ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
+                            @Override
+                            public boolean onMove(
+                                @NonNull RecyclerView recyclerView,
+                                @NonNull RecyclerView.ViewHolder dragged,
+                                @NonNull RecyclerView.ViewHolder target) {
+                              int draggedPosition = dragged.getAdapterPosition();
+
+                              int targetPosition = target.getAdapterPosition();
+
+                              Collections.swap(choreList, draggedPosition, targetPosition);
+
+                              setUser.setChorePreferences(choreList);
+
+                              Log.e(TAG, setUser.getChorePreference().toString());
+
+                              Log.d(TAG, "Reached update chore prefs");
+
+                              modelInterface.updateCurrentUser(
+                                  setUser,
+                                  updatedUser -> {
+                                    if (updatedUser
+                                        == null) { // reset chore preference list if null
+                                      Toast.makeText(
+                                              ProfileActivity.this,
+                                              "Update failed.",
+                                              Toast.LENGTH_SHORT)
+                                          .show();
+                                    } else {
+                                      if (updatedUser.getChorePreference() == null) {
+                                        Log.e(TAG, "Updated user prefs are null");
+                                      } else {
+                                        Log.e(TAG, updatedUser.getChorePreference().toString());
+                                      }
+                                    }
+                                  });
+
+                              recyclerAdapter.notifyItemMoved(draggedPosition, targetPosition);
+
+                              return false;
+                            }
+
+                            @Override
+                            public void onSwiped(
+                                @NonNull RecyclerView.ViewHolder viewHolder, int direction) {}
+                          });
+
+                  helper.attachToRecyclerView(recyclerView);
+                });
           }
         });
-
-    // get username if user != null, otherwise fill in name with default
-    if (user != null) {
-      username = user.getFirstName() + " " + user.getLastName();
-    } else {
-      username = "No Name";
-    }
-
-    // set textView to username
-    nameView.setText(username);
-
-    // this section makes the profile picture circular
-    ImageView profilePic = (ImageView) findViewById(R.id.profile_picture);
-    // might be able to replace R.drawable.example_user with user's selected image later on in the
-    // project
-    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.example_user);
-    RoundedBitmapDrawable roundedBitmapDrawable =
-        RoundedBitmapDrawableFactory.create(getResources(), bitmap);
-    roundedBitmapDrawable.setCircular(true);
-    profilePic.setImageDrawable(roundedBitmapDrawable);
-
-    // Set up recycler view for drag and drop chore preference list
-    recyclerView = findViewById(R.id.chore_preference_list);
-    mLayoutManager = new LinearLayoutManager(this);
-    recyclerAdapter = new RecyclerAdapter(choreList);
-    recyclerView.setLayoutManager(mLayoutManager);
-    recyclerView.setAdapter(recyclerAdapter);
-
-    RecyclerView.ItemDecoration divider =
-        new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-    recyclerView.addItemDecoration(divider);
-
-    ItemTouchHelper helper =
-        new ItemTouchHelper(
-            new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
-              @Override
-              public boolean onMove(
-                  @NonNull RecyclerView recyclerView,
-                  @NonNull RecyclerView.ViewHolder dragged,
-                  @NonNull RecyclerView.ViewHolder target) {
-                int draggedPosition = dragged.getAdapterPosition();
-
-                int targetPosition = target.getAdapterPosition();
-
-                Collections.swap(
-                    choreList,
-                    draggedPosition,
-                    targetPosition); // probably work with backend on chore preference algo
-                // needs to update preference list
-                recyclerAdapter.notifyItemMoved(draggedPosition, targetPosition);
-
-                return false;
-              }
-
-              @Override
-              public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {}
-            });
-
-    helper.attachToRecyclerView(recyclerView);
   }
-
-  private void setModelCallbacks() {
-    //    modelInterface.registerTaskCallback(
-    //        new TaskCallbackInterface() {
-    //          @Override
-    //          public void taskCallback(List<TaskModel> users) {
-    //            Log.d("test", "Profile task callback success tasks == null = " + (users == null));
-    //            for (int i = 0; i < users.size(); i++) {
-    //              choreList.add(users.get(i).getName());
-    //              recyclerAdapter.notifyDataSetChanged();
-    //            }
-    //          }
-    //
-    //          @Override
-    //          public void taskCallbackFail(String message) {
-    //            Log.d("test", "task callback fail message = " + message);
-    //          }
-    //        });
-    //
-    //    modelInterface.registerHouseholdCallback(
-    //        new HouseholdCallbackInterface() {
-    //          @Override
-    //          public void householdCallback(HouseholdModel household) {
-    //            Log.d(
-    //                "test",
-    //                "Profile house callback success household == null = " + (household == null));
-    //          }
-    //
-    //          @Override
-    //          public void householdCallbackFailed(String message) {
-    //            Log.d("test", "house callback fail message = " + message);
-    //          }
-    //        });
-    //
-    //    modelInterface.registerUserCallback(
-    //        new UserCallbackInterface() {
-    //          @Override
-    //          public void userCallback(List<UserModel> users) {
-    //            Log.d("test", "Profile user callback success users == null = " + (users == null));
-    //          }
-    //
-    //          @Override
-    //          public void userCallbackFailed(String message) {
-    //            Log.d("test", "user callback fail message = " + message);
-    //          }
-    //        });
-  }
-
-  /*
-  private List<String> compareList(List<String> original, List<String> updated) {
-      List<String> returned = new ArrayList<>(original);
-      for (int i = 0; i < updated.size(); i++) { // see new additions
-          if (!original.contains(updated.get(i))) {
-              returned.add(updated.get(i));
-          }
-      }
-
-      for (int i = 0; i < original.size(); i++) { // see removals
-          if (!updated.contains(original.get(i))) {
-              returned.remove(original.get(i));
-          }
-      }
-      return returned;
-  }
-
-   */
 }
