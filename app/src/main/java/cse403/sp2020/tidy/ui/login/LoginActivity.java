@@ -47,6 +47,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
   private boolean signInPressed = false;
 
   @Override
+  public void onBackPressed(){
+    finishAffinity();
+    Intent a = new Intent(Intent.ACTION_MAIN);
+    a.addCategory(Intent.CATEGORY_HOME);
+    a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    startActivity(a);
+  }
+
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_login);
@@ -200,10 +209,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
           getString(
               R.string.signed_in_fmt,
               account.getDisplayName(),
-              account.getEmail(),
-              account.getGivenName(),
-              account.getFamilyName()));
+              account.getEmail()));
 
+      mStatusTextView.setVisibility(View.VISIBLE);
       findViewById(R.id.sign_in_button).setVisibility(View.GONE);
       findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
     } else {

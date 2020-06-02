@@ -35,6 +35,13 @@ public class UserSetup extends AppCompatActivity {
   private FirebaseAuth mAuth;
 
   @Override
+  public void onBackPressed() {
+    // code here to show dialog
+    Intent loginActivityIntent = new Intent(this, LoginActivity.class);
+    startActivity(loginActivityIntent);
+  }
+
+    @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     mFirestore = FirebaseFirestore.getInstance();
