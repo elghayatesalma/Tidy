@@ -68,19 +68,19 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(intent);
                               });
                     }
-                    model.setUsersListener(
-                        users -> {
-                          if (users == null) {
-                            Log.e(TAG, "No users found");
-                          } else {
-                            handleUsersUpdates(users);
-                          }
-                        });
                     Log.d(TAG, "Tasks updated");
 
                     handleTaskUpdates(tasks);
                   }
                 });
+              model.setUsersListener(
+                  users -> {
+                    if (users == null) {
+                      Log.e(TAG, "No users found");
+                    } else {
+                      handleUsersUpdates(users);
+                    }
+                  });
           }
         });
   }
