@@ -35,11 +35,13 @@ import cse403.sp2020.tidy.data.ModelInterface;
 import cse403.sp2020.tidy.data.model.HouseholdModel;
 import cse403.sp2020.tidy.data.model.TaskModel;
 import cse403.sp2020.tidy.data.model.UserModel;
+import cse403.sp2020.tidy.ui.profile.ChoreEntry;
 import cse403.sp2020.tidy.ui.profile.RecyclerAdapter;
 
 public class ProfileActivity extends AppCompatActivity {
 
-  public List<String> choreList;
+  public List<ChoreEntry> choreList;
+  public List<String> choreListIDs;
   private RecyclerView recyclerView;
   private RecyclerAdapter recyclerAdapter;
   private LinearLayoutManager mLayoutManager;
@@ -87,7 +89,7 @@ public class ProfileActivity extends AppCompatActivity {
           } else { // user has been found/created
             Log.d(TAG, "User set");
             user = setUser;
-            choreList = setUser.getPreferences();
+            choreListIDs = setUser.getPreferences();
             modelInterface.setTasksListener(
                 tasks -> {
                   if (tasks == null) {
@@ -97,19 +99,35 @@ public class ProfileActivity extends AppCompatActivity {
                     taskList = new ArrayList<>(tasks);
                     Log.d(TAG, "Reached here");
                   }
-                  if (choreList
+                  if (choreListIDs
                       == null) { // don't set chore preferences in db until changed in recycler
                     // adapter
                     Log.d(TAG, "chore list is null");
-                    choreList = new ArrayList<>();
+                    choreListIDs = new ArrayList<>();
                     for (TaskModel t : taskList) {
-                      choreList.add(t.getName());
+                      choreListIDs.add(t.getTaskId());
                       Log.d(TAG, t.getName());
                     }
                   } else if (taskList.size()
-                      != choreList.size()) { // if there is an update to task list, update chorelist
+                      != choreListIDs.size()) { // if there is an update to task list, update chorelist
+                      for (TaskModel t : taskList) {
+                          if (!choreListIDs.contains(t.getTaskId())) {
+                              choreListIDs.add(t.getTaskId());
+                          }
+                      }
                     // remove any deleted tasks and append any new tasks
                   }
+
+                  // Build the combined chore preferences list
+                  choreList = new ArrayList<>();
+                  for (String taskID : choreListIDs) {
+                     for (TaskModel t : taskList) {
+                         if (t.getTaskId().equals(taskID)) {
+                             choreList.add(new ChoreEntry(t.getTaskId(), t.getName()));
+                         }
+                     }
+                  }
+
                   // Button for going back to main activity
                   ImageButton backToMain = (ImageButton) findViewById(R.id.profile_back);
                   backToMain.setOnClickListener(
@@ -161,7 +179,11 @@ public class ProfileActivity extends AppCompatActivity {
 
                               Collections.swap(choreList, draggedPosition, targetPosition);
 
-                              setUser.setPreferences(choreList);
+                              choreListIDs.clear();
+                              for (ChoreEntry ce : choreList) {
+                                 choreListIDs.add(ce.taskId);
+                              }
+                              setUser.setPreferences(choreListIDs);
 
                               modelInterface.updateCurrentUser(
                                   setUser,
