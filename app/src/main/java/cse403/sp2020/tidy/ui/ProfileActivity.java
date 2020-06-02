@@ -87,8 +87,7 @@ public class ProfileActivity extends AppCompatActivity {
           } else { // user has been found/created
             Log.d(TAG, "User set");
             user = setUser;
-            choreList = setUser.getChorePreferences();
-            Log.d(TAG, "Chore list is null: " + (choreList == null));
+            choreList = setUser.getPreferences();
             modelInterface.setTasksListener(
                 tasks -> {
                   if (tasks == null) {
@@ -147,28 +146,18 @@ public class ProfileActivity extends AppCompatActivity {
 
                               Collections.swap(choreList, draggedPosition, targetPosition);
 
-                              setUser.setChorePreferences(choreList);
-
-                              Log.e(TAG, setUser.getChorePreferences().toString());
-
-                              Log.d(TAG, "Reached update chore prefs");
+                              setUser.setPreferences(choreList);
 
                               modelInterface.updateCurrentUser(
                                   setUser,
                                   updatedUser -> {
-                                    if (updatedUser
-                                        == null) { // reset chore preference list if null
+                                    // reset chore preference list if null
+                                    if (updatedUser == null) {
                                       Toast.makeText(
                                               ProfileActivity.this,
                                               "Update failed.",
                                               Toast.LENGTH_SHORT)
                                           .show();
-                                    } else {
-                                      if (updatedUser.getChorePreferences() == null) {
-                                        Log.e(TAG, "Updated user prefs are null");
-                                      } else {
-                                        Log.e(TAG, updatedUser.getChorePreferences().toString());
-                                      }
                                     }
                                   });
 

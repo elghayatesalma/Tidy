@@ -72,14 +72,6 @@ public class MainActivity extends AppCompatActivity {
                     handleTaskUpdates(tasks);
                   }
                 });
-            model.setUsersListener(
-                users -> {
-                  if (users == null) {
-                    Log.e(TAG, "No users found");
-                  } else {
-                    allFrag.updateUserList(users);
-                  }
-                });
           }
         });
   }
@@ -111,6 +103,15 @@ public class MainActivity extends AppCompatActivity {
             } else {
               Log.d(TAG, "Tasks updated");
               handleTaskUpdates(tasks);
+            }
+          });
+
+      model.setUsersListener(
+          users -> {
+            if (users == null) {
+              Log.e(TAG, "No users found");
+            } else {
+              allFrag.updateUserList(users);
             }
           });
     }

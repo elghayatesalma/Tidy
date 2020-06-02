@@ -11,7 +11,7 @@ public class UserModel {
   private String firebaseId;
   private String firstName;
   private String lastName;
-  private List<String> chorePreferences;
+  private List<String> preferences;
 
   // Empty constructor for firestore
   public UserModel() {}
@@ -22,8 +22,8 @@ public class UserModel {
       this.firstName = other.firstName;
       this.lastName = other.lastName;
 
-      if (other.chorePreferences != null) {
-        this.chorePreferences = new ArrayList<>(other.chorePreferences);
+      if (other.preferences != null) {
+        this.preferences = new ArrayList<>(other.preferences);
       }
     }
   }
@@ -40,9 +40,9 @@ public class UserModel {
     return lastName;
   }
 
-  public List<String> getChorePreferences() {
-    if (chorePreferences != null) {
-      return new ArrayList<>(chorePreferences);
+  public List<String> getPreferences() {
+    if (preferences != null) {
+      return new ArrayList<>(preferences);
     } else {
       return null;
     }
@@ -60,9 +60,9 @@ public class UserModel {
     this.lastName = lastName;
   }
 
-  public void setChorePreferences(List<String> chorePreferences) {
-    if (chorePreferences != null) {
-      this.chorePreferences = new ArrayList<>(chorePreferences);
+  public void setPreferences(List<String> preferences) {
+    if (preferences != null) {
+      this.preferences = new ArrayList<>(preferences);
     }
   }
 
