@@ -30,26 +30,26 @@ public class MyChoresFragment extends ChoresFragment {
     addOnClick(frag.findViewById(R.id.my_chores_add));
 
     frag.findViewById(R.id.my_chores_add);
-    choreList = new ArrayList<>();
-    allChoreListView.setAdapter(new ChoreListArrayAdapter<>(getContext(), choreList));
+    choreList = new ChoreListArrayAdapter<>(getContext(), new ArrayList<>());
+    allChoreListView.setAdapter(choreList);
     return frag;
   }
 
   @Override
-  protected void updateChoreList(List<TaskModel> tasks) {
+  public void updateChoreList(List<TaskModel> tasks) {
     choreList.clear();
 
     // Get all user related chores
     for (TaskModel task : tasks) {
       if (model.getCurrentUser().getFirebaseId() != null
           && model.getCurrentUser().getFirebaseId().equals(task.getAssignedTo())) {
-        choreList.addAll(tasks);
+        choreList.add(task);
       }
     }
   }
 
   @Override
-  protected void addTask(TaskModel newTask) {
+  public void addTask(TaskModel newTask) {
     // Set user first
     newTask.setAssignedTo(model.getCurrentUser().getFirebaseId());
     model.addTask(

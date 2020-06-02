@@ -25,7 +25,7 @@ import cse403.sp2020.tidy.ui.MainActivity;
 public abstract class ChoresFragment extends Fragment {
   protected String TAG = "CHORE_FRAGMENT";
   protected ModelInterface model;
-  protected List<TaskModel> choreList;
+  protected ChoreListArrayAdapter<TaskModel> choreList;
 
   /**
    * On fragment creation gets the firebase model interface and arguments from MainActivity
@@ -54,32 +54,6 @@ public abstract class ChoresFragment extends Fragment {
       @NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
       @Nullable Bundle savedInstanceState);
-
-  /** Always called whenever the fragment is no longer being used */
-  @Override
-  public void onPause() {
-    super.onPause();
-    Log.e(TAG, "PAUSING");
-    model.removeListeners();
-  }
-
-  /** Always called whenever the fragment starts being used */
-  @Override
-  public void onResume() {
-    super.onResume();
-    Log.e(TAG, "RESUMING");
-
-    // Add listener on tasks
-    model.setTasksListener(
-        tasks -> {
-          if (tasks == null) {
-            Log.e(TAG, "Tasks returned null in listener callback");
-          } else {
-            Log.d(TAG, "Tasks updated");
-            updateChoreList(tasks);
-          }
-        });
-  }
 
   /** Creates specific fragment views */
   protected void addOnClick(View viewById) {
@@ -135,8 +109,8 @@ public abstract class ChoresFragment extends Fragment {
   }
 
   /** Handles all updates related to a new/updated list of tasks */
-  protected abstract void updateChoreList(List<TaskModel> tasks);
+  public abstract void updateChoreList(List<TaskModel> tasks);
 
   /** Handles creating setting a new task */
-  protected abstract void addTask(TaskModel newTask);
+  public abstract void addTask(TaskModel newTask);
 }

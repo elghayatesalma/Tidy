@@ -5,14 +5,20 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.List;
+
 import cse403.sp2020.tidy.R;
 import cse403.sp2020.tidy.data.ModelInterface;
+import cse403.sp2020.tidy.data.model.TaskModel;
 import cse403.sp2020.tidy.ui.main.AllChoresFragment;
+import cse403.sp2020.tidy.ui.main.ChoresFragment;
 import cse403.sp2020.tidy.ui.main.MyChoresFragment;
 import cse403.sp2020.tidy.ui.main.SectionsPagerAdapter;
 
@@ -20,14 +26,15 @@ public class MainActivity extends AppCompatActivity {
 
   private static final String TAG = "MainActivity";
   private ModelInterface model;
+  private ChoresFragment allFrag, myFrag;
+  private boolean initialized = false;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    Intent creationIntent = getIntent();
-    final String userId = creationIntent.getStringExtra("tidy_user_id");
-    Log.d("test", "main userid = " + userId);
+    final String userId = FirebaseAuth.getInstance().getUid();
+    Log.d(TAG, "main userid = " + userId);
     FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
     model = new ModelInterface(mFirestore);
     model.setCurrentUser(
@@ -37,21 +44,34 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, "Failed to set user in main activity");
           } else {
             Log.d(TAG, "User set");
-            // Initiate fragments and tabs
-            ViewPager viewPager = findViewById(R.id.main_view_pager);
-            setupViewPager(viewPager, userId);
-            TabLayout tabLayout = findViewById(R.id.main_tabs);
-            tabLayout.setupWithViewPager(viewPager);
 
-            // Enable navigation button to ProfileActivity
-            findViewById(R.id.main_to_profile_button)
-                .setOnClickListener(
-                    view -> {
-                      Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
-                      intent.putExtra("tidy_user_id", userId);
-                      startActivity(intent);
-                    });
-          }
+            model.setTasksListener(
+              tasks -> {
+                if (tasks == null) {
+                  Log.e(TAG, "Tasks returned null in listener callback");
+                } else {
+                  if (!initialized) {
+                    initialized = true;
+                    // Initiate fragments and tabs
+                    ViewPager viewPager = findViewById(R.id.main_view_pager);
+                    setupViewPager(viewPager, userId);
+                    TabLayout tabLayout = findViewById(R.id.main_tabs);
+                    tabLayout.setupWithViewPager(viewPager);
+
+                    // Enable navigation button to ProfileActivity
+                    findViewById(R.id.main_to_profile_button)
+                        .setOnClickListener(
+                            view -> {
+                              Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                              intent.putExtra("tidy_user_id", userId);
+                              startActivity(intent);
+                            });
+                  }
+                  Log.d(TAG, "Tasks updated");
+                  handleTaskUpdates(tasks);
+                }
+              });
+            }
         });
   }
 
@@ -60,13 +80,48 @@ public class MainActivity extends AppCompatActivity {
     return model;
   }
 
+  /** Always called whenever the fragment is no longer being used */
+  @Override
+  public void onPause() {
+    super.onPause();
+    Log.e(TAG, "PAUSING");
+    if (initialized) {
+      model.removeListeners();
+    }
+  }
+
+  /** Always called whenever the fragment starts being used */
+  @Override
+  public void onResume() {
+    super.onResume();
+    Log.e(TAG, "RESUMING");
+
+    if (initialized) {
+      // Add listener on tasks
+      model.setTasksListener(
+        tasks -> {
+          if (tasks == null) {
+            Log.e(TAG, "Tasks returned null in listener callback");
+          } else {
+            Log.d(TAG, "Tasks updated");
+            handleTaskUpdates(tasks);
+          }
+        });
+    }
+  }
+
+  private void handleTaskUpdates(List<TaskModel> tasks) {
+    allFrag.updateChoreList(tasks);
+    myFrag.updateChoreList(tasks);
+  }
+
   private void setupViewPager(ViewPager viewPager, String userId) {
     // Set arguments for the fragments
     Bundle bundle = new Bundle();
     bundle.putString("tidy_user_id", userId);
-    AllChoresFragment allFrag = new AllChoresFragment();
+    allFrag = new AllChoresFragment();
     allFrag.setArguments(bundle);
-    MyChoresFragment myFrag = new MyChoresFragment();
+    myFrag = new MyChoresFragment();
     myFrag.setArguments(bundle);
 
     SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());

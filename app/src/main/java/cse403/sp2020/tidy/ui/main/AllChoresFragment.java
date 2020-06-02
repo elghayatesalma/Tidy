@@ -30,19 +30,19 @@ public class AllChoresFragment extends ChoresFragment {
     addOnClick(frag.findViewById(R.id.all_chores_add));
 
     frag.findViewById(R.id.all_chores_add);
-    choreList = new ArrayList<>();
-    allChoreListView.setAdapter(new ChoreListArrayAdapter<>(getContext(), choreList));
+    choreList = new ChoreListArrayAdapter<>(getContext(), new ArrayList<>());
+    allChoreListView.setAdapter(choreList);
     return frag;
   }
 
   @Override
-  protected void updateChoreList(List<TaskModel> tasks) {
+  public void updateChoreList(List<TaskModel> tasks) {
     choreList.clear();
     choreList.addAll(tasks);
   }
 
   @Override
-  protected void addTask(TaskModel newTask) {
+  public void addTask(TaskModel newTask) {
     model.addTask(
         newTask,
         task -> {
