@@ -85,7 +85,8 @@ def update_assignments(data, context):
         # reassign all tasks if all are completed
         if num_completed == len(tasks):
             unassigned = tasks
-
+            for uid in num_assignments:
+                num_assignments[uid] = 0
 
         unassigned_ids = []
         for task in unassigned:
