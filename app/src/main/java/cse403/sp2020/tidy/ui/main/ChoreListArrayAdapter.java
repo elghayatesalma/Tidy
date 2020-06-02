@@ -75,7 +75,8 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
         if (user.getFirebaseId().equals(uid)) {
           assigned = user.getFirstName() + " " + user.getLastName();
           choreHolder.assigned_roommate.setText(assigned);
-            choreHolder.assigned_roommate.setTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
+          choreHolder.assigned_roommate.setTextColor(
+              ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
         }
       }
     }
