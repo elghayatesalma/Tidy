@@ -17,8 +17,9 @@
     <string name="desc_google_icon">Google</string>
     <string name="sign_out">Firebase and Google Sign-Out</string>
     <string name="disconnect">Disconnect Google</string>
-    <string name="firebase_disconnected">Firebase Disconnected</string>
+    <string name="firebase_disconnected">Firebase failed to connect</string>
     <string name="firebase_status_fmt">Firebase User Account Info:\n Display Name: %1$s\n Email: %2$s\n PhotoURL: %3$s\n FirebaseUID: %4$s</string>
     <string name="signed_in_fmt">Google User Account Info:\n Display Name: %1$s\n Email: %2$s\n GivenName: %3$s\n FamilyName: %4$s</string>
     <string name="profile">profile</string>
+    <string name="pref_previously_started">PREVIOUSLY_STARTED</string>
 </resources>

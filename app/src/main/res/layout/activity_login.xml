@@ -36,18 +36,6 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/textView"
-            android:layout_width="229dp"
-            android:layout_height="wrap_content"
-            android:text="Google Account Profile Picture:" />
-
-        <ImageView
-            android:id="@+id/userProfileImage"
-            android:layout_width="145dp"
-            android:layout_height="wrap_content"
-            tools:srcCompat="@tools:sample/avatars"/>
-
-        <TextView
             android:id="@+id/detail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -63,7 +51,7 @@
             android:id="@+id/firebaseStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/firebase_disconnected" />
+            ></TextView>
 
         <Button
             android:id="@+id/go_to_main_button"
@@ -104,6 +92,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:visibility="invisible"
                 android:text="@string/sign_out" />
 
             <Button
@@ -111,6 +100,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:visibility="invisible"
                 android:text="@string/disconnect" />
         </LinearLayout>
 

@@ -1,7 +1,9 @@
 package cse403.sp2020.tidy.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.android.material.tabs.TabLayout;
@@ -17,6 +19,7 @@ import cse403.sp2020.tidy.R;
 import cse403.sp2020.tidy.data.ModelInterface;
 import cse403.sp2020.tidy.data.model.TaskModel;
 import cse403.sp2020.tidy.data.model.UserModel;
+import cse403.sp2020.tidy.ui.login.LoginActivity;
 import cse403.sp2020.tidy.ui.main.AllChoresFragment;
 import cse403.sp2020.tidy.ui.main.ChoresFragment;
 import cse403.sp2020.tidy.ui.main.MyChoresFragment;
@@ -90,10 +93,19 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
-  /** Always called whenever the fragment starts being used */
+  @Override
+  public void onBackPressed()
+  {
+      // code here to show dialog
+      Intent loginActivityIntent = new Intent(this, LoginActivity.class);
+      startActivity(loginActivityIntent);
+  }
+
+    /** Always called whenever the fragment starts being used */
   @Override
   public void onResume() {
     super.onResume();
+
     if (initialized) {
       // Add listener on tasks
       model.setTasksListener(
