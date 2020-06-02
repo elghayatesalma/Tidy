@@ -195,7 +195,6 @@ public class ProfileActivity extends AppCompatActivity {
                                               });
                           });
 
-
                   // Button for sharing household
                   ImageButton shareHouse = (ImageButton) findViewById(R.id.share_button);
                   shareHouse.setOnClickListener(
