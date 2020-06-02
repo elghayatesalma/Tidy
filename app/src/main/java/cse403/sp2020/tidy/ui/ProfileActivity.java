@@ -147,53 +147,66 @@ public class ProfileActivity extends AppCompatActivity {
                   // Button for going back to main activity
                   ImageButton profileSettings = (ImageButton) findViewById(R.id.settings_button);
                   profileSettings.setOnClickListener(
-                          view -> {
-                              // Model add task
-                              UserModel u = modelInterface.getCurrentUser();
-                              final Dialog dialog = new Dialog(Objects.requireNonNull(ProfileActivity.this));
-                              dialog.setContentView(R.layout.edit_user_dialog);
-                              ((EditText) dialog.findViewById(R.id.set_first_name)).setText(u.getFirstName());
-                              ((EditText) dialog.findViewById(R.id.set_last_name)).setText(u.getLastName());
-                              dialog.show();
-                              dialog
-                                      .findViewById(R.id.edit_user_dialog_cancel)
-                                      .setOnClickListener(view1 -> dialog.dismiss());
-                              dialog
-                                      .findViewById(R.id.edit_user_dialog_submit)
-                                      .setOnClickListener(
-                                              view12 -> {
-                                                  String first_name =
-                                                          ((EditText) dialog.findViewById(R.id.set_first_name))
-                                                                  .getText()
-                                                                  .toString();
-                                                  String last_name =
-                                                          ((EditText) dialog.findViewById(R.id.set_last_name))
-                                                                  .getText()
-                                                                  .toString();
-                                                  String house_name =
-                                                          ((EditText) dialog.findViewById(R.id.set_house_name))
-                                                                  .getText()
-                                                                  .toString();
-                                                  boolean valid = !first_name.isEmpty();
-                                                  valid &= !last_name.isEmpty();
-                                                  valid &= !house_name.isEmpty();
-                                                  if (valid) {
-                                                      u.setFirstName(first_name);
-                                                      u.setLastName(last_name);
-                                                      modelInterface.updateCurrentUser(u, nu -> {
-                                                          if (nu == null) {
-                                                              Toast.makeText(getBaseContext(), "Failed to update user", Toast.LENGTH_SHORT).show();
-                                                          } else {
-                                                              dialog.dismiss();
-                                                          }
-                                                      });
-                                                  } else {
-                                                      Toast.makeText(getBaseContext(), "All fields must be filled", Toast.LENGTH_SHORT)
-                                                              .show();
-                                                  }
-                                              });
-                          });
-
+                      view -> {
+                        // Model add task
+                        UserModel u = modelInterface.getCurrentUser();
+                        final Dialog dialog =
+                            new Dialog(Objects.requireNonNull(ProfileActivity.this));
+                        dialog.setContentView(R.layout.edit_user_dialog);
+                        ((EditText) dialog.findViewById(R.id.set_first_name))
+                            .setText(u.getFirstName());
+                        ((EditText) dialog.findViewById(R.id.set_last_name))
+                            .setText(u.getLastName());
+                        dialog.show();
+                        dialog
+                            .findViewById(R.id.edit_user_dialog_cancel)
+                            .setOnClickListener(view1 -> dialog.dismiss());
+                        dialog
+                            .findViewById(R.id.edit_user_dialog_submit)
+                            .setOnClickListener(
+                                view12 -> {
+                                  String first_name =
+                                      ((EditText) dialog.findViewById(R.id.set_first_name))
+                                          .getText()
+                                          .toString();
+                                  String last_name =
+                                      ((EditText) dialog.findViewById(R.id.set_last_name))
+                                          .getText()
+                                          .toString();
+                                  String house_name =
+                                      ((EditText) dialog.findViewById(R.id.set_house_name))
+                                          .getText()
+                                          .toString();
+                                  boolean valid = !first_name.isEmpty();
+                                  valid &= !last_name.isEmpty();
+                                  valid &= !house_name.isEmpty();
+                                  if (valid) {
+                                    u.setFirstName(first_name);
+                                    u.setLastName(last_name);
+                                    modelInterface.updateCurrentUser(
+                                        u,
+                                        nu -> {
+                                          if (nu == null) {
+                                            Toast.makeText(
+                                                    getBaseContext(),
+                                                    "Failed to update user",
+                                                    Toast.LENGTH_SHORT)
+                                                .show();
+                                          } else {
+                                            nameView.setText(
+                                                nu.getFirstName() + " " + nu.getLastName());
+                                            dialog.dismiss();
+                                          }
+                                        });
+                                  } else {
+                                    Toast.makeText(
+                                            getBaseContext(),
+                                            "All fields must be filled",
+                                            Toast.LENGTH_SHORT)
+                                        .show();
+                                  }
+                                });
+                      });
 
                   // Button for sharing household
                   ImageButton shareHouse = (ImageButton) findViewById(R.id.share_button);
