@@ -184,6 +184,7 @@ public class ProfileActivity extends AppCompatActivity {
                                                           if (nu == null) {
                                                               Toast.makeText(getBaseContext(), "Failed to update user", Toast.LENGTH_SHORT).show();
                                                           } else {
+                                                              nameView.setText(nu.getFirstName() + " " + nu.getLastName());
                                                               dialog.dismiss();
                                                           }
                                                       });
