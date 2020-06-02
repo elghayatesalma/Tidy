@@ -28,7 +28,6 @@ public abstract class ChoresFragment extends Fragment {
   protected ChoreListArrayAdapter<TaskModel> choreList;
   protected List<UserModel> userList;
 
-
   /**
    * On fragment creation gets the firebase model interface and arguments from MainActivity
    *
