@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import java.util.List;
 
 import cse403.sp2020.tidy.R;
-import cse403.sp2020.tidy.data.CallbackInterface;
 import cse403.sp2020.tidy.data.ModelInterface;
 import cse403.sp2020.tidy.data.model.TaskModel;
 
@@ -24,7 +23,8 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
   private ModelInterface model;
   private boolean toggleable;
 
-  ChoreListArrayAdapter(Context context, List<E> objects, ModelInterface model, boolean toggleable) {
+  ChoreListArrayAdapter(
+      Context context, List<E> objects, ModelInterface model, boolean toggleable) {
     super(context, 0, objects);
     inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     this.model = model;
@@ -59,19 +59,22 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
     choreHolder.complete.setChecked(chore.isCompleted());
 
     if (this.toggleable) {
-      View.OnClickListener li = l -> {
-//        choreHolder.complete.toggle();
-        boolean completed = choreHolder.complete.isChecked();
-        chore.setCompleted(completed);
-        this.model.updateTask(chore, t -> {
-          if (t == null) {
-            Log.d("ChoreListAdapter", "failed to change completion status");
-            choreHolder.complete.toggle(); // failed to update
-          } else {
-            Log.d("ChoreListAdapter", "Changed completion status " + chore);
-          }
-        });
-      };
+      View.OnClickListener li =
+          l -> {
+            //        choreHolder.complete.toggle();
+            boolean completed = choreHolder.complete.isChecked();
+            chore.setCompleted(completed);
+            this.model.updateTask(
+                chore,
+                t -> {
+                  if (t == null) {
+                    Log.d("ChoreListAdapter", "failed to change completion status");
+                    choreHolder.complete.toggle(); // failed to update
+                  } else {
+                    Log.d("ChoreListAdapter", "Changed completion status " + chore);
+                  }
+                });
+          };
 
       convertView.setOnClickListener(li);
       choreHolder.complete.setEnabled(true);
@@ -82,10 +85,7 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
     return convertView;
   }
 
-  private void onClick(View v) {
-
-  }
-
+  private void onClick(View v) {}
 
   private class ChoreHolder {
     TextView chore_name;

@@ -1,6 +1,5 @@
 package cse403.sp2020.tidy.data.model;
 
-
 import com.google.firebase.Timestamp;
 
 /**
