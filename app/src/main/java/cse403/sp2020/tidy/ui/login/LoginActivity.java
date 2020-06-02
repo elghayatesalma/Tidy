@@ -287,13 +287,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         // Start temporary household registry
         FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
         ModelInterface model = new ModelInterface(mFirestore);
-        model.setCurrentUser(mAuth.getUid(), user -> {
-          if (user == null) {
-            Log.e(TAG, "Error setting current user in login");
-          } else {
-            startActivity(mainActivityIntent);
-          }
-        });
+        model.setCurrentUser(
+            mAuth.getUid(),
+            user -> {
+              if (user == null) {
+                Log.e(TAG, "Error setting current user in login");
+              } else {
+                startActivity(mainActivityIntent);
+              }
+            });
         break;
       case R.id.sign_in_button:
         signInGoogle();
