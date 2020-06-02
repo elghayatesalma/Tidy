@@ -15,9 +15,11 @@ import java.util.List;
 
 import cse403.sp2020.tidy.R;
 import cse403.sp2020.tidy.data.model.TaskModel;
+import cse403.sp2020.tidy.data.model.UserModel;
 
 public class AllChoresFragment extends ChoresFragment {
   protected String TAG = "ALL_CHORES";
+  protected List<TaskModel> prev_tasks;
 
   @Override
   public View onCreateView(
@@ -39,6 +41,16 @@ public class AllChoresFragment extends ChoresFragment {
   public void updateChoreList(List<TaskModel> tasks) {
     choreList.clear();
     choreList.addAll(tasks);
+    prev_tasks = tasks;
+  }
+
+  @Override
+  public void updateUserList(List<UserModel> users) {
+    choreList.clear();
+    choreList.setUsers(users);
+    if (this.prev_tasks != null) {
+      choreList.addAll(prev_tasks);
+    }
   }
 
   @Override
