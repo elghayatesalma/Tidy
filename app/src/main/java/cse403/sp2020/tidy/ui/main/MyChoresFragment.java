@@ -30,7 +30,7 @@ public class MyChoresFragment extends ChoresFragment {
     addOnClick(frag.findViewById(R.id.my_chores_add));
 
     frag.findViewById(R.id.my_chores_add);
-    choreList = new ChoreListArrayAdapter<>(getContext(), new ArrayList<>());
+    choreList = new ChoreListArrayAdapter<>(getContext(), new ArrayList<>(), model, true);
     allChoreListView.setAdapter(choreList);
     return frag;
   }
