@@ -100,7 +100,7 @@ public class ProfileActivity extends AppCompatActivity {
                   }
                   if (choreList
                       == null) { // don't set chore preferences in db until changed in recycler
-                                 // adapter
+                    // adapter
                     Log.d(TAG, "chore list is null");
                     choreList = new ArrayList<>();
                     for (TaskModel t : taskList) {
