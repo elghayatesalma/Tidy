@@ -8,7 +8,6 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -46,32 +45,33 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "User set");
 
             model.setTasksListener(
-              tasks -> {
-                if (tasks == null) {
-                  Log.e(TAG, "Tasks returned null in listener callback");
-                } else {
-                  if (!initialized) {
-                    initialized = true;
-                    // Initiate fragments and tabs
-                    ViewPager viewPager = findViewById(R.id.main_view_pager);
-                    setupViewPager(viewPager, userId);
-                    TabLayout tabLayout = findViewById(R.id.main_tabs);
-                    tabLayout.setupWithViewPager(viewPager);
+                tasks -> {
+                  if (tasks == null) {
+                    Log.e(TAG, "Tasks returned null in listener callback");
+                  } else {
+                    if (!initialized) {
+                      initialized = true;
+                      // Initiate fragments and tabs
+                      ViewPager viewPager = findViewById(R.id.main_view_pager);
+                      setupViewPager(viewPager, userId);
+                      TabLayout tabLayout = findViewById(R.id.main_tabs);
+                      tabLayout.setupWithViewPager(viewPager);
 
-                    // Enable navigation button to ProfileActivity
-                    findViewById(R.id.main_to_profile_button)
-                        .setOnClickListener(
-                            view -> {
-                              Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
-                              intent.putExtra("tidy_user_id", userId);
-                              startActivity(intent);
-                            });
+                      // Enable navigation button to ProfileActivity
+                      findViewById(R.id.main_to_profile_button)
+                          .setOnClickListener(
+                              view -> {
+                                Intent intent =
+                                    new Intent(getApplicationContext(), ProfileActivity.class);
+                                intent.putExtra("tidy_user_id", userId);
+                                startActivity(intent);
+                              });
+                    }
+                    Log.d(TAG, "Tasks updated");
+                    handleTaskUpdates(tasks);
                   }
-                  Log.d(TAG, "Tasks updated");
-                  handleTaskUpdates(tasks);
-                }
-              });
-            }
+                });
+          }
         });
   }
 
@@ -99,14 +99,14 @@ public class MainActivity extends AppCompatActivity {
     if (initialized) {
       // Add listener on tasks
       model.setTasksListener(
-        tasks -> {
-          if (tasks == null) {
-            Log.e(TAG, "Tasks returned null in listener callback");
-          } else {
-            Log.d(TAG, "Tasks updated");
-            handleTaskUpdates(tasks);
-          }
-        });
+          tasks -> {
+            if (tasks == null) {
+              Log.e(TAG, "Tasks returned null in listener callback");
+            } else {
+              Log.d(TAG, "Tasks updated");
+              handleTaskUpdates(tasks);
+            }
+          });
     }
   }
 
