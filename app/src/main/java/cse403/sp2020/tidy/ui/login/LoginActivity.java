@@ -196,6 +196,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
   private void updateGoogleSignInUI(@Nullable GoogleSignInAccount account) {
     if (account != null) {
+      /*
       mStatusTextView.setText(
           getString(
               R.string.signed_in_fmt,
@@ -204,12 +205,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
               account.getGivenName(),
               account.getFamilyName()));
 
+       */
+
       findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+      findViewById(R.id.title_text).setVisibility(View.GONE);
       findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
     } else {
+      /*
       mStatusTextView.setText(R.string.signed_out);
 
+       */
+
       findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+      findViewById(R.id.title_text).setVisibility(View.VISIBLE);
       findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
     }
   }
@@ -258,7 +266,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                   toast("Firebase failed to sign in!");
                   updateFireBaseSignInUI(null);
                 }
-
                 // ...
               }
             });
