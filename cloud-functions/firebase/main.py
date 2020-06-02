@@ -93,22 +93,32 @@ def update_assignments(data, context):
         preference_map = {}
         for user_data in users:
             uid = user_data['firebaseId']
-            # Make a user preference map for only unassigned tasks
-            if 'preferences' in user_data:
-                prefs = user_data['preferences']
-
-                # Add any missing preferences randomly to the end of pref list
-                to_add = [p for p in taskIds if p not in prefs]
-                random.shuffle(to_add)
-                all_prefs = prefs + to_add
-
-                # Get unassigned preferences
-                unassigned_prefs = [p for p in all_prefs if p in unassigned_ids]
-                preference_map[uid] = unassigned_prefs
-            else:
+            if 'preferences' not in user_data:
                 # Give them a random preference list
-                unassigned_prefs = random.sample(unassigned_ids, len(unassigned_ids))
-                preference_map[uid] = unassigned_prefs
+                user_data['preferences'] = random.sample(taskIds, len(taskIds))
+
+            # Make a user preference map for only unassigned tasks
+            prefs = user_data['preferences']
+
+            # Only keep preferences for tasks in the household
+            to_keep = [p for p in prefs if p in taskIds]
+
+            # Add any missing preferences randomly to the end of pref list
+            to_add = [p for p in taskIds if p not in to_keep]
+            random.shuffle(to_add)
+            all_prefs = to_keep + to_add
+
+            userDoc = userCollection.document(uid)
+
+            # merge in the new user preferences back to firebase
+            transaction.update(userDoc,
+                               {
+                                   u'preferences': all_prefs
+                               })
+
+            # Get unassigned preferences
+            unassigned_prefs = [p for p in all_prefs if p in unassigned_ids]
+            preference_map[uid] = unassigned_prefs
 
         logging.info("unassigned preferences " + str(preference_map))
 
