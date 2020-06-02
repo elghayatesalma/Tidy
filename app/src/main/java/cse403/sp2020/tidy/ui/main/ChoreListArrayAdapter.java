@@ -17,12 +17,14 @@ import cse403.sp2020.tidy.R;
 import cse403.sp2020.tidy.data.CallbackInterface;
 import cse403.sp2020.tidy.data.ModelInterface;
 import cse403.sp2020.tidy.data.model.TaskModel;
+import cse403.sp2020.tidy.data.model.UserModel;
 
 public class ChoreListArrayAdapter<E> extends ArrayAdapter {
 
   private final LayoutInflater inflater;
   private ModelInterface model;
   private boolean toggleable;
+  private List<UserModel> users;
 
   ChoreListArrayAdapter(Context context, List<E> objects, ModelInterface model, boolean toggleable) {
     super(context, 0, objects);
@@ -55,20 +57,30 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
     assert chore != null;
     choreHolder.chore_name.setText(chore.getName());
     choreHolder.chore_description.setText(chore.getDescription());
-    choreHolder.assigned_roommate.setText(""); // TODO add assigned roommate
+    String uid = chore.getAssignedTo();
+    String assigned = "";
+    if (users != null) {
+      for (UserModel user : users) {
+        if (user.getFirebaseId().equals(uid)) {
+          assigned = user.getFirstName() + " " + user.getLastName();
+        }
+      }
+    }
+    choreHolder.assigned_roommate.setText(assigned);
     choreHolder.complete.setChecked(chore.isCompleted());
 
     if (this.toggleable) {
       View.OnClickListener li = l -> {
-//        choreHolder.complete.toggle();
+        // Toggle the checkbox if this is the choreholder view
+        if (!(l instanceof CheckBox)) {
+          choreHolder.complete.toggle();
+        } // otherwise it was already toggled by clicking on it
         boolean completed = choreHolder.complete.isChecked();
         chore.setCompleted(completed);
         this.model.updateTask(chore, t -> {
           if (t == null) {
             Log.d("ChoreListAdapter", "failed to change completion status");
             choreHolder.complete.toggle(); // failed to update
-          } else {
-            Log.d("ChoreListAdapter", "Changed completion status " + chore);
           }
         });
       };
@@ -82,10 +94,9 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
     return convertView;
   }
 
-  private void onClick(View v) {
-
+  public void setUsers(List<UserModel> users) {
+    this.users = users;
   }
-
 
   private class ChoreHolder {
     TextView chore_name;

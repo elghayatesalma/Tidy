@@ -16,6 +16,7 @@ import java.util.List;
 import cse403.sp2020.tidy.R;
 import cse403.sp2020.tidy.data.ModelInterface;
 import cse403.sp2020.tidy.data.model.TaskModel;
+import cse403.sp2020.tidy.data.model.UserModel;
 import cse403.sp2020.tidy.ui.main.AllChoresFragment;
 import cse403.sp2020.tidy.ui.main.ChoresFragment;
 import cse403.sp2020.tidy.ui.main.MyChoresFragment;
@@ -71,6 +72,15 @@ public class MainActivity extends AppCompatActivity {
                     handleTaskUpdates(tasks);
                   }
                 });
+            model.setUsersListener(
+                users -> {
+                  if (users == null) {
+                     Log.e(TAG, "No users found");
+                  } else {
+                      allFrag.updateUserList(users);
+                  }
+                }
+            );
           }
         });
   }
@@ -110,6 +120,11 @@ public class MainActivity extends AppCompatActivity {
   private void handleTaskUpdates(List<TaskModel> tasks) {
     allFrag.updateChoreList(tasks);
     myFrag.updateChoreList(tasks);
+  }
+
+  private void handleUserUpdates(List<UserModel> users) {
+      allFrag.updateUserList(users);
+      myFrag.updateUserList(users);
   }
 
   private void setupViewPager(ViewPager viewPager, String userId) {

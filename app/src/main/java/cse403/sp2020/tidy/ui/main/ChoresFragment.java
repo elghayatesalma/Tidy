@@ -18,6 +18,7 @@ import java.util.Objects;
 import cse403.sp2020.tidy.R;
 import cse403.sp2020.tidy.data.ModelInterface;
 import cse403.sp2020.tidy.data.model.TaskModel;
+import cse403.sp2020.tidy.data.model.UserModel;
 import cse403.sp2020.tidy.ui.MainActivity;
 
 /** Generic chores fragment class, handles drawing and */
@@ -25,6 +26,8 @@ public abstract class ChoresFragment extends Fragment {
   protected String TAG = "CHORE_FRAGMENT";
   protected ModelInterface model;
   protected ChoreListArrayAdapter<TaskModel> choreList;
+  protected List<UserModel> userList;
+
 
   /**
    * On fragment creation gets the firebase model interface and arguments from MainActivity
@@ -109,6 +112,9 @@ public abstract class ChoresFragment extends Fragment {
 
   /** Handles all updates related to a new/updated list of tasks */
   public abstract void updateChoreList(List<TaskModel> tasks);
+
+  /** Handles all updates related to a new/updated list of tasks */
+  public abstract void updateUserList(List<UserModel> users);
 
   /** Handles creating setting a new task */
   public abstract void addTask(TaskModel newTask);
