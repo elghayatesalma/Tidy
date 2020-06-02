@@ -110,6 +110,7 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
       choreHolder.complete.setEnabled(true);
       choreHolder.complete.setOnClickListener(li);
     } else {
+      convertView.setOnClickListener(null);
       choreHolder.complete.setAlpha(0.4f);
       choreHolder.complete.setEnabled(false);
     }
