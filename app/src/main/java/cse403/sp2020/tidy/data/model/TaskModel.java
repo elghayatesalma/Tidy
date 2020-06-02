@@ -16,7 +16,9 @@ public class TaskModel {
   private Timestamp assignedDate;
 
   // Empty constructor for firestore
-  public TaskModel() {}
+  public TaskModel() {
+    this.assignedDate = new Timestamp(0, 0);
+  }
 
   public TaskModel(TaskModel other) {
     if (other != null) {
@@ -26,7 +28,11 @@ public class TaskModel {
       this.priority = other.priority;
       this.assignedTo = other.assignedTo;
       this.completed = other.completed;
-      this.assignedDate = other.assignedDate;
+      if (other.assignedDate == null) {
+        this.assignedDate = new Timestamp(0, 0);
+      } else {
+        this.assignedDate = other.assignedDate;
+      }
     }
   }
 

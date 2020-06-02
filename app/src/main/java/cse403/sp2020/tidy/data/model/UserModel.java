@@ -14,7 +14,9 @@ public class UserModel {
   private List<String> preferences;
 
   // Empty constructor for firestore
-  public UserModel() {}
+  public UserModel() {
+    this.preferences = new ArrayList<>();
+  }
 
   public UserModel(UserModel other) {
     if (other != null) {
@@ -24,6 +26,8 @@ public class UserModel {
 
       if (other.preferences != null) {
         this.preferences = new ArrayList<>(other.preferences);
+      } else {
+        this.preferences = new ArrayList<>();
       }
     }
   }

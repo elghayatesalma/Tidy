@@ -120,6 +120,20 @@ public class ProfileActivity extends AppCompatActivity {
                         }
                       });
 
+                    // Button for sharing household
+                    ImageButton shareHouse = (ImageButton) findViewById(R.id.share_button);
+                    shareHouse.setOnClickListener(
+                        v -> {
+                            String dynamicLink = modelInterface.getSharingLink().toString();
+                            Intent sendIntent = new Intent();
+                            sendIntent.setAction(Intent.ACTION_SEND);
+                            sendIntent.putExtra(Intent.EXTRA_SUBJECT, "Share household with others");
+                            sendIntent.putExtra(Intent.EXTRA_TEXT, dynamicLink);
+                            sendIntent.setType("text/plain");
+                            Intent shareIntent = Intent.createChooser(sendIntent, "Add users to household");
+                            startActivity(shareIntent);
+                    });
+
                   // Set up recycler view for drag and drop chore preference list
                   recyclerView = findViewById(R.id.chore_preference_list);
                   mLayoutManager = new LinearLayoutManager(this);

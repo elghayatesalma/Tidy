@@ -281,8 +281,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
   public void onClick(View v) {
     switch (v.getId()) {
       case R.id.go_to_main_button:
-        Intent mainActivityIntent = new Intent(this, MainActivity.class);
-        mainActivityIntent.putExtra("tidy_user_id", mAuth.getUid());
         // TODO Remove this when setup activity is completed
         // Start temporary household registry
         FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
@@ -292,8 +290,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             user -> {
               if (user == null) {
                 Log.e(TAG, "Error setting current user in login");
-              } else {
+              } else if (model.getHousehold() != null) {
+                Intent mainActivityIntent = new Intent(this, MainActivity.class);
+                mainActivityIntent.putExtra("tidy_user_id", mAuth.getUid());
                 startActivity(mainActivityIntent);
+              } else {
+                Intent setupActivityIntent = new Intent(this, UserSetup.class);
+                startActivity(setupActivityIntent);
               }
             });
         break;
