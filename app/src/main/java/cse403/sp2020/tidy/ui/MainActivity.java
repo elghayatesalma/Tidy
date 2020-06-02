@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, "Failed to set user in main activity");
           } else {
             Log.d(TAG, "User set");
-
             model.setTasksListener(
                 tasks -> {
                   if (tasks == null) {
@@ -69,7 +68,17 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(intent);
                               });
                     }
+                    model.setUsersListener(
+                            users -> {
+                              if (users == null) {
+                                  Log.e(TAG, "No users found");
+                              } else {
+                                  handleUsersUpdates(users);
+                              }
+                            });
                     Log.d(TAG, "Tasks updated");
+
+                    handleUserIdUpdates(user.getFirebaseId());
                     handleTaskUpdates(tasks);
                   }
                 });
@@ -105,6 +114,16 @@ public class MainActivity extends AppCompatActivity {
 
     if (initialized) {
       // Add listener on tasks
+        model.setCurrentUser(
+            FirebaseAuth.getInstance().getUid(),
+            user -> {
+                if (user == null) {
+                    Log.e(TAG, "Failed to set user in onResume main activity");
+                } else {
+                    handleUserIdUpdates(user.getFirebaseId());
+                }
+            });
+
       model.setTasksListener(
           tasks -> {
             if (tasks == null) {
@@ -120,9 +139,10 @@ public class MainActivity extends AppCompatActivity {
             if (users == null) {
               Log.e(TAG, "No users found");
             } else {
-              allFrag.updateUserList(users);
+                handleUsersUpdates(users);
             }
           });
+
     }
   }
 
@@ -131,9 +151,14 @@ public class MainActivity extends AppCompatActivity {
     myFrag.updateChoreList(tasks);
   }
 
-  private void handleUserUpdates(List<UserModel> users) {
-    allFrag.updateUserList(users);
-    myFrag.updateUserList(users);
+  private void handleUsersUpdates(List<UserModel> users) {
+      allFrag.updateUserList(users);
+      myFrag.updateUserList(users);
+  }
+
+  private void handleUserIdUpdates(String uid) {
+      allFrag.updateUserID(uid);
+      myFrag.updateUserID(uid);
   }
 
   private void setupViewPager(ViewPager viewPager, String userId) {

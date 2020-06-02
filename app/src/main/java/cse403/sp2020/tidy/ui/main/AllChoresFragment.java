@@ -37,6 +37,16 @@ public class AllChoresFragment extends ChoresFragment {
     return frag;
   }
 
+
+  /** Handles updates to user id*/
+  public void updateUserID(String uid) {
+    choreList.setUserId(uid);
+    choreList.clear();
+    if (this.prev_tasks != null) {
+      choreList.addAll(prev_tasks);
+    }
+  }
+
   @Override
   public void updateChoreList(List<TaskModel> tasks) {
     choreList.clear();

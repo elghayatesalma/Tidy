@@ -56,6 +56,9 @@ public class MyChoresFragment extends ChoresFragment {
   }
 
   @Override
+  public void updateUserID(String uid) { choreList.setUserId(uid); }
+
+  @Override
   public void addTask(TaskModel newTask) {
     // Set user first
     newTask.setAssignedTo(model.getCurrentUser().getFirebaseId());

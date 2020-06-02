@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import java.util.List;
 import java.util.Objects;
@@ -26,15 +27,16 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
 
   private final LayoutInflater inflater;
   private ModelInterface model;
-  private boolean toggleable;
+  private boolean all_toggleable;
   private List<UserModel> users;
+  private String myUID;
 
   ChoreListArrayAdapter(
       Context context, List<E> objects, ModelInterface model, boolean toggleable) {
     super(context, 0, objects);
     inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     this.model = model;
-    this.toggleable = toggleable;
+    this.all_toggleable = toggleable;
   }
 
   @Override
@@ -63,20 +65,27 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
     choreHolder.chore_description.setText(chore.getDescription());
     String uid = chore.getAssignedTo();
     String assigned = "";
-    if (users != null) {
+    boolean toggleable = false;
+    if (this.myUID != null && this.myUID.equals(uid)) {
+        assigned = "Mine";
+        toggleable = true;
+        choreHolder.assigned_roommate.setText(assigned);
+        choreHolder.assigned_roommate.setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+    } else if (users != null) {
       for (UserModel user : users) {
         if (user.getFirebaseId().equals(uid)) {
           assigned = user.getFirstName() + " " + user.getLastName();
+          choreHolder.assigned_roommate.setText(assigned);
+            choreHolder.assigned_roommate.setTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
         }
       }
     }
 
-    choreHolder.assigned_roommate.setText(assigned);
     choreHolder.complete.setChecked(chore.isCompleted());
 
     addEditView(convertView, chore);
 
-    if (this.toggleable) {
+    if (this.all_toggleable || toggleable) {
       View.OnClickListener li =
           l -> {
             // Toggle the checkbox if this is the choreholder view
@@ -99,6 +108,7 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
       choreHolder.complete.setEnabled(true);
       choreHolder.complete.setOnClickListener(li);
     } else {
+      choreHolder.complete.setAlpha(0.4f);
       choreHolder.complete.setEnabled(false);
     }
     return convertView;
@@ -106,6 +116,10 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
 
   public void setUsers(List<UserModel> users) {
     this.users = users;
+  }
+
+  public void setUserId(String userId) {
+      this.myUID = userId;
   }
 
   private void addEditView(View viewById, TaskModel task) {
