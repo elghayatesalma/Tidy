@@ -42,9 +42,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
   private GoogleSignInClient mGoogleSignInClient;
   private TextView mStatusTextView;
-  private TextView mFirebaseStatusTextView;
   private FirebaseAuth mAuth;
   private Intent intent;
+  private boolean signInPressed = false;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +54,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     // Views
     mStatusTextView = findViewById(R.id.status);
-    mFirebaseStatusTextView = findViewById(R.id.firebaseStatus);
 
     // Button listeners
     findViewById(R.id.sign_in_button).setOnClickListener(this);
@@ -218,30 +217,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
   private void updateFireBaseSignInUI(@Nullable FirebaseUser user) {
     if (user != null) {
       // Back button was pressed
-      if (intent.getCategories() == null) {
-        String displayName = "no display name";
-        String email = "no email";
-        String photoURL = "no photo";
-        String phone = "no phone number";
-        if (user.getDisplayName() != null) {
-          displayName = user.getDisplayName();
-        }
-        if (user.getPhotoUrl() != null) {
-          photoURL = user.getPhotoUrl().toString();
-        }
-        if (user.getEmail() != null) {
-          email = user.getEmail();
-        }
-        mFirebaseStatusTextView.setText(
-            getString(R.string.firebase_status_fmt, displayName, email, photoURL, user.getUid()));
+      if (signInPressed || intent.getCategories() != null) {
+        signInPressed = false;
+        proceedToApp();
+      } else {
         findViewById(R.id.go_to_main_button).setVisibility(View.VISIBLE);
         findViewById(R.id.disconnect_button).setVisibility(View.VISIBLE);
         findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
-      } else {
-        proceedToApp();
       }
     } else {
-      mFirebaseStatusTextView.setText(getString(R.string.firebase_disconnected));
       findViewById(R.id.go_to_main_button).setVisibility(View.GONE);
     }
   }
@@ -306,6 +290,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         proceedToApp();
         break;
       case R.id.sign_in_button:
+        signInPressed = true;
         signInGoogle();
         break;
       case R.id.sign_out_button:
