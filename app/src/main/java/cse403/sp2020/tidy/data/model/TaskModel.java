@@ -1,5 +1,8 @@
 package cse403.sp2020.tidy.data.model;
 
+
+import com.google.firebase.Timestamp;
+
 /**
  * Data model class that represents a Task Contains an Id field that is used for identification All
  * other fields are effectively arbitrary for backend
@@ -11,6 +14,7 @@ public class TaskModel {
   private int priority;
   private String assignedTo;
   private boolean completed;
+  private Timestamp assignedDate;
 
   // Empty constructor for firestore
   public TaskModel() {}
@@ -23,6 +27,7 @@ public class TaskModel {
       this.priority = other.priority;
       this.assignedTo = other.assignedTo;
       this.completed = other.completed;
+      this.assignedDate = other.assignedDate;
     }
   }
 
@@ -44,6 +49,14 @@ public class TaskModel {
 
   public String getAssignedTo() {
     return assignedTo;
+  }
+
+  public Timestamp getAssignedDate() {
+    return assignedDate;
+  }
+
+  public void setAssignedDate(Timestamp assignedDate) {
+    this.assignedDate = assignedDate;
   }
 
   public boolean isCompleted() {
