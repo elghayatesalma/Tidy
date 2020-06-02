@@ -125,14 +125,13 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
           // Model add task
           final Dialog dialog = new Dialog(Objects.requireNonNull(getContext()));
           dialog.setContentView(R.layout.add_chore_dialog);
-            ((EditText) dialog.findViewById(R.id.add_chore_dialog_name))
-                    .setText(task.getName());
-            ((EditText) dialog.findViewById(R.id.add_chore_dialog_description))
-                    .setText(task.getDescription());
-            ((EditText) dialog.findViewById(R.id.add_chore_dialog_priority))
-                    .setText(String.valueOf(task.getPriority()));
-            dialog.show();
-            dialog.findViewById(R.id.add_chore_dialog_delete).setVisibility(View.VISIBLE);
+          ((EditText) dialog.findViewById(R.id.add_chore_dialog_name)).setText(task.getName());
+          ((EditText) dialog.findViewById(R.id.add_chore_dialog_description))
+              .setText(task.getDescription());
+          ((EditText) dialog.findViewById(R.id.add_chore_dialog_priority))
+              .setText(String.valueOf(task.getPriority()));
+          dialog.show();
+          dialog.findViewById(R.id.add_chore_dialog_delete).setVisibility(View.VISIBLE);
           dialog
               .findViewById(R.id.add_chore_dialog_delete)
               .setOnClickListener(
