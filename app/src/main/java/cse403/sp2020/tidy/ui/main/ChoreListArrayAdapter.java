@@ -67,16 +67,18 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
     String assigned = "";
     boolean toggleable = false;
     if (this.myUID != null && this.myUID.equals(uid)) {
-        assigned = "Mine";
-        toggleable = true;
-        choreHolder.assigned_roommate.setText(assigned);
-        choreHolder.assigned_roommate.setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+      assigned = "Mine";
+      toggleable = true;
+      choreHolder.assigned_roommate.setText(assigned);
+      choreHolder.assigned_roommate.setTextColor(
+          ContextCompat.getColor(getContext(), R.color.colorAccent));
     } else if (users != null) {
       for (UserModel user : users) {
         if (user.getFirebaseId().equals(uid)) {
           assigned = user.getFirstName() + " " + user.getLastName();
           choreHolder.assigned_roommate.setText(assigned);
-            choreHolder.assigned_roommate.setTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
+          choreHolder.assigned_roommate.setTextColor(
+              ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
         }
       }
     }
@@ -119,7 +121,7 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
   }
 
   public void setUserId(String userId) {
-      this.myUID = userId;
+    this.myUID = userId;
   }
 
   private void addEditView(View viewById, TaskModel task) {

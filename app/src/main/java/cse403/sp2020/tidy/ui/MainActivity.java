@@ -69,13 +69,13 @@ public class MainActivity extends AppCompatActivity {
                               });
                     }
                     model.setUsersListener(
-                            users -> {
-                              if (users == null) {
-                                  Log.e(TAG, "No users found");
-                              } else {
-                                  handleUsersUpdates(users);
-                              }
-                            });
+                        users -> {
+                          if (users == null) {
+                            Log.e(TAG, "No users found");
+                          } else {
+                            handleUsersUpdates(users);
+                          }
+                        });
                     Log.d(TAG, "Tasks updated");
 
                     handleUserIdUpdates(user.getFirebaseId());
@@ -114,15 +114,15 @@ public class MainActivity extends AppCompatActivity {
 
     if (initialized) {
       // Add listener on tasks
-        model.setCurrentUser(
-            FirebaseAuth.getInstance().getUid(),
-            user -> {
-                if (user == null) {
-                    Log.e(TAG, "Failed to set user in onResume main activity");
-                } else {
-                    handleUserIdUpdates(user.getFirebaseId());
-                }
-            });
+      model.setCurrentUser(
+          FirebaseAuth.getInstance().getUid(),
+          user -> {
+            if (user == null) {
+              Log.e(TAG, "Failed to set user in onResume main activity");
+            } else {
+              handleUserIdUpdates(user.getFirebaseId());
+            }
+          });
 
       model.setTasksListener(
           tasks -> {
@@ -139,10 +139,9 @@ public class MainActivity extends AppCompatActivity {
             if (users == null) {
               Log.e(TAG, "No users found");
             } else {
-                handleUsersUpdates(users);
+              handleUsersUpdates(users);
             }
           });
-
     }
   }
 
@@ -152,13 +151,13 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void handleUsersUpdates(List<UserModel> users) {
-      allFrag.updateUserList(users);
-      myFrag.updateUserList(users);
+    allFrag.updateUserList(users);
+    myFrag.updateUserList(users);
   }
 
   private void handleUserIdUpdates(String uid) {
-      allFrag.updateUserID(uid);
-      myFrag.updateUserID(uid);
+    allFrag.updateUserID(uid);
+    myFrag.updateUserID(uid);
   }
 
   private void setupViewPager(ViewPager viewPager, String userId) {

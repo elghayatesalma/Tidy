@@ -37,8 +37,7 @@ public class AllChoresFragment extends ChoresFragment {
     return frag;
   }
 
-
-  /** Handles updates to user id*/
+  /** Handles updates to user id */
   public void updateUserID(String uid) {
     choreList.setUserId(uid);
     choreList.clear();

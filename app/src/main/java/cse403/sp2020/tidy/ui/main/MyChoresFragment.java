@@ -56,7 +56,9 @@ public class MyChoresFragment extends ChoresFragment {
   }
 
   @Override
-  public void updateUserID(String uid) { choreList.setUserId(uid); }
+  public void updateUserID(String uid) {
+    choreList.setUserId(uid);
+  }
 
   @Override
   public void addTask(TaskModel newTask) {
