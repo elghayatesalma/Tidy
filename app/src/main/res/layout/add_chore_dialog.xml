@@ -36,20 +36,34 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_below="@id/add_chore_dialog_group">
-        <Button android:id="@+id/add_chore_dialog_cancel"
-            android:text="Cancel"
-            android:textAllCaps="false"
+
+        <Button
+            android:id="@+id/add_chore_dialog_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"/>
+            android:layout_margin="5dp"
+            android:text="Cancel"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/add_chore_dialog_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Delete"
+            android:visibility="invisible" />
+
         <Space android:layout_weight="1"
             android:layout_width="0px"
             android:layout_height="1px"/>
-        <Button android:id="@+id/add_chore_dialog_submit"
-            android:text="Submit"
-            android:textAllCaps="false"
+
+        <Button
+            android:id="@+id/add_chore_dialog_submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"/>
+            android:layout_margin="5dp"
+            android:text="Submit"
+            android:textAllCaps="false" />
+
     </LinearLayout>
 </RelativeLayout>

@@ -1,5 +1,6 @@
 package cse403.sp2020.tidy.ui.main;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -7,11 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import java.util.List;
+import java.util.Objects;
 
 import cse403.sp2020.tidy.R;
 import cse403.sp2020.tidy.data.ModelInterface;
@@ -66,8 +70,11 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
         }
       }
     }
+
     choreHolder.assigned_roommate.setText(assigned);
     choreHolder.complete.setChecked(chore.isCompleted());
+
+    addEditView(convertView, chore);
 
     if (this.toggleable) {
       View.OnClickListener li =
@@ -99,6 +106,82 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
 
   public void setUsers(List<UserModel> users) {
     this.users = users;
+  }
+
+  private void addEditView(View viewById, TaskModel task) {
+    viewById.setOnLongClickListener(
+        view -> {
+          // Model add task
+          final Dialog dialog = new Dialog(Objects.requireNonNull(getContext()));
+          dialog.setContentView(R.layout.add_chore_dialog);
+          dialog.show();
+          dialog.findViewById(R.id.add_chore_dialog_delete).setVisibility(View.VISIBLE);
+          dialog
+              .findViewById(R.id.add_chore_dialog_delete)
+              .setOnClickListener(
+                  viewDelete -> {
+                    model.removeTask(
+                        task,
+                        deletedTask -> {
+                          if (deletedTask == null) {
+                            Log.e("ChoreAdapter", "Task failed to delete");
+                          } else {
+                            Log.e("ChoreAdapter", "Task deleted successfully");
+                          }
+                        });
+                    dialog.dismiss();
+                  });
+          dialog
+              .findViewById(R.id.add_chore_dialog_cancel)
+              .setOnClickListener(view1 -> dialog.dismiss());
+          dialog
+              .findViewById(R.id.add_chore_dialog_submit)
+              .setOnClickListener(
+                  view12 -> {
+                    String name =
+                        ((EditText) dialog.findViewById(R.id.add_chore_dialog_name))
+                            .getText()
+                            .toString();
+                    String description =
+                        ((EditText) dialog.findViewById(R.id.add_chore_dialog_description))
+                            .getText()
+                            .toString();
+                    String priorityStr =
+                        ((EditText) dialog.findViewById(R.id.add_chore_dialog_priority))
+                            .getText()
+                            .toString();
+                    boolean valid = !name.isEmpty();
+                    valid &= !description.isEmpty();
+                    valid &= !priorityStr.isEmpty();
+                    int priority = -1; // Dummy value that will never be used
+                    try {
+                      priority = Integer.parseInt(priorityStr, 10);
+                    } catch (NumberFormatException ex) {
+                      valid = false;
+                    }
+                    if (valid) {
+                      // Create a task and delete it
+                      task.setName(name);
+                      task.setDescription(description);
+                      task.setPriority(priority);
+                      model.updateTask(
+                          task,
+                          updatedTask -> {
+                            if (updatedTask == null) {
+                              Log.e("ChoreListAdapter", "Failed to update task");
+                            } else {
+                              Log.d("ChoreListAdapter", "Task updated");
+                            }
+                          });
+
+                      dialog.dismiss();
+                    } else {
+                      Toast.makeText(getContext(), "All fields must be filled", Toast.LENGTH_SHORT)
+                          .show();
+                    }
+                  });
+          return true;
+        });
   }
 
   private void onClick(View v) {}
