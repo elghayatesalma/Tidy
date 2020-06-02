@@ -8,7 +8,6 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -84,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
   @Override
   public void onPause() {
     super.onPause();
-    Log.e(TAG, "PAUSING");
     if (initialized) {
       model.removeListeners();
     }
@@ -94,8 +92,6 @@ public class MainActivity extends AppCompatActivity {
   @Override
   public void onResume() {
     super.onResume();
-    Log.e(TAG, "RESUMING");
-
     if (initialized) {
       // Add listener on tasks
       model.setTasksListener(
