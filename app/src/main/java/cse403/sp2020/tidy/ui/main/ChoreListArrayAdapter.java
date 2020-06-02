@@ -66,7 +66,7 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
     String assigned = "";
     boolean toggleable = false;
     if (model.getCurrentUser().getFirebaseId().equals(uid)) {
-      assigned = "Mine";
+      assigned = "Mine" + '\u00A0';
       toggleable = true;
       choreHolder.assigned_roommate.setText(assigned);
       choreHolder.assigned_roommate.setTextColor(
@@ -74,7 +74,7 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
     } else if (users != null) {
       for (UserModel user : users) {
         if (user.getFirebaseId().equals(uid)) {
-          assigned = user.getFirstName() + " " + user.getLastName();
+          assigned = user.getFirstName() + " " + user.getLastName() + '\u00A0';
           choreHolder.assigned_roommate.setText(assigned);
           choreHolder.assigned_roommate.setTextColor(
               ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
