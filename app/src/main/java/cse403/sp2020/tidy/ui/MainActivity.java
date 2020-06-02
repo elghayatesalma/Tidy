@@ -146,8 +146,9 @@ public class MainActivity extends AppCompatActivity {
     myFrag.setArguments(bundle);
 
     SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
-    adapter.addFragment(allFrag, "All Chores");
-    adapter.addFragment(myFrag, "My Chores");
+    adapter.addFragment(allFrag, "all chores");
+    adapter.addFragment(myFrag, "my chores");
+    viewPager.setBackgroundResource(R.drawable.background);
     viewPager.setAdapter(adapter);
   }
 }

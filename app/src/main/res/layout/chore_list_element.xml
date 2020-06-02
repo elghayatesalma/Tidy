@@ -35,6 +35,7 @@
             android:layout_height="wrap_content"
             android:text="Chore Name"
             android:textColor="@android:color/black"
+            android:fontFamily="@font/hind_bold"
             android:textSize="25sp"
             android:textStyle="bold" />
 
@@ -42,9 +43,10 @@
             android:id="@+id/chore_list_element_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/hind"
             android:text="Chore Description"
             android:textColor="@android:color/black"
-            android:textSize="25sp" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/chore_list_element_roommate"
@@ -52,9 +54,10 @@
             android:layout_height="wrap_content"
             android:text="Assigned Roommate"
             android:textAllCaps="false"
+            android:fontFamily="@font/hind"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textColor="@android:color/black"
-            android:textSize="15sp"
+            android:textSize="20sp"
             android:textStyle="italic" />
     </LinearLayout>
 </LinearLayout>

@@ -74,6 +74,7 @@ public class ProfileActivity extends AppCompatActivity {
     RequestOptions requestOptions = new RequestOptions();
     requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
 
+    // import google+ profile picture
     Glide.with(getApplicationContext())
         .load(photoURL)
         .thumbnail(0.5f)
