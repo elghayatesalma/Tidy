@@ -51,7 +51,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     @Override
     public void onClick(View v) {
-      Toast.makeText(v.getContext(), chorePreferences.get(getAdapterPosition()).taskName, Toast.LENGTH_SHORT)
+      Toast.makeText(
+              v.getContext(),
+              chorePreferences.get(getAdapterPosition()).taskName,
+              Toast.LENGTH_SHORT)
           .show();
     }
   }

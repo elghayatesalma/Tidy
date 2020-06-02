@@ -109,23 +109,24 @@ public class ProfileActivity extends AppCompatActivity {
                       Log.d(TAG, t.getName());
                     }
                   } else if (taskList.size()
-                      != choreListIDs.size()) { // if there is an update to task list, update chorelist
-                      for (TaskModel t : taskList) {
-                          if (!choreListIDs.contains(t.getTaskId())) {
-                              choreListIDs.add(t.getTaskId());
-                          }
+                      != choreListIDs
+                          .size()) { // if there is an update to task list, update chorelist
+                    for (TaskModel t : taskList) {
+                      if (!choreListIDs.contains(t.getTaskId())) {
+                        choreListIDs.add(t.getTaskId());
                       }
+                    }
                     // remove any deleted tasks and append any new tasks
                   }
 
                   // Build the combined chore preferences list
                   choreList = new ArrayList<>();
                   for (String taskID : choreListIDs) {
-                     for (TaskModel t : taskList) {
-                         if (t.getTaskId().equals(taskID)) {
-                             choreList.add(new ChoreEntry(t.getTaskId(), t.getName()));
-                         }
-                     }
+                    for (TaskModel t : taskList) {
+                      if (t.getTaskId().equals(taskID)) {
+                        choreList.add(new ChoreEntry(t.getTaskId(), t.getName()));
+                      }
+                    }
                   }
 
                   // Button for going back to main activity
@@ -181,7 +182,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                               choreListIDs.clear();
                               for (ChoreEntry ce : choreList) {
-                                 choreListIDs.add(ce.taskId);
+                                choreListIDs.add(ce.taskId);
                               }
                               setUser.setPreferences(choreListIDs);
 
