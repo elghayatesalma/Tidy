@@ -70,20 +70,23 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
     choreHolder.complete.setChecked(chore.isCompleted());
 
     if (this.toggleable) {
-      View.OnClickListener li = l -> {
-        // Toggle the checkbox if this is the choreholder view
-        if (!(l instanceof CheckBox)) {
-          choreHolder.complete.toggle();
-        } // otherwise it was already toggled by clicking on it
-        boolean completed = choreHolder.complete.isChecked();
-        chore.setCompleted(completed);
-        this.model.updateTask(chore, t -> {
-          if (t == null) {
-            Log.d("ChoreListAdapter", "failed to change completion status");
-            choreHolder.complete.toggle(); // failed to update
-          }
-        });
-      };
+      View.OnClickListener li =
+          l -> {
+            // Toggle the checkbox if this is the choreholder view
+            if (!(l instanceof CheckBox)) {
+              choreHolder.complete.toggle();
+            } // otherwise it was already toggled by clicking on it
+            boolean completed = choreHolder.complete.isChecked();
+            chore.setCompleted(completed);
+            this.model.updateTask(
+                chore,
+                t -> {
+                  if (t == null) {
+                    Log.d("ChoreListAdapter", "failed to change completion status");
+                    choreHolder.complete.toggle(); // failed to update
+                  }
+                });
+          };
 
       convertView.setOnClickListener(li);
       choreHolder.complete.setEnabled(true);
@@ -97,6 +100,7 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
   public void setUsers(List<UserModel> users) {
     this.users = users;
   }
+
   private void onClick(View v) {}
 
   private class ChoreHolder {

@@ -75,12 +75,11 @@ public class MainActivity extends AppCompatActivity {
             model.setUsersListener(
                 users -> {
                   if (users == null) {
-                     Log.e(TAG, "No users found");
+                    Log.e(TAG, "No users found");
                   } else {
-                      allFrag.updateUserList(users);
+                    allFrag.updateUserList(users);
                   }
-                }
-            );
+                });
           }
         });
   }
@@ -123,8 +122,8 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void handleUserUpdates(List<UserModel> users) {
-      allFrag.updateUserList(users);
-      myFrag.updateUserList(users);
+    allFrag.updateUserList(users);
+    myFrag.updateUserList(users);
   }
 
   private void setupViewPager(ViewPager viewPager, String userId) {
