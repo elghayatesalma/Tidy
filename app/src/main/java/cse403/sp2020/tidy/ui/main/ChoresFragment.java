@@ -115,9 +115,6 @@ public abstract class ChoresFragment extends Fragment {
   /** Handles updates to new users */
   public abstract void updateUserList(List<UserModel> users);
 
-  /** Handles updates to user id*/
-  public abstract void updateUserID(String uid);
-
   /** Handles creating setting a new task */
   public abstract void addTask(TaskModel newTask);
 }

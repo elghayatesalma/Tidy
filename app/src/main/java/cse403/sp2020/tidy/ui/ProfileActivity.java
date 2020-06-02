@@ -7,10 +7,12 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -61,14 +64,13 @@ public class ProfileActivity extends AppCompatActivity {
 
     Intent data = getIntent();
     final TextView nameView = (TextView) findViewById(R.id.profile_username);
+    final TextView houseNameView = (TextView) findViewById(R.id.profile_household_name);
     mAuth = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     // initialize firestore instance
     modelInterface = new ModelInterface(FirebaseFirestore.getInstance());
 
     GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-    username = acct.getDisplayName();
-    nameView.setText(username);
     String photoURL = acct.getPhotoUrl().toString();
 
     RequestOptions requestOptions = new RequestOptions();
@@ -90,6 +92,8 @@ public class ProfileActivity extends AppCompatActivity {
           } else { // user has been found/created
             Log.d(TAG, "User set");
             user = setUser;
+            username = user.getFirstName() + " " + user.getLastName();
+            nameView.setText(username);
             choreListIDs = setUser.getPreferences();
             modelInterface.setTasksListener(
                 tasks -> {
@@ -139,6 +143,57 @@ public class ProfileActivity extends AppCompatActivity {
                           finish();
                         }
                       });
+
+                  // Button for going back to main activity
+                  ImageButton profileSettings = (ImageButton) findViewById(R.id.settings_button);
+                  profileSettings.setOnClickListener(
+                          view -> {
+                              // Model add task
+                              UserModel u = modelInterface.getCurrentUser();
+                              final Dialog dialog = new Dialog(Objects.requireNonNull(ProfileActivity.this));
+                              dialog.setContentView(R.layout.edit_user_dialog);
+                              ((EditText) dialog.findViewById(R.id.set_first_name)).setText(u.getFirstName());
+                              ((EditText) dialog.findViewById(R.id.set_last_name)).setText(u.getLastName());
+                              dialog.show();
+                              dialog
+                                      .findViewById(R.id.edit_user_dialog_cancel)
+                                      .setOnClickListener(view1 -> dialog.dismiss());
+                              dialog
+                                      .findViewById(R.id.edit_user_dialog_submit)
+                                      .setOnClickListener(
+                                              view12 -> {
+                                                  String first_name =
+                                                          ((EditText) dialog.findViewById(R.id.set_first_name))
+                                                                  .getText()
+                                                                  .toString();
+                                                  String last_name =
+                                                          ((EditText) dialog.findViewById(R.id.set_last_name))
+                                                                  .getText()
+                                                                  .toString();
+                                                  String house_name =
+                                                          ((EditText) dialog.findViewById(R.id.set_house_name))
+                                                                  .getText()
+                                                                  .toString();
+                                                  boolean valid = !first_name.isEmpty();
+                                                  valid &= !last_name.isEmpty();
+                                                  valid &= !house_name.isEmpty();
+                                                  if (valid) {
+                                                      u.setFirstName(first_name);
+                                                      u.setLastName(last_name);
+                                                      modelInterface.updateCurrentUser(u, nu -> {
+                                                          if (nu == null) {
+                                                              Toast.makeText(getBaseContext(), "Failed to update user", Toast.LENGTH_SHORT).show();
+                                                          } else {
+                                                              dialog.dismiss();
+                                                          }
+                                                      });
+                                                  } else {
+                                                      Toast.makeText(getBaseContext(), "All fields must be filled", Toast.LENGTH_SHORT)
+                                                              .show();
+                                                  }
+                                              });
+                          });
+
 
                   // Button for sharing household
                   ImageButton shareHouse = (ImageButton) findViewById(R.id.share_button);

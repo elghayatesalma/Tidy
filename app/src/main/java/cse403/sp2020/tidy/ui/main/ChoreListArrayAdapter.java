@@ -29,7 +29,6 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
   private ModelInterface model;
   private boolean all_toggleable;
   private List<UserModel> users;
-  private String myUID;
 
   ChoreListArrayAdapter(
       Context context, List<E> objects, ModelInterface model, boolean toggleable) {
@@ -66,7 +65,7 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
     String uid = chore.getAssignedTo();
     String assigned = "";
     boolean toggleable = false;
-    if (this.myUID != null && this.myUID.equals(uid)) {
+    if (model.getCurrentUser().getFirebaseId().equals(uid)) {
         assigned = "Mine";
         toggleable = true;
         choreHolder.assigned_roommate.setText(assigned);
@@ -116,10 +115,6 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
 
   public void setUsers(List<UserModel> users) {
     this.users = users;
-  }
-
-  public void setUserId(String userId) {
-      this.myUID = userId;
   }
 
   private void addEditView(View viewById, TaskModel task) {

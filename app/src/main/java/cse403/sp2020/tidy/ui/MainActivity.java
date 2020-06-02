@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
                             });
                     Log.d(TAG, "Tasks updated");
 
-                    handleUserIdUpdates(user.getFirebaseId());
                     handleTaskUpdates(tasks);
                   }
                 });
@@ -114,16 +113,6 @@ public class MainActivity extends AppCompatActivity {
 
     if (initialized) {
       // Add listener on tasks
-        model.setCurrentUser(
-            FirebaseAuth.getInstance().getUid(),
-            user -> {
-                if (user == null) {
-                    Log.e(TAG, "Failed to set user in onResume main activity");
-                } else {
-                    handleUserIdUpdates(user.getFirebaseId());
-                }
-            });
-
       model.setTasksListener(
           tasks -> {
             if (tasks == null) {
@@ -154,11 +143,6 @@ public class MainActivity extends AppCompatActivity {
   private void handleUsersUpdates(List<UserModel> users) {
       allFrag.updateUserList(users);
       myFrag.updateUserList(users);
-  }
-
-  private void handleUserIdUpdates(String uid) {
-      allFrag.updateUserID(uid);
-      myFrag.updateUserID(uid);
   }
 
   private void setupViewPager(ViewPager viewPager, String userId) {

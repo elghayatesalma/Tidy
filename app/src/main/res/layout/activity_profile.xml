@@ -82,7 +82,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_toRightOf="@+id/profile_picture"
                 android:fontFamily="@font/ubuntu_bold"
-                android:text="Kara Lee"
+                android:text="User Name"
                 android:textSize="28sp">
 
             </TextView>
@@ -95,7 +95,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_toRightOf="@+id/profile_picture"
                 android:fontFamily="@font/hind_bold"
-                android:text="Magic Tree House"
+                android:text="Household Name"
                 android:textColor="@color/colorPrimary"
                 android:textSize="20sp">
 
