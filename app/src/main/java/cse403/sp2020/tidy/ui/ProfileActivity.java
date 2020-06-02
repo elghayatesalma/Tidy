@@ -2,16 +2,12 @@ package cse403.sp2020.tidy.ui;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.drawable.RoundedBitmapDrawable;
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -36,7 +32,6 @@ import com.bumptech.glide.*;
 
 import cse403.sp2020.tidy.R;
 import cse403.sp2020.tidy.data.ModelInterface;
-import cse403.sp2020.tidy.data.callbacks.UserCallbackInterface;
 import cse403.sp2020.tidy.data.model.HouseholdModel;
 import cse403.sp2020.tidy.data.model.TaskModel;
 import cse403.sp2020.tidy.data.model.UserModel;
@@ -78,108 +73,118 @@ public class ProfileActivity extends AppCompatActivity {
     requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
 
     Glide.with(getApplicationContext())
-      .load(photoURL)
-      .thumbnail(0.5f)
-      .transition(withCrossFade())
-      .apply(requestOptions)
-      .into((ImageView) findViewById(R.id.profile_picture));
+        .load(photoURL)
+        .thumbnail(0.5f)
+        .transition(withCrossFade())
+        .apply(requestOptions)
+        .into((ImageView) findViewById(R.id.profile_picture));
 
-    modelInterface.setCurrentUser(mAuth, setUser -> {
-        if (setUser == null) {
+    modelInterface.setCurrentUser(
+        mAuth,
+        setUser -> {
+          if (setUser == null) {
             Toast.makeText(this, "An error has occurred", Toast.LENGTH_LONG).show();
-        } else { // user has been found/created
+          } else { // user has been found/created
             Log.d(TAG, "User set");
             user = setUser;
             choreList = setUser.getChorePreference();
             Log.d(TAG, "Chore list is null: " + (choreList == null));
-            modelInterface.setTasksListener(tasks -> {
-                if (tasks == null) {
+            modelInterface.setTasksListener(
+                tasks -> {
+                  if (tasks == null) {
                     taskList = new ArrayList<>();
                     Log.d(TAG, "Tasks is null");
-                } else {
+                  } else {
                     taskList = new ArrayList<>(tasks);
                     Log.d(TAG, "Reached here");
-                }
-                if (choreList == null) { // don't set chore preferences in db until changed in recycler adapter
+                  }
+                  if (choreList
+                      == null) { // don't set chore preferences in db until changed in recycler
+                                 // adapter
                     Log.d(TAG, "chore list is null");
                     choreList = new ArrayList<>();
                     for (TaskModel t : taskList) {
-                        choreList.add(t.getName());
-                        Log.d(TAG, t.getName());
+                      choreList.add(t.getName());
+                      Log.d(TAG, t.getName());
                     }
-                } else if (taskList.size() != choreList.size()) { // if there is an update to task list, update chorelist
+                  } else if (taskList.size()
+                      != choreList.size()) { // if there is an update to task list, update chorelist
                     // remove any deleted tasks and append any new tasks
-                }
-                // Button for going back to main activity
-                ImageButton backToMain = (ImageButton) findViewById(R.id.profile_back);
-                backToMain.setOnClickListener(
-                        new View.OnClickListener() {
+                  }
+                  // Button for going back to main activity
+                  ImageButton backToMain = (ImageButton) findViewById(R.id.profile_back);
+                  backToMain.setOnClickListener(
+                      new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                          finish();
+                        }
+                      });
+
+                  // Set up recycler view for drag and drop chore preference list
+                  recyclerView = findViewById(R.id.chore_preference_list);
+                  mLayoutManager = new LinearLayoutManager(this);
+                  recyclerAdapter = new RecyclerAdapter(choreList);
+                  recyclerView.setLayoutManager(mLayoutManager);
+                  recyclerView.setAdapter(recyclerAdapter);
+
+                  RecyclerView.ItemDecoration divider =
+                      new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+                  recyclerView.addItemDecoration(divider);
+
+                  ItemTouchHelper helper =
+                      new ItemTouchHelper(
+                          new ItemTouchHelper.SimpleCallback(
+                              ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
                             @Override
-                            public void onClick(View v) {
-                                finish();
-                            }
-                        });
+                            public boolean onMove(
+                                @NonNull RecyclerView recyclerView,
+                                @NonNull RecyclerView.ViewHolder dragged,
+                                @NonNull RecyclerView.ViewHolder target) {
+                              int draggedPosition = dragged.getAdapterPosition();
 
-                // Set up recycler view for drag and drop chore preference list
-                recyclerView = findViewById(R.id.chore_preference_list);
-                mLayoutManager = new LinearLayoutManager(this);
-                recyclerAdapter = new RecyclerAdapter(choreList);
-                recyclerView.setLayoutManager(mLayoutManager);
-                recyclerView.setAdapter(recyclerAdapter);
+                              int targetPosition = target.getAdapterPosition();
 
-                RecyclerView.ItemDecoration divider =
-                        new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-                recyclerView.addItemDecoration(divider);
+                              Collections.swap(choreList, draggedPosition, targetPosition);
 
-                ItemTouchHelper helper =
-                        new ItemTouchHelper(
-                                new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
-                                    @Override
-                                    public boolean onMove(
-                                            @NonNull RecyclerView recyclerView,
-                                            @NonNull RecyclerView.ViewHolder dragged,
-                                            @NonNull RecyclerView.ViewHolder target) {
-                                        int draggedPosition = dragged.getAdapterPosition();
+                              setUser.setChorePreferences(choreList);
 
-                                        int targetPosition = target.getAdapterPosition();
+                              Log.e(TAG, setUser.getChorePreference().toString());
 
-                                        Collections.swap(
-                                                choreList,
-                                                draggedPosition,
-                                                targetPosition);
+                              Log.d(TAG, "Reached update chore prefs");
 
-                                        setUser.setChorePreferences(choreList);
-
-                                        Log.e(TAG, setUser.getChorePreference().toString());
-
-                                        Log.d(TAG, "Reached update chore prefs");
-
-                                        modelInterface.updateCurrentUser(setUser, updatedUser -> {
-                                            if (updatedUser == null) { // reset chore preference list if null
-                                                Toast.makeText(ProfileActivity.this, "Update failed.", Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                if (updatedUser.getChorePreference() == null) {
-                                                    Log.e(TAG, "Updated user prefs are null");
-                                                } else {
-                                                    Log.e(TAG, updatedUser.getChorePreference().toString());
-                                                }
-                                            }
-                                        });
-
-                                        recyclerAdapter.notifyItemMoved(draggedPosition, targetPosition);
-
-                                        return false;
+                              modelInterface.updateCurrentUser(
+                                  setUser,
+                                  updatedUser -> {
+                                    if (updatedUser
+                                        == null) { // reset chore preference list if null
+                                      Toast.makeText(
+                                              ProfileActivity.this,
+                                              "Update failed.",
+                                              Toast.LENGTH_SHORT)
+                                          .show();
+                                    } else {
+                                      if (updatedUser.getChorePreference() == null) {
+                                        Log.e(TAG, "Updated user prefs are null");
+                                      } else {
+                                        Log.e(TAG, updatedUser.getChorePreference().toString());
+                                      }
                                     }
+                                  });
 
-                                    @Override
-                                    public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {}
-                                });
+                              recyclerAdapter.notifyItemMoved(draggedPosition, targetPosition);
 
-                helper.attachToRecyclerView(recyclerView);
+                              return false;
+                            }
 
-            });
+                            @Override
+                            public void onSwiped(
+                                @NonNull RecyclerView.ViewHolder viewHolder, int direction) {}
+                          });
 
-        }
-    });
+                  helper.attachToRecyclerView(recyclerView);
+                });
+          }
+        });
   }
 }
