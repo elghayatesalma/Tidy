@@ -21,9 +21,9 @@ public class MyChoresFragment extends ChoresFragment {
 
   @Override
   public View onCreateView(
-          @NonNull LayoutInflater inflater,
-          @Nullable ViewGroup container,
-          @Nullable Bundle savedInstanceState) {
+      @NonNull LayoutInflater inflater,
+      @Nullable ViewGroup container,
+      @Nullable Bundle savedInstanceState) {
 
     final View frag = inflater.inflate(R.layout.mychores_fragment, container, false);
     ListView allChoreListView = frag.findViewById(R.id.my_chores_list);
@@ -42,7 +42,7 @@ public class MyChoresFragment extends ChoresFragment {
     // Get all user related chores
     for (TaskModel task : tasks) {
       if (model.getCurrentUser().getFirebaseId() != null
-              && model.getCurrentUser().getFirebaseId().equals(task.getAssignedTo())) {
+          && model.getCurrentUser().getFirebaseId().equals(task.getAssignedTo())) {
         choreList.addAll(tasks);
       }
     }
@@ -52,15 +52,22 @@ public class MyChoresFragment extends ChoresFragment {
   protected void addTask(TaskModel newTask) {
     // Set user first
     newTask.setAssignedTo(model.getCurrentUser().getFirebaseId());
-    model.addTask(newTask, task -> {
-      if (task == null) {
-        Log.e(TAG, "Failed to add a new task");
-      } else {
-        Log.d(TAG, "New task added -- "
-                + "Name: " + task.getName()
-                + ", Desc:" + task.getDescription()
-                + ", Priority: " + task.getPriority());
-      }
-    });
+    model.addTask(
+        newTask,
+        task -> {
+          if (task == null) {
+            Log.e(TAG, "Failed to add a new task");
+          } else {
+            Log.d(
+                TAG,
+                "New task added -- "
+                    + "Name: "
+                    + task.getName()
+                    + ", Desc:"
+                    + task.getDescription()
+                    + ", Priority: "
+                    + task.getPriority());
+          }
+        });
   }
 }

@@ -21,9 +21,9 @@ public class AllChoresFragment extends ChoresFragment {
 
   @Override
   public View onCreateView(
-          @NonNull LayoutInflater inflater,
-          @Nullable ViewGroup container,
-          @Nullable Bundle savedInstanceState) {
+      @NonNull LayoutInflater inflater,
+      @Nullable ViewGroup container,
+      @Nullable Bundle savedInstanceState) {
 
     final View frag = inflater.inflate(R.layout.allchores_fragment, container, false);
     ListView allChoreListView = frag.findViewById(R.id.all_chores_list);
@@ -43,15 +43,22 @@ public class AllChoresFragment extends ChoresFragment {
 
   @Override
   protected void addTask(TaskModel newTask) {
-    model.addTask(newTask, task -> {
-      if (task == null) {
-        Log.e(TAG, "Failed to add a new task");
-      } else {
-        Log.d(TAG, "New task added -- "
-                + "Name: " + task.getName()
-                + ", Desc:" + task.getDescription()
-                + ", Priority: " + task.getPriority());
-      }
-    });
+    model.addTask(
+        newTask,
+        task -> {
+          if (task == null) {
+            Log.e(TAG, "Failed to add a new task");
+          } else {
+            Log.d(
+                TAG,
+                "New task added -- "
+                    + "Name: "
+                    + task.getName()
+                    + ", Desc:"
+                    + task.getDescription()
+                    + ", Priority: "
+                    + task.getPriority());
+          }
+        });
   }
 }

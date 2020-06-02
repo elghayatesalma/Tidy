@@ -30,27 +30,29 @@ public class MainActivity extends AppCompatActivity {
     Log.d("test", "main userid = " + userId);
     FirebaseFirestore mFirestore = FirebaseFirestore.getInstance();
     model = new ModelInterface(mFirestore);
-    model.setCurrentUser(userId, user -> {
-      if (user == null) {
-        Log.e(TAG, "Failed to set user in main activity");
-      } else {
-        Log.d(TAG, "User set");
-        // Initiate fragments and tabs
-        ViewPager viewPager = findViewById(R.id.main_view_pager);
-        setupViewPager(viewPager, userId);
-        TabLayout tabLayout = findViewById(R.id.main_tabs);
-        tabLayout.setupWithViewPager(viewPager);
+    model.setCurrentUser(
+        userId,
+        user -> {
+          if (user == null) {
+            Log.e(TAG, "Failed to set user in main activity");
+          } else {
+            Log.d(TAG, "User set");
+            // Initiate fragments and tabs
+            ViewPager viewPager = findViewById(R.id.main_view_pager);
+            setupViewPager(viewPager, userId);
+            TabLayout tabLayout = findViewById(R.id.main_tabs);
+            tabLayout.setupWithViewPager(viewPager);
 
-        // Enable navigation button to ProfileActivity
-        findViewById(R.id.main_to_profile_button)
-          .setOnClickListener(
-            view -> {
-              Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
-              intent.putExtra("tidy_user_id", userId);
-              startActivity(intent);
-            });
-      }
-    });
+            // Enable navigation button to ProfileActivity
+            findViewById(R.id.main_to_profile_button)
+                .setOnClickListener(
+                    view -> {
+                      Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                      intent.putExtra("tidy_user_id", userId);
+                      startActivity(intent);
+                    });
+          }
+        });
   }
 
   // Enables fragments to share ModelInterface

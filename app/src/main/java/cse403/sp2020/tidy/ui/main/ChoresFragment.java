@@ -21,7 +21,6 @@ import cse403.sp2020.tidy.data.ModelInterface;
 import cse403.sp2020.tidy.data.model.TaskModel;
 import cse403.sp2020.tidy.ui.MainActivity;
 
-
 /** Generic chores fragment class, handles drawing and */
 public abstract class ChoresFragment extends Fragment {
   protected String TAG = "CHORE_FRAGMENT";
@@ -37,7 +36,7 @@ public abstract class ChoresFragment extends Fragment {
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     model = ((MainActivity) Objects.requireNonNull(getActivity())).getModelInterface();
-    Bundle b = getArguments();  // TODO: Needed?
+    Bundle b = getArguments(); // TODO: Needed?
     assert b != null;
   }
 
@@ -49,7 +48,8 @@ public abstract class ChoresFragment extends Fragment {
    * @param savedInstanceState saved bundle that is passed by the system
    * @return Inflated allchores fragment with all interactions initialized
    */
-  @Nullable @Override
+  @Nullable
+  @Override
   public abstract View onCreateView(
       @NonNull LayoutInflater inflater,
       @Nullable ViewGroup container,
@@ -70,69 +70,68 @@ public abstract class ChoresFragment extends Fragment {
     Log.e(TAG, "RESUMING");
 
     // Add listener on tasks
-    model.setTasksListener(tasks -> {
-      if (tasks == null) {
-        Log.e(TAG, "Tasks returned null in listener callback");
-      } else {
-        Log.d(TAG, "Tasks updated");
-        updateChoreList(tasks);
-      }
-    });
+    model.setTasksListener(
+        tasks -> {
+          if (tasks == null) {
+            Log.e(TAG, "Tasks returned null in listener callback");
+          } else {
+            Log.d(TAG, "Tasks updated");
+            updateChoreList(tasks);
+          }
+        });
   }
 
   /** Creates specific fragment views */
   protected void addOnClick(View viewById) {
-    viewById
-        .setOnClickListener(
-            view -> {
-              // Model add task
-              final Dialog dialog = new Dialog(Objects.requireNonNull(getContext()));
-              dialog.setContentView(R.layout.add_chore_dialog);
-              dialog.show();
-              dialog
-                  .findViewById(R.id.add_chore_dialog_cancel)
-                  .setOnClickListener(view1 -> dialog.dismiss());
-              dialog
-                  .findViewById(R.id.add_chore_dialog_submit)
-                  .setOnClickListener(
-                      view12 -> {
-                        String name =
-                            ((EditText) dialog.findViewById(R.id.add_chore_dialog_name))
-                                .getText()
-                                .toString();
-                        String description =
-                            ((EditText) dialog.findViewById(R.id.add_chore_dialog_description))
-                                .getText()
-                                .toString();
-                        String priorityStr =
-                            ((EditText) dialog.findViewById(R.id.add_chore_dialog_priority))
-                                .getText()
-                                .toString();
-                        boolean valid = !name.isEmpty();
-                        valid &= !description.isEmpty();
-                        valid &= !priorityStr.isEmpty();
-                        int priority = -1; // Dummy value that will never be used
-                        try {
-                          priority = Integer.parseInt(priorityStr, 10);
-                        } catch (NumberFormatException ex) {
-                          valid = false;
-                        }
-                        if (valid) {
-                          // Build a new task and add it to the DB
-                          TaskModel newTask = new TaskModel();
-                          newTask.setName(name);
-                          newTask.setDescription(description);
-                          newTask.setPriority(priority);
-                          addTask(newTask);
+    viewById.setOnClickListener(
+        view -> {
+          // Model add task
+          final Dialog dialog = new Dialog(Objects.requireNonNull(getContext()));
+          dialog.setContentView(R.layout.add_chore_dialog);
+          dialog.show();
+          dialog
+              .findViewById(R.id.add_chore_dialog_cancel)
+              .setOnClickListener(view1 -> dialog.dismiss());
+          dialog
+              .findViewById(R.id.add_chore_dialog_submit)
+              .setOnClickListener(
+                  view12 -> {
+                    String name =
+                        ((EditText) dialog.findViewById(R.id.add_chore_dialog_name))
+                            .getText()
+                            .toString();
+                    String description =
+                        ((EditText) dialog.findViewById(R.id.add_chore_dialog_description))
+                            .getText()
+                            .toString();
+                    String priorityStr =
+                        ((EditText) dialog.findViewById(R.id.add_chore_dialog_priority))
+                            .getText()
+                            .toString();
+                    boolean valid = !name.isEmpty();
+                    valid &= !description.isEmpty();
+                    valid &= !priorityStr.isEmpty();
+                    int priority = -1; // Dummy value that will never be used
+                    try {
+                      priority = Integer.parseInt(priorityStr, 10);
+                    } catch (NumberFormatException ex) {
+                      valid = false;
+                    }
+                    if (valid) {
+                      // Build a new task and add it to the DB
+                      TaskModel newTask = new TaskModel();
+                      newTask.setName(name);
+                      newTask.setDescription(description);
+                      newTask.setPriority(priority);
+                      addTask(newTask);
 
-                          dialog.dismiss();
-                        } else {
-                          Toast.makeText(
-                                  getContext(), "All fields must be filled", Toast.LENGTH_SHORT)
-                              .show();
-                        }
-                      });
-            });
+                      dialog.dismiss();
+                    } else {
+                      Toast.makeText(getContext(), "All fields must be filled", Toast.LENGTH_SHORT)
+                          .show();
+                    }
+                  });
+        });
   }
 
   /** Handles all updates related to a new/updated list of tasks */
