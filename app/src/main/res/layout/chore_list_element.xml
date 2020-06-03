@@ -16,12 +16,36 @@
         android:text=""
         android:visibility="visible" />
 
-    <ImageView
-        android:id="@+id/chore_list_element_icon"
-        android:layout_width="82dp"
-        android:layout_height="81dp"
-        android:contentDescription="Chore Icon"
-        android:src="@null" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/increase_priority"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="increase priority"
+            android:textSize="10sp"
+            android:fontFamily="@font/hind_semibold"
+            android:stateListAnimator="@null"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+
+        </Button>
+
+        <Button
+            android:id="@+id/decrease_priority"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="decrease priority"
+            android:textSize="10sp"
+            android:fontFamily="@font/hind_semibold"
+            android:stateListAnimator="@null"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+
+        </Button>
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="261dp"
