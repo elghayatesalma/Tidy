@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -251,7 +252,7 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
     TextView chore_description;
     TextView assigned_roommate;
     CheckBox complete;
-    Button priority_up;
-    Button priority_down;
+    ImageButton priority_up;
+    ImageButton priority_down;
   }
 }
