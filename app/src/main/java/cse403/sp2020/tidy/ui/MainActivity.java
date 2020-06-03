@@ -17,7 +17,6 @@ import cse403.sp2020.tidy.R;
 import cse403.sp2020.tidy.data.ModelInterface;
 import cse403.sp2020.tidy.data.model.TaskModel;
 import cse403.sp2020.tidy.data.model.UserModel;
-import cse403.sp2020.tidy.ui.login.LoginActivity;
 import cse403.sp2020.tidy.ui.main.AllChoresFragment;
 import cse403.sp2020.tidy.ui.main.ChoresFragment;
 import cse403.sp2020.tidy.ui.main.MyChoresFragment;
@@ -134,12 +133,12 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void handleUsersUpdates(List<UserModel> users) {
-      if (allFrag != null) {
-          allFrag.updateUserList(users);
-      }
-      if (myFrag != null) {
-          myFrag.updateUserList(users);
-      }
+    if (allFrag != null) {
+      allFrag.updateUserList(users);
+    }
+    if (myFrag != null) {
+      myFrag.updateUserList(users);
+    }
   }
 
   private void setupViewPager(ViewPager viewPager, String userId) {

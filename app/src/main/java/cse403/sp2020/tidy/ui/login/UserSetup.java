@@ -41,7 +41,7 @@ public class UserSetup extends AppCompatActivity {
     startActivity(loginActivityIntent);
   }
 
-    @Override
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     mFirestore = FirebaseFirestore.getInstance();

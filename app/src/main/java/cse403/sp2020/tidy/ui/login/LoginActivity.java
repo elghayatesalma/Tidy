@@ -47,7 +47,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
   private boolean signInPressed = false;
 
   @Override
-  public void onBackPressed(){
+  public void onBackPressed() {
     finishAffinity();
     Intent a = new Intent(Intent.ACTION_MAIN);
     a.addCategory(Intent.CATEGORY_HOME);
