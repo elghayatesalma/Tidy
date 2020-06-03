@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -55,6 +56,8 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
       choreHolder.chore_description = convertView.findViewById(R.id.chore_list_element_description);
       choreHolder.assigned_roommate = convertView.findViewById(R.id.chore_list_element_roommate);
       choreHolder.complete = convertView.findViewById(R.id.checkBox);
+      choreHolder.priority_up = convertView.findViewById(R.id.increase_priority);
+      choreHolder.priority_down = convertView.findViewById(R.id.decrease_priority);
       convertView.setTag(choreHolder);
     } else {
       choreHolder = (ChoreHolder) convertView.getTag();
@@ -114,6 +117,45 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
       choreHolder.complete.setAlpha(0.4f);
       choreHolder.complete.setEnabled(false);
     }
+
+    // increases the priority number (lower priority)
+    choreHolder.priority_down.setOnClickListener(
+        v -> {
+          int p = chore.getPriority();
+          chore.setPriority(p + 1);
+          model.updateTask(
+              chore,
+              updatedTask -> {
+                if (updatedTask == null) {
+                  Log.e("ChoreListAdapter", "Failed to update task");
+                  Toast.makeText(getContext(), "Failed to decrease priority", Toast.LENGTH_SHORT)
+                      .show();
+                  chore.setPriority(p);
+                } else {
+                  Log.d("ChoreListAdapter", "Task updated");
+                }
+              });
+        });
+
+    // decreases the priority number (higher priority)
+    choreHolder.priority_up.setOnClickListener(
+        v -> {
+          int old_p = chore.getPriority();
+          int p = Math.max(old_p - 1, 0);
+          chore.setPriority(p);
+          model.updateTask(
+              chore,
+              updatedTask -> {
+                if (updatedTask == null) {
+                  Log.e("ChoreListAdapter", "Failed to update task");
+                  Toast.makeText(getContext(), "Failed to decrease priority", Toast.LENGTH_SHORT)
+                      .show();
+                  chore.setPriority(old_p);
+                } else {
+                  Log.d("ChoreListAdapter", "Task updated");
+                }
+              });
+        });
     return convertView;
   }
 
@@ -209,5 +251,7 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
     TextView chore_description;
     TextView assigned_roommate;
     CheckBox complete;
+    Button priority_up;
+    Button priority_down;
   }
 }
