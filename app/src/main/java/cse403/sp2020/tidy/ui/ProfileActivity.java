@@ -292,6 +292,7 @@ public class ProfileActivity extends AppCompatActivity {
                   signOut.setOnClickListener(v -> {
                       Intent signOutIntent = new Intent(ProfileActivity.this, LoginActivity.class);
                       signOutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                      signOutIntent.putExtra("SIGNOUT", true);
                       startActivity(signOutIntent);
                   });
 
