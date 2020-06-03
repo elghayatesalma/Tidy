@@ -67,7 +67,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     // Button listeners
     findViewById(R.id.sign_in_button).setOnClickListener(this);
     findViewById(R.id.sign_out_button).setOnClickListener(this);
-    findViewById(R.id.disconnect_button).setOnClickListener(this);
     findViewById(R.id.go_to_main_button).setOnClickListener(this);
 
     // [START configure_signin]
@@ -205,20 +204,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
   private void updateGoogleSignInUI(@Nullable GoogleSignInAccount account) {
     if (account != null) {
-      mStatusTextView.setText(
-          getString(
-              R.string.signed_in_fmt,
-              account.getDisplayName(),
-              account.getEmail()));
+      mStatusTextView.setText(getString(R.string.signed_in_fmt, account.getEmail()));
 
-      mStatusTextView.setVisibility(View.VISIBLE);
       findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-      findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
+      findViewById(R.id.title_text).setVisibility(View.GONE);
+      findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
     } else {
       mStatusTextView.setText(R.string.signed_out);
-
       findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-      findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
+      findViewById(R.id.title_text).setVisibility(View.VISIBLE);
+      findViewById(R.id.sign_out_button).setVisibility(View.GONE);
     }
   }
 
@@ -230,7 +225,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         proceedToApp();
       } else {
         findViewById(R.id.go_to_main_button).setVisibility(View.VISIBLE);
-        findViewById(R.id.disconnect_button).setVisibility(View.VISIBLE);
         findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
       }
     } else {
@@ -266,7 +260,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                   toast("Firebase failed to sign in!");
                   updateFireBaseSignInUI(null);
                 }
-
                 // ...
               }
             });
@@ -304,10 +297,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
       case R.id.sign_out_button:
         signOutGoogle();
         mAuth.signOut();
-        updateFireBaseSignInUI(null);
-        break;
-      case R.id.disconnect_button:
-        revokeAccessGoogle();
         updateFireBaseSignInUI(null);
         break;
     }

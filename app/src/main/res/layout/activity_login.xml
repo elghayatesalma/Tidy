@@ -5,7 +5,7 @@
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorPrimary"
+    android:background="#1ACB90"
     android:orientation="vertical"
     android:weightSum="4"
     tools:context=".ui.login.LoginActivity">
@@ -25,6 +25,7 @@
             android:text="@string/login_title_text"
             android:gravity="center"
             android:textColor="@android:color/white"
+            android:fontFamily="@font/ubuntu_light"
             android:textSize="36sp" />
 
         <TextView
@@ -52,52 +53,51 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            android:text="Continue"
+            android:text="continue to tidy"
+            android:fontFamily="@font/ubuntu_bold"
+            android:textColor="@color/white"
+            android:backgroundTint="@android:color/transparent"
+            android:stateListAnimator="@null"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
             tools:visibility="visible" />
 
     </LinearLayout>
-    <RelativeLayout
-        android:layout_width="fill_parent"
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="?attr/colorPrimary">
+        android:background="#1ACB90">
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/sign_in_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
             android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:visibility="gone" />
 
-        <LinearLayout
-            android:id="@+id/sign_out_and_disconnect"
-            android:layout_width="fill_parent"
+        <Button
+            android:id="@+id/sign_out_button"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:orientation="horizontal"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:visibility="gone"
-            tools:visibility="visible">
+            android:backgroundTint="@android:color/transparent"
+            android:fontFamily="@font/ubuntu_bold"
+            android:stateListAnimator="@null"
+            android:text="@string/sign_out"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+            android:textColor="@color/white"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <Button
-                android:id="@+id/sign_out_button"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="@string/sign_out"
-                android:visibility="invisible" />
 
-            <Button
-                android:id="@+id/disconnect_button"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="@string/disconnect"
-                android:visibility="invisible" />
-        </LinearLayout>
-
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

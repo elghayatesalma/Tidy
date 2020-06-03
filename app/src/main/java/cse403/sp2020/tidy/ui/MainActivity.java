@@ -134,8 +134,12 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void handleUsersUpdates(List<UserModel> users) {
-    allFrag.updateUserList(users);
-    myFrag.updateUserList(users);
+      if (allFrag != null) {
+          allFrag.updateUserList(users);
+      }
+      if (myFrag != null) {
+          myFrag.updateUserList(users);
+      }
   }
 
   private void setupViewPager(ViewPager viewPager, String userId) {
