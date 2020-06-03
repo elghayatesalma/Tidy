@@ -978,8 +978,9 @@ public class ModelInterface {
           .collection(HOUSEHOLD_COLLECTION_NAME)
           .document(mHousehold.getHouseholdId())
           .collection(USERS_COLLECTION_NAME);
+    } else {
+      return mFirestore.collection(UNASSIGNED_USER_COLLECTION_NAME);
     }
-    return null;
   }
 
   // Remove listeners if they exist
