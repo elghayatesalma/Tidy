@@ -192,7 +192,9 @@ public class ProfileActivity extends AppCompatActivity {
                                                         new Intent(
                                                             ProfileActivity.this,
                                                             LoginActivity.class);
-                                                    loginActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                    loginActivityIntent.setFlags(
+                                                        Intent.FLAG_ACTIVITY_NEW_TASK
+                                                            | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                                     startActivity(loginActivityIntent);
                                                   } else {
                                                     Toast.makeText(
