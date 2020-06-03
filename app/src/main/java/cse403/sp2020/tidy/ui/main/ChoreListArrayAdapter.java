@@ -119,41 +119,43 @@ public class ChoreListArrayAdapter<E> extends ArrayAdapter {
     }
 
     // increases the priority number (lower priority)
-    choreHolder.priority_down.setOnClickListener(v -> {
-      int p = chore.getPriority();
-      chore.setPriority(p + 1);
-      model.updateTask(
+    choreHolder.priority_down.setOnClickListener(
+        v -> {
+          int p = chore.getPriority();
+          chore.setPriority(p + 1);
+          model.updateTask(
               chore,
               updatedTask -> {
                 if (updatedTask == null) {
                   Log.e("ChoreListAdapter", "Failed to update task");
                   Toast.makeText(getContext(), "Failed to decrease priority", Toast.LENGTH_SHORT)
-                          .show();
+                      .show();
                   chore.setPriority(p);
                 } else {
                   Log.d("ChoreListAdapter", "Task updated");
                 }
               });
-    });
+        });
 
     // decreases the priority number (higher priority)
-    choreHolder.priority_up.setOnClickListener(v -> {
-      int old_p = chore.getPriority();
-      int p = Math.max(old_p - 1, 0);
-      chore.setPriority(p);
-      model.updateTask(
+    choreHolder.priority_up.setOnClickListener(
+        v -> {
+          int old_p = chore.getPriority();
+          int p = Math.max(old_p - 1, 0);
+          chore.setPriority(p);
+          model.updateTask(
               chore,
               updatedTask -> {
                 if (updatedTask == null) {
                   Log.e("ChoreListAdapter", "Failed to update task");
                   Toast.makeText(getContext(), "Failed to decrease priority", Toast.LENGTH_SHORT)
-                          .show();
+                      .show();
                   chore.setPriority(old_p);
                 } else {
                   Log.d("ChoreListAdapter", "Task updated");
                 }
               });
-    });
+        });
     return convertView;
   }
 
