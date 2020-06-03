@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -96,6 +97,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     signInButton.setSize(SignInButton.SIZE_STANDARD);
     signInButton.setColorScheme(SignInButton.COLOR_LIGHT);
     // [END customize_button]
+    ActionBar ab = getSupportActionBar();
+    ab.hide();
   }
 
   @Override

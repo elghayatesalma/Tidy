@@ -32,6 +32,19 @@
             </ImageButton>
 
             <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/sign_out_button"
+                android:src="@drawable/signout"
+                android:layout_toStartOf="@+id/share_button"
+                android:backgroundTint="@color/white"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:layout_centerVertical="true">
+
+            </ImageButton>
+
+            <ImageButton
                 android:id="@+id/settings_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

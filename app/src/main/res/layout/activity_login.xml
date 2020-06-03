@@ -33,7 +33,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/signed_out"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
+            android:fontFamily="@font/ubuntu_bold"
             android:textSize="14sp" />
 
         <TextView
@@ -53,13 +54,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            android:text="continue to tidy"
-            android:fontFamily="@font/ubuntu_bold"
-            android:textColor="@color/white"
-            android:backgroundTint="@android:color/transparent"
+            android:text="continue"
+            android:fontFamily="@font/ubuntu_light"
+            android:textColor="#1ACB90"
+            android:background="@drawable/mybutton"
             android:stateListAnimator="@null"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
             tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tidy_logo"
+            android:layout_marginTop="@dimen/appbar_padding"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="tidy"
+            android:textColor="@android:color/white"
+            android:fontFamily="@font/ubuntu_bold"
+            android:textSize="48sp" />
 
     </LinearLayout>
 
@@ -86,12 +97,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/transparent"
-            android:fontFamily="@font/ubuntu_bold"
             android:stateListAnimator="@null"
             android:text="@string/sign_out"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
-            android:textColor="@color/white"
             android:visibility="invisible"
+            android:fontFamily="@font/ubuntu_light"
+            android:textColor="#1ACB90"
+            android:background="@drawable/mybutton"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

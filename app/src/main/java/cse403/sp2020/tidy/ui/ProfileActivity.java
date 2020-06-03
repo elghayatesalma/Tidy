@@ -288,6 +288,13 @@ public class ProfileActivity extends AppCompatActivity {
                         startActivity(shareIntent);
                       });
 
+                  ImageButton signOut = (ImageButton) findViewById(R.id.sign_out_button);
+                  signOut.setOnClickListener(v -> {
+                      Intent signOutIntent = new Intent(ProfileActivity.this, LoginActivity.class);
+                      signOutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                      startActivity(signOutIntent);
+                  });
+
                   // Set up recycler view for drag and drop chore preference list
                   recyclerView = findViewById(R.id.chore_preference_list);
                   mLayoutManager = new LinearLayoutManager(this);
