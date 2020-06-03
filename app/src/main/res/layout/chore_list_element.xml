@@ -17,37 +17,6 @@
         android:visibility="visible" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/increase_priority"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="increase priority"
-            android:textSize="10sp"
-            android:fontFamily="@font/hind_semibold"
-            android:stateListAnimator="@null"
-            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
-
-        </Button>
-
-        <Button
-            android:id="@+id/decrease_priority"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="decrease priority"
-            android:textSize="10sp"
-            android:fontFamily="@font/hind_semibold"
-            android:stateListAnimator="@null"
-            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
-
-        </Button>
-
-    </LinearLayout>
-
-    <LinearLayout
         android:layout_width="261dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
@@ -83,5 +52,33 @@
             android:textColor="@android:color/black"
             android:textSize="20sp"
             android:textStyle="italic" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="56dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/increase_priority"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/increase"
+            android:adjustViewBounds="true"
+            android:backgroundTint="#00FFFFFF"
+            android:scaleType="fitCenter">
+        </ImageButton>
+
+        <ImageButton
+            android:id="@+id/decrease_priority"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/decrease"
+            android:adjustViewBounds="true"
+            android:backgroundTint="#00FFFFFF"
+            android:scaleType="fitCenter">
+
+        </ImageButton>
+
     </LinearLayout>
 </LinearLayout>
