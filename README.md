@@ -11,36 +11,53 @@ Install the app from the Google Play Store (not yet published).
 #### Beta Releases:
 Download and install the APK file from our Github Releases page: [Releases](https://github.com/elghayatesalma/Tidy/releases)
 
-#### Usage
-If you received an invite link from another Tidy user, click on this link to open the app and automatically be added to the user’s shared household.
+See instructions here for how to install APK files on Android: [Installing APKs](https://www.xda-developers.com/sideload-apps-how-to/)
 
-Otherwise, open the app from your home screen to set up your own new household.
+#### Usage
+If you received an invite link from another Tidy user, click on this link to open the app. Once you have signed in, you will be given the option to join the household from the link or to create a new household.
+
+Otherwise, open the app from your home screen, login, and set up your own new household.
 
 #### Sign-In
 You will be greeted by the Tidy sign-in screen with a Google Sign-In button at the bottom
 Press the Google Sign-In button and select a Google Account you want to use for the app.
-If sign-in was successful, you will see a “Continue” button - press it.
+
+#### Household Setup
+If your account hasn't already been added to a household, you will be taken to the household setup screen.
+Here you will have the option to join an existing household or create a new one.
+Joining an existing household requires a sharing link - if you used the link to open the app this will already be filled out for you.
+Otherwise, you can just manually paste the link and join the household that way.
+
+To create a new household, press the "Create New Household" button.
 
 #### Tidy Household
 You will now see a list of `All Chores` in your household.
 Press on the “Add Chore” button to create a new chore.
 - Fill out the Title, Description, and Priority fields
 - The Priority field determines how important a task is by decreasing priority. i.e. priority = 1 is the most important task
-Delete a task by long-pressing on it and confirming (not implemented yet).
 
-Swiping left will take you to the `My Chores` pane where you can view which chores have been assigned to you by the app. (not implemented yet)
+Swiping left will take you to the `My Chores` pane where you can view which chores have been assigned to you by the app.
+
+Edit a task by long-pressing on it - this will bring up a dialog to edit or delete the task.
+Tap on a task to mark it as completed - you can only mark your own assigned tasks as complete.
+Use the +/- button on the tasks to increase/decrease their priority.
+
+The tasks will be automatically reassigned if all tasks are completed.
+A user's tasks will be automatically reassigned if they leave a house.
+New tasks are be automatically and fairly assigned, but existing task assignments are not reassigned when new users join.
+Rather, existing assigned tasks will be automatically reassigned to users every 24 hours.
 
 #### User Profile
 Pressing the `User Profile` button in the top right corner will take you to the User Profile.
 
 Here you can view and edit your profile information.
-There is a list of re-orderable chore preferences on this screen. Preferences can be re-ordered by dragging items up and down the list. Chores will automatically be assigned to users based on their preferences.
+There is a list of re-orderable chore preferences on this screen. Preferences can be re-ordered by long-pressing and dragging items up and down the list. Chores will automatically be assigned to users based on their preferences on a daily basis, or when all chores are marked complete.
 
 ##### Inviting Users to Household
 In the User Profile screen, there is a Share button in the top right corner.
 Press it to get an invitation to your household which can be shared with others.
 
-The invitation is in the form of a URL - if the app is not installed it will take you to the Google Play Store page. If the app is installed, it will open the app and add the user to your household rather than creating a new one. It will currently only work on Android devices.
+The invitation is in the form of a URL - if the app is not installed it will take you to the Google Play Store page. If the app is installed, it will open the app and fill out the Join House link field automatically. It currently only works on Android devices.
 
 ### Bug report
 Bug reporting for Tidy follows these guidelines below.
@@ -59,6 +76,7 @@ These are the tools that you will need, click the links to download and install.
 - Setup Android API 29 in Android Studio.
 - Setup an Android device or Android emulator (API 29) in Android Studio’s AVD if you intend to run the integration tests.
 - For running Firebase integration tests: [Firebase CLI](https://firebase.google.com/docs/cli#setup_update_cli)
+- For deploying Google Cloud Functions: [here](https://cloud.google.com/sdk/install)
 
 ### Get the Code
 Clone this repository to a location where you'd like the code to live:
@@ -70,7 +88,9 @@ Clone this repository to a location where you'd like the code to live:
 - Tidy/app: Folder for the actual app.  
 	-Tidy/app/src/main: Folder for the main source  
 		-Tidy/app/src/main/AndroidManifest.xml: Manifest file  
-		-Tidy/app/src/main/java/cse403/sp2020/tidy/: Folder for main java files  
+		-Tidy/app/src/main/java/cse403/sp2020/tidy/: Folder for main java files
+- cloud-functions/firebase: Folder containing Firebase Cloud Functions code for assigning tasks to users
+- .github/workflows: Folder containing Github Actions CI configuration files
 - README.md -File containing useful instructions for how to get started on the project.  
 - gradlew - gradle wrapper script for Linux and macOS systems  
 - gradlew.bat - gradle wrapper for Windows systems  
@@ -98,10 +118,26 @@ Alternatively, you can also create and use your own Firebase project by followin
 - In the Firebase console General Settings pane under the JSON file download section, find the SHA certificate fingerprints section and click 'Add fingerprint'. 
 - Add your SHA1 key there (or email it to the Tidy developers so we can add it to our project) 
 
+#### Setup Firebase Dynamic Links
+- Navigate to Firebase Console for your project
+- Find 'Dynamic Links' under 'Grow' in the sidebar
+- Press 'Get started'
+- Create a URL prefix. You can pick one of the Google-provided domains
+- Replace `https://tidy403.page.link` with your URL prefix in the Tidy source tree
+  - Found in: 
+    - tidy/ui/login/UserSetup.java
+    - tidy/data/ModelInterface.java
+    
+#### Deploy Cloud Functions
+See the Cloud Functions README [here](https://github.com/elghayatesalma/Tidy/blob/master/cloud-functions/firebase/README.md)
+
 ### Testing
 Android studio provides gradle wrappers `gradlew` and `gradlew.bat` for Linux/macOS and Windows systems. These wrap the same gradle build tasks and allow the project to be built from multiple platforms. Substitute `gradlew` for the version appropriate to your system.
 
 Our Unit tests and Integration tests are separate targets in our gradle build system. The unit tests run as part of the build whereas integration tests require an Android device be available to deploy and run the tests on.
+
+### Continuous Integration
+We are using Github Actions to build, test, and format our code. It sets up both Android and Firebase emulators to run our integration tests.
 
 #### Unit tests
 ##### CLI
