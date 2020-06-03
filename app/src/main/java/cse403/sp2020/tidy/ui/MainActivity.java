@@ -11,6 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Collections;
 import java.util.List;
 
 import cse403.sp2020.tidy.R;
@@ -129,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void handleTaskUpdates(List<TaskModel> tasks) {
+    Collections.sort(tasks, (t1, t2) -> t1.getPriority() - t2.getPriority());
     allFrag.updateChoreList(tasks);
     myFrag.updateChoreList(tasks);
   }
