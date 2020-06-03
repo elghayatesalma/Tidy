@@ -44,7 +44,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
   private GoogleSignInClient mGoogleSignInClient;
   private TextView mStatusTextView;
   private FirebaseAuth mAuth;
-  private Intent intent;
   private boolean signInPressed = false;
 
   @Override
@@ -60,8 +59,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_login);
-    intent = getIntent();
-
     // Views
     mStatusTextView = findViewById(R.id.status);
 
@@ -90,6 +87,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     // Initialize Firebase Auth
     mAuth = FirebaseAuth.getInstance();
+
+    if (getIntent().getBooleanExtra("SIGNOUT", false)) {
+      signOutGoogle();
+      mAuth.signOut();
+    }
 
     // [START customize_button]
     // Set the dimensions of the sign-in button.
@@ -223,7 +225,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
   private void updateFireBaseSignInUI(@Nullable FirebaseUser user) {
     if (user != null) {
       // Back button was pressed
-      if (signInPressed || intent.getCategories() != null) {
+      if (signInPressed || getIntent().getCategories() != null) {
         signInPressed = false;
         proceedToApp();
       } else {
