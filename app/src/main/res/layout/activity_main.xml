@@ -38,6 +38,7 @@
             android:fontFamily="@font/hind_semibold"
             android:padding="@dimen/appbar_padding"
             android:text="profile"
+            android:stateListAnimator="@null"
             android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title" />
     </LinearLayout>
 
